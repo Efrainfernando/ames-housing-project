@@ -366,37 +366,43 @@ En este capítulo se presentan las demostraciones teóricas fundamentales del mo
 <hr class="docutils" />
 <section id="modelo-de-regresion-lineal-simple">
 <h2>1.1 Modelo de regresión lineal simple<a class="headerlink" href="#modelo-de-regresion-lineal-simple" title="Permalink to this heading">#</a></h2>
-<p>Sea el modelo
-$<span class="math notranslate nohighlight">\(
+<p>Sea el modelo</p>
+<div class="math notranslate nohighlight">
+\[
 y_i = \beta_0 + \beta_1 x_i + \varepsilon_i, \quad i=1,\ldots,n,
-\)</span><span class="math notranslate nohighlight">\(
-donde los errores cumplen:
-\)</span><span class="math notranslate nohighlight">\(
+\]</div>
+<p>donde los errores cumplen:</p>
+<div class="math notranslate nohighlight">
+\[
 \mathbb{E}(\varepsilon_i)=0, \qquad \operatorname{Var}(\varepsilon_i)=\sigma^2.
-\)</span>$</p>
-<p>Definimos los <strong>residuos</strong>:
-$<span class="math notranslate nohighlight">\(
+\]</div>
+<p>Definimos los <strong>residuos</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
 e_i = y_i - \hat{y}_i = y_i - (\hat{\beta}_0+\hat{\beta}_1 x_i),
-\)</span><span class="math notranslate nohighlight">\(
-y la **suma de cuadrados de los residuos**:
-\)</span><span class="math notranslate nohighlight">\(
+\]</div>
+<p>y la <strong>suma de cuadrados de los residuos</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
 SS_{Res} = \sum_{i=1}^n e_i^2.
-\)</span>$</p>
+\]</div>
 </section>
 <hr class="docutils" />
 <section id="objetivo-de-la-demostracion">
 <h2>1.2 Objetivo de la demostración<a class="headerlink" href="#objetivo-de-la-demostracion" title="Permalink to this heading">#</a></h2>
-<p>Demostrar que:
-$<span class="math notranslate nohighlight">\(
+<p>Demostrar que:</p>
+<div class="math notranslate nohighlight">
+\[
 \frac{SS_{Res}}{\sigma^2} \sim \chi^2_{n-2},
-\)</span><span class="math notranslate nohighlight">\(
-y explicar por qué se restan **dos grados de libertad** en el modelo de regresión simple (asociados a \)</span>\hat\beta_0<span class="math notranslate nohighlight">\( y \)</span>\hat\beta_1$).</p>
+\]</div>
+<p>y explicar por qué se restan <strong>dos grados de libertad</strong> en el modelo de regresión simple (asociados a <span class="math notranslate nohighlight">\(\hat\beta_0\)</span> y <span class="math notranslate nohighlight">\(\hat\beta_1\)</span> ).</p>
 </section>
 <hr class="docutils" />
 <section id="marco-teorico">
 <h2>1.3 Marco teórico<a class="headerlink" href="#marco-teorico" title="Permalink to this heading">#</a></h2>
-<p>En notación matricial:
-$<span class="math notranslate nohighlight">\(
+<p>En notación matricial:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
 y = X\beta + \varepsilon, \qquad X = 
 \begin{bmatrix}
 1 &amp; x_1\\
@@ -404,30 +410,35 @@ y = X\beta + \varepsilon, \qquad X =
 \vdots &amp; \vdots\\
 1 &amp; x_n
 \end{bmatrix}.
-\)</span>$</p>
-<p>El estimador de mínimos cuadrados ordinarios (MCO) es:
-$<span class="math notranslate nohighlight">\(
+\end{split}\]</div>
+<p>El estimador de mínimos cuadrados ordinarios (MCO) es:</p>
+<div class="math notranslate nohighlight">
+\[
 \hat\beta = (X'X)^{-1}X'y,
-\)</span><span class="math notranslate nohighlight">\(
-y las predicciones se obtienen mediante la **matriz sombrero** \)</span>H = X(X’X)^{-1}X’<span class="math notranslate nohighlight">\(:
-\)</span><span class="math notranslate nohighlight">\(
+\]</div>
+<p>y las predicciones se obtienen mediante la <strong>matriz sombrero</strong> <span class="math notranslate nohighlight">\(H = X(X'X)^{-1}X'\)</span> :</p>
+<div class="math notranslate nohighlight">
+\[
 \hat{y} = Hy, \qquad e = y - \hat{y} = (I-H)y.
-\)</span>$</p>
+\]</div>
 </section>
 <hr class="docutils" />
 <section id="demostracion-paso-a-paso">
 <h2>1.4 Demostración paso a paso<a class="headerlink" href="#demostracion-paso-a-paso" title="Permalink to this heading">#</a></h2>
 <ol class="arabic">
 <li><p><strong>Expresión de los residuos en función de los errores</strong></p>
-<p>Sustituyendo <span class="math notranslate nohighlight">\(y = X\beta + \varepsilon\)</span>:
-$<span class="math notranslate nohighlight">\(
-e = (I-H)(X\beta+\varepsilon) = (I-H)\varepsilon.
-\)</span>$</p>
+<p>Sustituyendo <span class="math notranslate nohighlight">\(y = X\beta + \varepsilon\)</span> :</p>
+<div class="math notranslate nohighlight">
+\[
+   e = (I-H)(X\beta+\varepsilon) = (I-H)\varepsilon.
+   \]</div>
 </li>
-<li><p><strong>Suma de cuadrados de los residuos</strong>
-$<span class="math notranslate nohighlight">\(
-SS_{Res} = e'e = \varepsilon'(I-H)\varepsilon.
-\)</span>$</p></li>
+<li><p><strong>Suma de cuadrados de los residuos</strong></p>
+<div class="math notranslate nohighlight">
+\[
+   SS_{Res} = e'e = \varepsilon'(I-H)\varepsilon.
+   \]</div>
+</li>
 <li><p><strong>Propiedades clave de la matriz <span class="math notranslate nohighlight">\((I-H)\)</span>:</strong></p>
 <ul class="simple">
 <li><p>Es <strong>simétrica</strong>: <span class="math notranslate nohighlight">\((I-H)' = I-H\)</span>,</p></li>
@@ -437,14 +448,16 @@ SS_{Res} = e'e = \varepsilon'(I-H)\varepsilon.
 <p>En el modelo simple, <span class="math notranslate nohighlight">\(p = 2\)</span> (intercepto y pendiente), por tanto <span class="math notranslate nohighlight">\(\operatorname{rango}(I-H) = n-2\)</span>.</p>
 </li>
 <li><p><strong>Distribución del cuadrático:</strong></p>
-<p>Como <span class="math notranslate nohighlight">\(\varepsilon \sim \mathcal N(0,\sigma^2 I)\)</span>,
-$<span class="math notranslate nohighlight">\(
-\frac{\varepsilon'(I-H)\varepsilon}{\sigma^2} \sim \chi^2_{n-2}.
-\)</span>$</p>
-<p>Por lo tanto:
-$<span class="math notranslate nohighlight">\(
-\boxed{\displaystyle \frac{SS_{Res}}{\sigma^2} \sim \chi^2_{n-2}}.
-\)</span>$</p>
+<p>Como <span class="math notranslate nohighlight">\(\varepsilon \sim \mathcal N(0,\sigma^2 I)\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+   \frac{\varepsilon'(I-H)\varepsilon}{\sigma^2} \sim \chi^2_{n-2}.
+   \]</div>
+<p>Por lo tanto:</p>
+<div class="math notranslate nohighlight">
+\[
+   \boxed{\displaystyle \frac{SS_{Res}}{\sigma^2} \sim \chi^2_{n-2}}.
+   \]</div>
 </li>
 </ol>
 </section>
@@ -456,10 +469,11 @@ $<span class="math notranslate nohighlight">\(
 <li><p>Cada parámetro estimado (<span class="math notranslate nohighlight">\(\beta_0\)</span>, <span class="math notranslate nohighlight">\(\beta_1\)</span>) “consume” un grado de libertad.</p></li>
 <li><p>En total se restan 2 grados de libertad al número de observaciones <span class="math notranslate nohighlight">\(n\)</span>.</p></li>
 </ul>
-<p>Por tanto, la estimación insesgada de la varianza del error es:
-$<span class="math notranslate nohighlight">\(
+<p>Por tanto, la estimación insesgada de la varianza del error es:</p>
+<div class="math notranslate nohighlight">
+\[
 s^2 = \frac{SS_{Res}}{n-2}.
-\)</span>$</p>
+\]</div>
 </section>
 <hr class="docutils" />
 <section id="key-takeaways">
