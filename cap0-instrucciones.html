@@ -62,11 +62,13 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'cap0-instrucciones';</script>
     <link rel="canonical" href="https://efrainfernando.github.io/ames-housing-project/cap0-instrucciones.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Capítulo 1 · Demostraciones solicitadas" href="cap1-demostraciones.html" />
+    <link rel="next" title="Capítulo 1 · Introducción y pregunta de investigación" href="cap1-introduccion.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -176,7 +178,7 @@ const thebe_selector_output = ".output, .cell_output"
             </li>
         </ul>
         <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="cap1-demostraciones.html">Capítulo 1 · Demostraciones solicitadas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap1-introduccion.html">Capítulo 1 · Introducción y pregunta de investigación</a></li>
 </ul>
 
     </div>
@@ -340,20 +342,26 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Capítulo 0 · Instrucciones de reproducción y estructura del proyecto</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#como-compilar-el-libro">0.1 Cómo compilar el libro</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencias">Dependencias</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#como-obtener-el-dataset">0.2 Cómo obtener el dataset</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#control-de-versiones">0.3 Control de versiones</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducibilidad">0.4 Reproducibilidad</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#requisitos-tecnicos-del-entregable">0.5 Requisitos técnicos del entregable</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estructura-general-del-proyecto">0.6 Estructura general del proyecto</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#capitulo-0-instrucciones-de-reproduccion">0.6.1 Capítulo 0: Instrucciones de reproducción</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">0.7 Key takeaways</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#capitulo-1-demostraciones-solicitadas">Capítulo 1 · Demostraciones solicitadas</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-de-regresion-lineal-simple">1.1 Modelo de regresión lineal simple</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#objetivo-de-la-demostracion">1.2 Objetivo de la demostración</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#marco-teorico">1.3 Marco teórico</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demostracion-paso-a-paso">1.4 Demostración paso a paso</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretacion">1.5 Interpretación</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">1.6 Key takeaways</a></li>
 </ul>
+</li>
+</ul>
+
             </nav>
         </div>
     </div>
@@ -415,121 +423,140 @@ mv<span class="w"> </span>data/AmesHousing.csv<span class="w"> </span>data/ames_
 └──<span class="w"> </span>requirements.txt
 </pre></div>
 </div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="capitulo-1-demostraciones-solicitadas">
+<h1>Capítulo 1 · Demostraciones solicitadas<a class="headerlink" href="#capitulo-1-demostraciones-solicitadas" title="Permalink to this heading">#</a></h1>
 <blockquote>
-<div><p>🔧 <strong>Consejo:</strong> usa control de versiones con Git y sincroniza los cambios del libro en GitHub antes de publicar.</p>
+<div><p><strong>Overview:</strong><br />
+En este capítulo se presentan las demostraciones teóricas fundamentales del modelo de <strong>regresión lineal simple</strong>, enfocadas en la distribución de la suma de cuadrados de los residuos y el origen de los grados de libertad asociados.</p>
 </div></blockquote>
+<hr class="docutils" />
+<section id="modelo-de-regresion-lineal-simple">
+<h2>1.1 Modelo de regresión lineal simple<a class="headerlink" href="#modelo-de-regresion-lineal-simple" title="Permalink to this heading">#</a></h2>
+<p>Sea el modelo</p>
+<div class="math notranslate nohighlight">
+\[
+y_i = \beta_0 + \beta_1 x_i + \varepsilon_i, \quad i=1,\ldots,n,
+\]</div>
+<p>donde los errores cumplen:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbb{E}(\varepsilon_i)=0, \qquad \operatorname{Var}(\varepsilon_i)=\sigma^2.
+\]</div>
+<p>Definimos los <strong>residuos</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+e_i = y_i - \hat{y}_i = y_i - (\hat{\beta}_0+\hat{\beta}_1 x_i),
+\]</div>
+<p>y la <strong>suma de cuadrados de los residuos</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+SS_{Res} = \sum_{i=1}^n e_i^2.
+\]</div>
 </section>
 <hr class="docutils" />
-<section id="reproducibilidad">
-<h2>0.4 Reproducibilidad<a class="headerlink" href="#reproducibilidad" title="Permalink to this heading">#</a></h2>
-<ul class="simple">
-<li><p>Todos los experimentos deben fijar una <strong>semilla aleatoria</strong> (<code class="docutils literal notranslate"><span class="pre">random_state</span></code>) para garantizar resultados reproducibles.</p></li>
-<li><p>Se recomienda usar Python ≥ 3.10 y registrar las versiones principales de librerías (<code class="docutils literal notranslate"><span class="pre">numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">pandas</span></code>, <code class="docutils literal notranslate"><span class="pre">statsmodels</span></code>, <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>, <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code>).</p></li>
-<li><p>Cada notebook debe incluir celdas comentadas para permitir su ejecución desde cero sin errores.</p></li>
-</ul>
+<section id="objetivo-de-la-demostracion">
+<h2>1.2 Objetivo de la demostración<a class="headerlink" href="#objetivo-de-la-demostracion" title="Permalink to this heading">#</a></h2>
+<p>Demostrar que:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{SS_{Res}}{\sigma^2} \sim \chi^2_{n-2},
+\]</div>
+<p>y explicar por qué se restan <strong>dos grados de libertad</strong> en el modelo de regresión simple (asociados a <span class="math notranslate nohighlight">\(\hat\beta_0\)</span> y <span class="math notranslate nohighlight">\(\hat\beta_1\)</span> ).</p>
 </section>
 <hr class="docutils" />
-<section id="requisitos-tecnicos-del-entregable">
-<h2>0.5 Requisitos técnicos del entregable<a class="headerlink" href="#requisitos-tecnicos-del-entregable" title="Permalink to this heading">#</a></h2>
-<ol class="arabic simple">
-<li><p><strong>El Jupyter Book debe compilar sin errores:</strong></p></li>
-</ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter-book<span class="w"> </span>build<span class="w"> </span>.
-</pre></div>
-</div>
-<ol class="arabic simple" start="2">
-<li><p><strong>El libro debe incluir texto interpretativo y conclusiones.</strong><br />
-Ninguna figura, tabla o ecuación debe quedar sin análisis.</p></li>
-<li><p><strong>Todas las figuras, tablas y ecuaciones deben:</strong></p>
-<ul class="simple">
-<li><p>Estar numeradas.</p></li>
-<li><p>Tener referencia explícita en el texto.</p></li>
-<li><p>Ser citadas en formato académico (por ejemplo, «ver Figura 3.2»).</p></li>
-</ul>
+<section id="marco-teorico">
+<h2>1.3 Marco teórico<a class="headerlink" href="#marco-teorico" title="Permalink to this heading">#</a></h2>
+<p>En notación matricial:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+y = X\beta + \varepsilon, \qquad X = 
+\begin{bmatrix}
+1 &amp; x_1\\
+1 &amp; x_2\\
+\vdots &amp; \vdots\\
+1 &amp; x_n
+\end{bmatrix}.
+\end{split}\]</div>
+<p>El estimador de mínimos cuadrados ordinarios (MCO) es:</p>
+<div class="math notranslate nohighlight">
+\[
+\hat\beta = (X'X)^{-1}X'y,
+\]</div>
+<p>y las predicciones se obtienen mediante la <strong>matriz sombrero</strong> <span class="math notranslate nohighlight">\(H = X(X'X)^{-1}X'\)</span> :</p>
+<div class="math notranslate nohighlight">
+\[
+\hat{y} = Hy, \qquad e = y - \hat{y} = (I-H)y.
+\]</div>
+</section>
+<hr class="docutils" />
+<section id="demostracion-paso-a-paso">
+<h2>1.4 Demostración paso a paso<a class="headerlink" href="#demostracion-paso-a-paso" title="Permalink to this heading">#</a></h2>
+<ol class="arabic">
+<li><p><strong>Expresión de los residuos en función de los errores</strong></p>
+<p>Sustituyendo <span class="math notranslate nohighlight">\(y = X\beta + \varepsilon\)</span> :</p>
+<div class="math notranslate nohighlight">
+\[
+   e = (I-H)(X\beta+\varepsilon) = (I-H)\varepsilon.
+   \]</div>
 </li>
-<li><p><strong>Debe incluir un archivo de entorno:</strong></p></li>
-</ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>requirements.txt
-</pre></div>
-</div>
-<p>o alternativamente</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>environment.yml
-</pre></div>
-</div>
-<p>Este archivo debe especificar la versión de Python y las librerías principales utilizadas.</p>
-<ol class="arabic simple" start="5">
-<li><p><strong>El libro debe estar publicado correctamente en GitHub Pages</strong> mediante:</p></li>
-</ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ghp-import<span class="w"> </span>-n<span class="w"> </span>-p<span class="w"> </span>-f<span class="w"> </span>_build/html
-</pre></div>
-</div>
-<p>📘 <em>Sugerencia:</em> Antes de publicar, verifica que las rutas de imágenes, notebooks y datos sean relativas (por ejemplo, <code class="docutils literal notranslate"><span class="pre">../data/archivo.csv</span></code>)<br />
-y que la carpeta <code class="docutils literal notranslate"><span class="pre">_build/html</span></code> se genere sin advertencias.</p>
-</section>
-<hr class="docutils" />
-<section id="estructura-general-del-proyecto">
-<h2>0.6 Estructura general del proyecto<a class="headerlink" href="#estructura-general-del-proyecto" title="Permalink to this heading">#</a></h2>
-<p>Cada capítulo del libro debe iniciar con un <strong>Resumen (overview)</strong> de 3–5 líneas que explique brevemente su propósito y contenido,<br />
-y finalizar con una sección <strong>«Key takeaways»</strong> que sintetice los aprendizajes principales.</p>
-<hr class="docutils" />
-<section id="capitulo-0-instrucciones-de-reproduccion">
-<h3>0.6.1 Capítulo 0: Instrucciones de reproducción<a class="headerlink" href="#capitulo-0-instrucciones-de-reproduccion" title="Permalink to this heading">#</a></h3>
-<ol class="arabic simple">
-<li><p><strong>Cómo compilar el libro:</strong></p></li>
-</ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter-book<span class="w"> </span>build<span class="w"> </span>.
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>Dependencias:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code></p></li>
-<li><p>o <code class="docutils literal notranslate"><span class="pre">environment.yml</span></code></p></li>
-</ul>
+<li><p><strong>Suma de cuadrados de los residuos</strong></p>
+<div class="math notranslate nohighlight">
+\[
+   SS_{Res} = e'e = \varepsilon'(I-H)\varepsilon.
+   \]</div>
 </li>
-</ul>
-<ol class="arabic simple" start="2">
-<li><p><strong>Cómo obtener el dataset:</strong></p>
+<li><p><strong>Propiedades clave de la matriz <span class="math notranslate nohighlight">\((I-H)\)</span>:</strong></p>
 <ul class="simple">
-<li><p>Ruta esperada: <code class="docutils literal notranslate"><span class="pre">data/ames_housing.csv</span></code></p></li>
-<li><p>Descarga manual o usando la <strong>Kaggle API</strong>:</p></li>
+<li><p>Es <strong>simétrica</strong>: <span class="math notranslate nohighlight">\((I-H)' = I-H\)</span>,</p></li>
+<li><p>Es <strong>idempotente</strong>: <span class="math notranslate nohighlight">\((I-H)^2 = I-H\)</span>,</p></li>
+<li><p>Su rango es <span class="math notranslate nohighlight">\(n - p\)</span>, donde <span class="math notranslate nohighlight">\(p\)</span> es el número de parámetros estimados.</p></li>
 </ul>
+<p>En el modelo simple, <span class="math notranslate nohighlight">\(p = 2\)</span> (intercepto y pendiente), por tanto <span class="math notranslate nohighlight">\(\operatorname{rango}(I-H) = n-2\)</span>.</p>
+</li>
+<li><p><strong>Distribución del cuadrático:</strong></p>
+<p>Como <span class="math notranslate nohighlight">\(\varepsilon \sim \mathcal N(0,\sigma^2 I)\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+   \frac{\varepsilon'(I-H)\varepsilon}{\sigma^2} \sim \chi^2_{n-2}.
+   \]</div>
+<p>Por lo tanto:</p>
+<div class="math notranslate nohighlight">
+\[
+   \boxed{\displaystyle \frac{SS_{Res}}{\sigma^2} \sim \chi^2_{n-2}}.
+   \]</div>
 </li>
 </ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>kaggle<span class="w"> </span>datasets<span class="w"> </span>download<span class="w"> </span>-d<span class="w"> </span>prevek18/ames-housing-dataset<span class="w"> </span>-p<span class="w"> </span>data/<span class="w"> </span>--unzip
-mv<span class="w"> </span>data/AmesHousing.csv<span class="w"> </span>data/ames_housing.csv
-</pre></div>
-</div>
-<ol class="arabic simple" start="3">
-<li><p><strong>Control de versiones:</strong></p></li>
-</ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>book/
-├──<span class="w"> </span>data/
-├──<span class="w"> </span>notebooks/
-├──<span class="w"> </span>_build/
-└──<span class="w"> </span>_config.yml
-</pre></div>
-</div>
-<ol class="arabic simple" start="4">
-<li><p><strong>Semillas reproducibles:</strong><br />
-Incluir el parámetro <code class="docutils literal notranslate"><span class="pre">random_state</span></code> en todos los experimentos.</p></li>
-<li><p><strong>Mapa del libro:</strong><br />
-Incluir la lista de capítulos con enlaces internos a cada sección.</p></li>
-</ol>
 </section>
+<hr class="docutils" />
+<section id="interpretacion">
+<h2>1.5 Interpretación<a class="headerlink" href="#interpretacion" title="Permalink to this heading">#</a></h2>
+<p>Los <strong>grados de libertad</strong> reflejan las restricciones impuestas por los parámetros estimados:</p>
+<ul class="simple">
+<li><p>Cada parámetro estimado (<span class="math notranslate nohighlight">\(\beta_0\)</span>, <span class="math notranslate nohighlight">\(\beta_1\)</span>) “consume” un grado de libertad.</p></li>
+<li><p>En total se restan 2 grados de libertad al número de observaciones <span class="math notranslate nohighlight">\(n\)</span>.</p></li>
+</ul>
+<p>Por tanto, la estimación insesgada de la varianza del error es:</p>
+<div class="math notranslate nohighlight">
+\[
+s^2 = \frac{SS_{Res}}{n-2}.
+\]</div>
 </section>
 <hr class="docutils" />
 <section id="key-takeaways">
-<h2>0.7 Key takeaways<a class="headerlink" href="#key-takeaways" title="Permalink to this heading">#</a></h2>
+<h2>1.6 Key takeaways<a class="headerlink" href="#key-takeaways" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
-<li><p>El libro debe ser <strong>completamente reproducible</strong> y <strong>compilar sin errores</strong>.</p></li>
-<li><p>Se exige una estructura clara, con capítulos bien documentados y conclusiones interpretativas.</p></li>
-<li><p>Las figuras, tablas y ecuaciones deben integrarse dentro del texto con análisis contextual.</p></li>
-<li><p>La publicación final debe realizarse en <strong>GitHub Pages</strong> de forma funcional y accesible.</p></li>
-<li><p>Este capítulo sirve como <strong>guía técnica y metodológica</strong> para el desarrollo del proyecto completo.</p></li>
+<li><p><span class="math notranslate nohighlight">\(H = X(X'X)^{-1}X'\)</span> es fundamental para expresar los residuos y entender su estructura.</p></li>
+<li><p><span class="math notranslate nohighlight">\((I-H)\)</span> proyecta los errores sobre el subespacio ortogonal a <span class="math notranslate nohighlight">\(X\)</span>.</p></li>
+<li><p>El estadístico <span class="math notranslate nohighlight">\(\tfrac{SS_{Res}}{\sigma^2}\)</span> sigue una distribución <span class="math notranslate nohighlight">\(\chi^2_{n-2}\)</span>.</p></li>
+<li><p>Los dos grados de libertad perdidos corresponden a los parámetros estimados.</p></li>
+<li><p>Este resultado sustenta la inferencia sobre <span class="math notranslate nohighlight">\(\sigma^2\)</span> y los test t en regresión.</p></li>
 </ul>
-</section>
 <hr class="docutils" />
+<p>📚 <strong>Referencia:</strong><br />
+Draper, N. R., &amp; Smith, H. (1998). <em>Applied Regression Analysis.</em> Wiley.</p>
+</section>
 <div class="toctree-wrapper compound">
 </div>
 </section>
@@ -565,11 +592,11 @@ Incluir la lista de capítulos con enlaces internos a cada sección.</p></li>
                   
 <div class="prev-next-area">
     <a class="right-next"
-       href="cap1-demostraciones.html"
+       href="cap1-introduccion.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Capítulo 1 · Demostraciones solicitadas</p>
+        <p class="prev-next-title">Capítulo 1 · Introducción y pregunta de investigación</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -589,20 +616,26 @@ Incluir la lista de capítulos con enlaces internos a cada sección.</p></li>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Capítulo 0 · Instrucciones de reproducción y estructura del proyecto</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#como-compilar-el-libro">0.1 Cómo compilar el libro</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencias">Dependencias</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#como-obtener-el-dataset">0.2 Cómo obtener el dataset</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#control-de-versiones">0.3 Control de versiones</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducibilidad">0.4 Reproducibilidad</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#requisitos-tecnicos-del-entregable">0.5 Requisitos técnicos del entregable</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estructura-general-del-proyecto">0.6 Estructura general del proyecto</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#capitulo-0-instrucciones-de-reproduccion">0.6.1 Capítulo 0: Instrucciones de reproducción</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">0.7 Key takeaways</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#capitulo-1-demostraciones-solicitadas">Capítulo 1 · Demostraciones solicitadas</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-de-regresion-lineal-simple">1.1 Modelo de regresión lineal simple</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#objetivo-de-la-demostracion">1.2 Objetivo de la demostración</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#marco-teorico">1.3 Marco teórico</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demostracion-paso-a-paso">1.4 Demostración paso a paso</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretacion">1.5 Interpretación</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">1.6 Key takeaways</a></li>
 </ul>
+</li>
+</ul>
+
   </nav></div>
 
 </div></div>

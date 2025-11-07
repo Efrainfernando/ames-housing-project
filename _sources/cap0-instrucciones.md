@@ -59,109 +59,143 @@ book/
 └── requirements.txt
 ```
 
-> 🔧 **Consejo:** usa control de versiones con Git y sincroniza los cambios del libro en GitHub antes de publicar.
+# Capítulo 1 · Demostraciones solicitadas
+
+> **Overview:**  
+> En este capítulo se presentan las demostraciones teóricas fundamentales del modelo de **regresión lineal simple**, enfocadas en la distribución de la suma de cuadrados de los residuos y el origen de los grados de libertad asociados.
 
 ---
 
-## 0.4 Reproducibilidad
+## 1.1 Modelo de regresión lineal simple
 
-- Todos los experimentos deben fijar una **semilla aleatoria** (`random_state`) para garantizar resultados reproducibles.  
-- Se recomienda usar Python ≥ 3.10 y registrar las versiones principales de librerías (`numpy`, `pandas`, `statsmodels`, `matplotlib`, `scikit-learn`).  
-- Cada notebook debe incluir celdas comentadas para permitir su ejecución desde cero sin errores.
+Sea el modelo
 
----
+$$
+y_i = \beta_0 + \beta_1 x_i + \varepsilon_i, \quad i=1,\ldots,n,
+$$
 
-## 0.5 Requisitos técnicos del entregable
+donde los errores cumplen:
 
-1. **El Jupyter Book debe compilar sin errores:**
+$$
+\mathbb{E}(\varepsilon_i)=0, \qquad \operatorname{Var}(\varepsilon_i)=\sigma^2.
+$$
 
-```bash
-jupyter-book build .
-```
+Definimos los **residuos**:
 
-2. **El libro debe incluir texto interpretativo y conclusiones.**  
-   Ninguna figura, tabla o ecuación debe quedar sin análisis.
+$$
+e_i = y_i - \hat{y}_i = y_i - (\hat{\beta}_0+\hat{\beta}_1 x_i),
+$$
 
-3. **Todas las figuras, tablas y ecuaciones deben:**
-   - Estar numeradas.  
-   - Tener referencia explícita en el texto.  
-   - Ser citadas en formato académico (por ejemplo, «ver Figura 3.2»).
+y la **suma de cuadrados de los residuos**:
 
-4. **Debe incluir un archivo de entorno:**
-
-```bash
-requirements.txt
-```
-   o alternativamente  
-```bash
-environment.yml
-```
-
-   Este archivo debe especificar la versión de Python y las librerías principales utilizadas.
-
-5. **El libro debe estar publicado correctamente en GitHub Pages** mediante:
-
-```bash
-ghp-import -n -p -f _build/html
-```
-
-📘 *Sugerencia:* Antes de publicar, verifica que las rutas de imágenes, notebooks y datos sean relativas (por ejemplo, `../data/archivo.csv`)  
-y que la carpeta `_build/html` se genere sin advertencias.
+$$
+SS_{Res} = \sum_{i=1}^n e_i^2.
+$$
 
 ---
 
-## 0.6 Estructura general del proyecto
+## 1.2 Objetivo de la demostración
 
-Cada capítulo del libro debe iniciar con un **Resumen (overview)** de 3–5 líneas que explique brevemente su propósito y contenido,  
-y finalizar con una sección **«Key takeaways»** que sintetice los aprendizajes principales.
+Demostrar que:
 
----
+$$
+\frac{SS_{Res}}{\sigma^2} \sim \chi^2_{n-2},
+$$
 
-### 0.6.1 Capítulo 0: Instrucciones de reproducción
-
-1. **Cómo compilar el libro:**
-
-```bash
-jupyter-book build .
-```
-
-   - Dependencias:  
-     - `requirements.txt`  
-     - o `environment.yml`
-
-2. **Cómo obtener el dataset:**
-   - Ruta esperada: `data/ames_housing.csv`
-   - Descarga manual o usando la **Kaggle API**:
-
-```bash
-kaggle datasets download -d prevek18/ames-housing-dataset -p data/ --unzip
-mv data/AmesHousing.csv data/ames_housing.csv
-```
-
-3. **Control de versiones:**
-
-```bash
-book/
-├── data/
-├── notebooks/
-├── _build/
-└── _config.yml
-```
-
-4. **Semillas reproducibles:**  
-   Incluir el parámetro `random_state` en todos los experimentos.
-
-5. **Mapa del libro:**  
-   Incluir la lista de capítulos con enlaces internos a cada sección.
+y explicar por qué se restan **dos grados de libertad** en el modelo de regresión simple (asociados a $\hat\beta_0$ y $\hat\beta_1$ ).
 
 ---
 
-## 0.7 Key takeaways
+## 1.3 Marco teórico
 
-- El libro debe ser **completamente reproducible** y **compilar sin errores**.  
-- Se exige una estructura clara, con capítulos bien documentados y conclusiones interpretativas.  
-- Las figuras, tablas y ecuaciones deben integrarse dentro del texto con análisis contextual.  
-- La publicación final debe realizarse en **GitHub Pages** de forma funcional y accesible.  
-- Este capítulo sirve como **guía técnica y metodológica** para el desarrollo del proyecto completo.
+En notación matricial:
+
+$$
+y = X\beta + \varepsilon, \qquad X = 
+\begin{bmatrix}
+1 & x_1\\
+1 & x_2\\
+\vdots & \vdots\\
+1 & x_n
+\end{bmatrix}.
+$$
+
+El estimador de mínimos cuadrados ordinarios (MCO) es:
+
+$$
+\hat\beta = (X'X)^{-1}X'y,
+$$
+
+y las predicciones se obtienen mediante la **matriz sombrero** $H = X(X'X)^{-1}X'$ :
+
+$$
+\hat{y} = Hy, \qquad e = y - \hat{y} = (I-H)y.
+$$
 
 ---
+
+## 1.4 Demostración paso a paso
+
+1. **Expresión de los residuos en función de los errores**  
+
+   Sustituyendo $y = X\beta + \varepsilon$ :
+
+   $$
+   e = (I-H)(X\beta+\varepsilon) = (I-H)\varepsilon.
+   $$
+
+2. **Suma de cuadrados de los residuos**
+
+   $$
+   SS_{Res} = e'e = \varepsilon'(I-H)\varepsilon.
+   $$
+
+3. **Propiedades clave de la matriz $(I-H)$:**
+   - Es **simétrica**: $(I-H)' = I-H$,
+   - Es **idempotente**: $(I-H)^2 = I-H$,
+   - Su rango es $n - p$, donde $p$ es el número de parámetros estimados.
+
+   En el modelo simple, $p = 2$ (intercepto y pendiente), por tanto $\operatorname{rango}(I-H) = n-2$.
+
+4. **Distribución del cuadrático:**
+
+   Como $\varepsilon \sim \mathcal N(0,\sigma^2 I)$,
+
+   $$
+   \frac{\varepsilon'(I-H)\varepsilon}{\sigma^2} \sim \chi^2_{n-2}.
+   $$
+
+   Por lo tanto:
+
+   $$
+   \boxed{\displaystyle \frac{SS_{Res}}{\sigma^2} \sim \chi^2_{n-2}}.
+   $$
+
+---
+
+## 1.5 Interpretación
+
+Los **grados de libertad** reflejan las restricciones impuestas por los parámetros estimados:
+- Cada parámetro estimado ($\beta_0$, $\beta_1$) “consume” un grado de libertad.  
+- En total se restan 2 grados de libertad al número de observaciones $n$.  
+
+Por tanto, la estimación insesgada de la varianza del error es:
+
+$$
+s^2 = \frac{SS_{Res}}{n-2}.
+$$
+
+---
+
+## 1.6 Key takeaways
+
+- $H = X(X'X)^{-1}X'$ es fundamental para expresar los residuos y entender su estructura.  
+- $(I-H)$ proyecta los errores sobre el subespacio ortogonal a $X$.  
+- El estadístico $\tfrac{SS_{Res}}{\sigma^2}$ sigue una distribución $\chi^2_{n-2}$.  
+- Los dos grados de libertad perdidos corresponden a los parámetros estimados.  
+- Este resultado sustenta la inferencia sobre $\sigma^2$ y los test t en regresión.
+
+---
+
+📚 **Referencia:**  
+Draper, N. R., & Smith, H. (1998). *Applied Regression Analysis.* Wiley.
