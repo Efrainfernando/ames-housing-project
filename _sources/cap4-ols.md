@@ -1,7 +1,9 @@
 # Capítulo 4 · Formulación matricial del modelo OLS
 
 > **Objetivo:** derivar y aplicar el estimador matricial de Mínimos Cuadrados Ordinarios (OLS)  
-> \[ \hat{\beta}=(X^\top X)^{-1}X^\top y \]  
+>  
+> $$ \hat{\beta} = (X^\top X)^{-1}X^\top y $$  
+>  
 > usando **las variables candidatas** seleccionadas en el Capítulo 3 y comparar con `statsmodels.OLS`.
 
 ---
@@ -17,17 +19,17 @@ import numpy as np
 from pathlib import Path
 
 # Localiza el CSV (compatible con tu estructura de proyecto)
-CANDIDATE_PATHS = [Path("data/ames_housing.csv"), Path("AmesHousing.csv")]
+CANDIDATE_PATHS = [Path('data/ames_housing.csv'), Path('AmesHousing.csv')]
 for p in CANDIDATE_PATHS:
     if p.exists():
         DATA_PATH = p
         break
 else:
-    raise FileNotFoundError("No se encontró data/ames_housing.csv ni AmesHousing.csv")
+    raise FileNotFoundError('No se encontró data/ames_housing.csv ni AmesHousing.csv')
 
 df = pd.read_csv(DATA_PATH)
 
-target = "SalePrice"
+target = 'SalePrice'
 
 # Asegurar numérico y eliminar infinitos
 num_df = df.select_dtypes(include=[np.number]).replace([np.inf, -np.inf], np.nan)
@@ -68,14 +70,20 @@ El vector de variables elegidas `sel` es el conjunto de **candidatas** para este
 
 ## 4.2 Derivación del estimador OLS
 
-Sea el problema de mínimos cuadrados: minimizar \(S(\beta)=\|y-X\beta\|^2\).  
-La condición de primer orden (ecuaciones normales) es
-\[ X^\top X\,\hat{\beta} = X^\top y. \]
-Si \(X^\top X\) es invertible (pleno rango), entonces
-\[ \hat{\beta}=(X^\top X)^{-1}X^\top y. \]
+Sea el problema de mínimos cuadrados: minimizar  
 
-> **Invertibilidad:** Se requiere \(\operatorname{rango}(X)=p\) (columnas linealmente independientes).  
-> Con intercepto, \(p=\) número de predictores + 1.
+$$ S(\beta) = \|y - X\beta\|^2 $$  
+
+La condición de primer orden (ecuaciones normales) es  
+
+$$ X^\top X\,\hat{\beta} = X^\top y $$  
+
+Si \( X^\top X \) es invertible (pleno rango), entonces  
+
+$$ \hat{\beta} = (X^\top X)^{-1} X^\top y $$  
+
+> **Invertibilidad:** Se requiere \( \operatorname{rango}(X) = p \) (columnas linealmente independientes).  
+> Con intercepto, \( p = \) número de predictores + 1.
 
 ---
 
@@ -126,7 +134,7 @@ import statsmodels.api as sm
 
 # Con statsmodels (agrega intercepto)
 y_sm = data[target].values
-X_sm = sm.add_constant(data[sel].values, has_constant="add")
+X_sm = sm.add_constant(data[sel].values, has_constant='add')
 
 ols = sm.OLS(y_sm, X_sm).fit()
 
@@ -140,7 +148,7 @@ print(ols.summary())
 
 ## 4.5 Discusión: invertibilidad y significado de cada término
 
-- \(X^\top X\) **singular** → ocurre con multicolinealidad perfecta (columnas duplicadas o combinación lineal exacta).  
+- \( X^\top X \) **singular** → ocurre con multicolinealidad perfecta (columnas duplicadas o combinación lineal exacta).  
 - \( \kappa(X^\top X) = \text{condición} \) **alta** → problemas de inestabilidad numérica; considerar eliminar predictores redundantes o regularización.  
 - **Interpretación:**  
   - Intercepto: precio esperado cuando los predictores valen cero (interpretar con cautela).  
@@ -152,6 +160,6 @@ print(ols.summary())
 
 ## 4.6 Key takeaways
 
-- El estimador matricial \( (X^\top X)^{-1}X^\top y \) coincide con `statsmodels.OLS`.  
+- El estimador matricial  $$ (X^\top X)^{-1}X^\top y $$  coincide con `statsmodels.OLS`.  
 - La **invertibilidad** depende del rango de \(X\); la colinealidad alta puede inflar varianzas y volver inestable la estimación.  
 - Usar variables **candidatas** reduce colinealidad y mejora interpretabilidad del modelo base que se ampliará en los siguientes capítulos.

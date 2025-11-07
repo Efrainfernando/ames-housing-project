@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>Capítulo 5 · Inferencia y grados de libertad &#8212; Modelos de regresión lineal usando el Ames Housing Dataset</title>
+    <title>Capítulo 8 · Selección de modelo y validación cruzada &#8212; Modelos de regresión lineal usando el Ames Housing Dataset</title>
   
   
   
@@ -62,14 +62,12 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'cap5-inferencia';</script>
-    <link rel="canonical" href="https://efrainfernando.github.io/ames-housing-project/cap5-inferencia.html" />
+    <script>DOCUMENTATION_OPTIONS.pagename = 'cap8-seleccion';</script>
+    <link rel="canonical" href="https://efrainfernando.github.io/ames-housing-project/cap8-seleccion.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Capítulo 6 · Diagnóstico de supuestos" href="cap6-supuestos.html" />
-    <link rel="prev" title="Capítulo 4 · Formulación matricial del modelo OLS" href="cap4-ols.html" />
+    <link rel="next" title="Capítulo 9 · Regularización: Ridge y Lasso" href="cap9-regularizacion.html" />
+    <link rel="prev" title="Capítulo 7 · Remedios y métodos robustos (research)" href="cap7-robustos.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -181,10 +179,10 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="cap2-limpieza.html">Capítulo 2 · Descripción y limpieza del dataset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cap3-eda.html">Capítulo 3 · Análisis exploratorio (EDA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cap4-ols.html">Capítulo 4 · Formulación matricial del modelo OLS</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Capítulo 5 · Inferencia y grados de libertad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap5-inferencia.html">Capítulo 5 · Inferencia y grados de libertad</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cap6-supuestos.html">Capítulo 6 · Diagnóstico de supuestos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cap7-robustos.html">Capítulo 7 · Remedios y métodos robustos (research)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cap8-seleccion.html">Capítulo 8 · Selección de modelo y validación cruzada</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Capítulo 8 · Selección de modelo y validación cruzada</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cap9-regularizacion.html">Capítulo 9 · Regularización: Ridge y Lasso</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cap10-elasticnet.html">Capítulo 10 · ElasticNet y comparación final de modelos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cap11-conclusiones.html">Capítulo 11 · Conclusiones y trabajo futuro</a></li>
@@ -258,7 +256,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="_sources/cap5-inferencia.md" target="_blank"
+      <li><a href="_sources/cap8-seleccion.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -342,7 +340,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Capítulo 5 · Inferencia y grados de libertad</h1>
+    <h1>Capítulo 8 · Selección de modelo y validación cruzada</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -352,11 +350,11 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definiciones-y-grados-de-libertad">5.1 Definiciones y grados de libertad</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos-y-modelo-mismas-variables-candidatas-del-cap-4">5.2 Datos y modelo (mismas <strong>variables candidatas</strong> del Cap. 4)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resumen-estadistico-tabla-tipo-statsmodels">5.3 Resumen estadístico (tabla tipo <code class="docutils literal notranslate"><span class="pre">statsmodels</span></code>)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intervalos-de-confianza-95-y-variables-significativas">5.4 Intervalos de confianza (95%) y variables significativas</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">5.5 Key takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos-y-modelo-base">8.1 Datos y modelo base</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparacion-de-especificaciones-reduccion-de-variables">8.2 Comparación de especificaciones (reducción de variables)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validacion-cruzada-k-fold-cv">8.3 Validación cruzada (K-Fold CV)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#seleccion-de-modelo-final">8.4 Selección de modelo final</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">8.5 Key takeaways</a></li>
 </ul>
             </nav>
         </div>
@@ -368,44 +366,20 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="capitulo-5-inferencia-y-grados-de-libertad">
-<h1>Capítulo 5 · Inferencia y grados de libertad<a class="headerlink" href="#capitulo-5-inferencia-y-grados-de-libertad" title="Permalink to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="capitulo-8-seleccion-de-modelo-y-validacion-cruzada">
+<h1>Capítulo 8 · Selección de modelo y validación cruzada<a class="headerlink" href="#capitulo-8-seleccion-de-modelo-y-validacion-cruzada" title="Permalink to this heading">#</a></h1>
 <blockquote>
-<div><p><strong>Objetivo:</strong> realizar <strong>inferencia</strong> sobre los parámetros del modelo OLS usando el dataset <em>Ames Housing</em>, mostrando el <strong>resumen estadístico tipo tabla</strong> (<code class="docutils literal notranslate"><span class="pre">statsmodels.OLS.summary()</span></code>), y explicitando los <strong>grados de libertad</strong> del modelo y de los residuos.</p>
+<div><p><strong>Objetivo:</strong> comparar especificaciones de modelos mediante métricas de ajuste (AIC, BIC, R² ajustado) y validar la capacidad predictiva con <strong>K-Fold Cross Validation (CV)</strong>, manteniendo el conjunto de variables candidatas como base.</p>
 </div></blockquote>
 <hr class="docutils" />
-<section id="definiciones-y-grados-de-libertad">
-<h2>5.1 Definiciones y grados de libertad<a class="headerlink" href="#definiciones-y-grados-de-libertad" title="Permalink to this heading">#</a></h2>
-<p>Para un modelo lineal con (n) observaciones y (k) predictores (sin contar el intercepto), los grados de libertad son:</p>
-<div class="math notranslate nohighlight">
-\[
-Df_{\text{Model}} = k,
-\qquad
-Df_{\text{Residuals}} = n-k-1.
-\]</div>
-<p>Los <strong>errores estándar</strong> provienen de</p>
-<div class="math notranslate nohighlight">
-\[
-\operatorname{Var}(\hat\beta) = \hat\sigma^2 \,(X^\top X)^{-1},
-\quad
-\hat\sigma^2=\frac{SS_{Res}}{n-k-1},
-\]</div>
-<p>y los estadísticos <strong>t</strong> se calculan como</p>
-<div class="math notranslate nohighlight">
-\[
-t_j=\frac{\hat\beta_j}{SE(\hat\beta_j)},
-\quad\text{con } t_j \sim t_{\,n-k-1}.
-\]</div>
-</section>
-<hr class="docutils" />
-<section id="datos-y-modelo-mismas-variables-candidatas-del-cap-4">
-<h2>5.2 Datos y modelo (mismas <strong>variables candidatas</strong> del Cap. 4)<a class="headerlink" href="#datos-y-modelo-mismas-variables-candidatas-del-cap-4" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<section id="datos-y-modelo-base">
+<h2>8.1 Datos y modelo base<a class="headerlink" href="#datos-y-modelo-base" title="Permalink to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
 
-<span class="c1"># Localiza el CSV</span>
+<span class="c1"># Cargar dataset (misma estructura que capítulos anteriores)</span>
 <span class="n">CANDIDATE_PATHS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data/ames_housing.csv&quot;</span><span class="p">),</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;AmesHousing.csv&quot;</span><span class="p">)]</span>
 <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">CANDIDATE_PATHS</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
@@ -417,7 +391,7 @@ t_j=\frac{\hat\beta_j}{SE(\hat\beta_j)},
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">DATA_PATH</span><span class="p">)</span>
 <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;SalePrice&quot;</span>
 
-<span class="c1"># Selección automática de variables candidatas (idéntica lógica a Cap. 4)</span>
+<span class="c1"># Selección automática de variables candidatas</span>
 <span class="n">num_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
 <span class="n">corr_abs</span> <span class="o">=</span> <span class="n">num_df</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">numeric_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">pool</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">corr_abs</span><span class="o">.</span><span class="n">index</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="n">target</span><span class="p">][:</span><span class="mi">15</span><span class="p">]</span>
@@ -438,62 +412,99 @@ t_j=\frac{\hat\beta_j}{SE(\hat\beta_j)},
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">12</span><span class="p">:</span>
         <span class="k">break</span>
 
-<span class="c1"># Datos finales (sin NA) y ajuste</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">num_df</span><span class="p">[[</span><span class="n">target</span><span class="p">]</span> <span class="o">+</span> <span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 <span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">has_constant</span><span class="o">=</span><span class="s2">&quot;add&quot;</span><span class="p">)</span>
 
-<span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 
-<span class="n">n</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">k</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># sin contar el intercepto</span>
-<span class="n">df_model</span> <span class="o">=</span> <span class="n">k</span>
-<span class="n">df_resid</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span>
-
-<span class="n">sel</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">df_model</span><span class="p">,</span> <span class="n">df_resid</span>
+<span class="n">sel</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">ols</span><span class="o">.</span><span class="n">rsquared_adj</span><span class="p">,</span> <span class="n">ols</span><span class="o">.</span><span class="n">aic</span><span class="p">,</span> <span class="n">ols</span><span class="o">.</span><span class="n">bic</span>
 </pre></div>
 </div>
 </section>
 <hr class="docutils" />
-<section id="resumen-estadistico-tabla-tipo-statsmodels">
-<h2>5.3 Resumen estadístico (tabla tipo <code class="docutils literal notranslate"><span class="pre">statsmodels</span></code>)<a class="headerlink" href="#resumen-estadistico-tabla-tipo-statsmodels" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
-</pre></div>
-</div>
-<blockquote>
-<div><p>La tabla incluye: <strong>coef</strong>, <strong>std err</strong>, <strong>t</strong>, <strong>P&gt;|t|</strong>, e <strong>IC(95%)</strong> por parámetro, además de métricas globales como <strong>R²</strong> y <strong>F-stat</strong>.</p>
-</div></blockquote>
-</section>
-<hr class="docutils" />
-<section id="intervalos-de-confianza-95-y-variables-significativas">
-<h2>5.4 Intervalos de confianza (95%) y variables significativas<a class="headerlink" href="#intervalos-de-confianza-95-y-variables-significativas" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Intervalos de confianza (95%)</span>
-<span class="n">ci</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
-<span class="n">ci</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CI_low&quot;</span><span class="p">,</span> <span class="s2">&quot;CI_high&quot;</span><span class="p">]</span>
+<section id="comparacion-de-especificaciones-reduccion-de-variables">
+<h2>8.2 Comparación de especificaciones (reducción de variables)<a class="headerlink" href="#comparacion-de-especificaciones-reduccion-de-variables" title="Permalink to this heading">#</a></h2>
+<p>Creamos versiones reducidas del modelo removiendo variables con <strong>p-value &gt; 0.05</strong> o alta colinealidad (VIF alto).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.stats.outliers_influence</span><span class="w"> </span><span class="kn">import</span> <span class="n">variance_inflation_factor</span>
 
-<span class="c1"># Tabla compacta con significancia</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="n">tbl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
-    <span class="s2">&quot;coef&quot;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
-    <span class="s2">&quot;std_err&quot;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">bse</span><span class="p">,</span>
-    <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">tvalues</span><span class="p">,</span>
-    <span class="s2">&quot;p&gt;|t|&quot;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">pvalues</span>
+<span class="c1"># Calcular VIF</span>
+<span class="n">X_noint</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="n">vif</span> <span class="o">=</span> <span class="p">[</span><span class="n">variance_inflation_factor</span><span class="p">(</span><span class="n">X_noint</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X_noint</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+<span class="n">vif_tbl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">sel</span><span class="p">,</span> <span class="s2">&quot;VIF&quot;</span><span class="p">:</span> <span class="n">vif</span><span class="p">})</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;VIF&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">vif_tbl</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+
+<span class="c1"># Modelo reducido (ejemplo: eliminar variables con VIF &gt; 10 o p&gt;0.05)</span>
+<span class="n">pvals</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">pvalues</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;const&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="n">reduced_sel</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sel</span> <span class="k">if</span> <span class="n">pvals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">]</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">reduced_sel</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+    <span class="n">reduced_sel</span> <span class="o">=</span> <span class="n">sel</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>  <span class="c1"># fallback</span>
+
+<span class="n">Xr</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">reduced_sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">has_constant</span><span class="o">=</span><span class="s2">&quot;add&quot;</span><span class="p">)</span>
+<span class="n">ols_reduced</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">Xr</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;Modelo&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Completo&quot;</span><span class="p">,</span> <span class="s2">&quot;Reducido&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;Variables&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">sel</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">reduced_sel</span><span class="p">)],</span>
+    <span class="s2">&quot;R2_adj&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">ols</span><span class="o">.</span><span class="n">rsquared_adj</span><span class="p">,</span> <span class="n">ols_reduced</span><span class="o">.</span><span class="n">rsquared_adj</span><span class="p">],</span>
+    <span class="s2">&quot;AIC&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">ols</span><span class="o">.</span><span class="n">aic</span><span class="p">,</span> <span class="n">ols_reduced</span><span class="o">.</span><span class="n">aic</span><span class="p">],</span>
+    <span class="s2">&quot;BIC&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">ols</span><span class="o">.</span><span class="n">bic</span><span class="p">,</span> <span class="n">ols_reduced</span><span class="o">.</span><span class="n">bic</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="n">tbl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">tbl</span><span class="p">,</span> <span class="n">ci</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-<span class="c1"># Marcamos significancia al 5%</span>
-<span class="n">tbl</span><span class="p">[</span><span class="s2">&quot;signif_5%&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tbl</span><span class="p">[</span><span class="s2">&quot;p&gt;|t|&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;Sí&quot;</span><span class="p">,</span> <span class="s2">&quot;No&quot;</span><span class="p">)</span>
-<span class="n">tbl</span>
 </pre></div>
 </div>
+<p><strong>Interpretación:</strong> modelos con <strong>menor AIC/BIC</strong> y <strong>mayor R² ajustado</strong> equilibran ajuste y parsimonia.</p>
+</section>
+<hr class="docutils" />
+<section id="validacion-cruzada-k-fold-cv">
+<h2>8.3 Validación cruzada (K-Fold CV)<a class="headerlink" href="#validacion-cruzada-k-fold-cv" title="Permalink to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">KFold</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span>
+
+<span class="n">kf</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">cross_val_rmse</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">rmses</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">kf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+        <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">train</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">test</span><span class="p">]</span>
+        <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">train</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">test</span><span class="p">]</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">X_train</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+        <span class="n">rmses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rmses</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rmses</span><span class="p">)</span>
+
+<span class="c1"># Comparación OLS completo vs reducido</span>
+<span class="n">X_full</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">has_constant</span><span class="o">=</span><span class="s2">&quot;add&quot;</span><span class="p">)</span>
+<span class="n">X_red</span>  <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">reduced_sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">has_constant</span><span class="o">=</span><span class="s2">&quot;add&quot;</span><span class="p">)</span>
+
+<span class="n">rmse_full_mean</span><span class="p">,</span> <span class="n">rmse_full_std</span> <span class="o">=</span> <span class="n">cross_val_rmse</span><span class="p">(</span><span class="n">X_full</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">rmse_red_mean</span><span class="p">,</span> <span class="n">rmse_red_std</span>   <span class="o">=</span> <span class="n">cross_val_rmse</span><span class="p">(</span><span class="n">X_red</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;Modelo&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Completo&quot;</span><span class="p">,</span> <span class="s2">&quot;Reducido&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;RMSE_mean&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">rmse_full_mean</span><span class="p">,</span> <span class="n">rmse_red_mean</span><span class="p">],</span>
+    <span class="s2">&quot;RMSE_std&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">rmse_full_std</span><span class="p">,</span> <span class="n">rmse_red_std</span><span class="p">]</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p><strong>Interpretación:</strong> un RMSE promedio menor indica <strong>mejor capacidad predictiva</strong> fuera de muestra.</p>
+</section>
+<hr class="docutils" />
+<section id="seleccion-de-modelo-final">
+<h2>8.4 Selección de modelo final<a class="headerlink" href="#seleccion-de-modelo-final" title="Permalink to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Si el modelo reducido mantiene R² similar y reduce AIC/BIC → <strong>preferirlo</strong> (más parsimonioso).</p></li>
+<li><p>Validar que no pierda capacidad predictiva (RMSE CV ≈ OLS completo).</p></li>
+<li><p>Revisar estabilidad de coeficientes (no deben variar drásticamente).</p></li>
+</ol>
 </section>
 <hr class="docutils" />
 <section id="key-takeaways">
-<h2>5.5 Key takeaways<a class="headerlink" href="#key-takeaways" title="Permalink to this heading">#</a></h2>
+<h2>8.5 Key takeaways<a class="headerlink" href="#key-takeaways" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
-<li><p>El <strong>resumen estadístico</strong> muestra los coeficientes, sus errores estándar, pruebas t y p-values.</p></li>
-<li><p>Los <strong>grados de libertad</strong> usados por <code class="docutils literal notranslate"><span class="pre">statsmodels</span></code> coinciden con (Df_{\text{Model}}=k) y (Df_{\text{Residuals}}=n-k-1).</p></li>
-<li><p>Identificar las variables con <strong>p-value &lt; 0.05</strong> permite resaltar las más influyentes; interpretar siempre su <strong>efecto práctico</strong> y el <strong>intervalo de confianza</strong> asociado.</p></li>
+<li><p>La <strong>selección de modelo</strong> busca equilibrio entre ajuste (R², AIC/BIC) y generalización (CV).</p></li>
+<li><p><strong>Validación cruzada</strong> estima error fuera de muestra y evita sobreajuste.</p></li>
+<li><p><strong>Modelos más simples</strong> suelen ser preferibles si el desempeño predictivo se mantiene.</p></li>
+<li><p>Esta fase prepara la base para aplicar <strong>regularización (Ridge/Lasso)</strong> o métodos predictivos más avanzados.</p></li>
 </ul>
 </section>
 </section>
@@ -529,20 +540,20 @@ t_j=\frac{\hat\beta_j}{SE(\hat\beta_j)},
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="cap4-ols.html"
+       href="cap7-robustos.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Capítulo 4 · Formulación matricial del modelo OLS</p>
+        <p class="prev-next-title">Capítulo 7 · Remedios y métodos robustos (research)</p>
       </div>
     </a>
     <a class="right-next"
-       href="cap6-supuestos.html"
+       href="cap9-regularizacion.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Capítulo 6 · Diagnóstico de supuestos</p>
+        <p class="prev-next-title">Capítulo 9 · Regularización: Ridge y Lasso</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -562,11 +573,11 @@ t_j=\frac{\hat\beta_j}{SE(\hat\beta_j)},
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definiciones-y-grados-de-libertad">5.1 Definiciones y grados de libertad</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos-y-modelo-mismas-variables-candidatas-del-cap-4">5.2 Datos y modelo (mismas <strong>variables candidatas</strong> del Cap. 4)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resumen-estadistico-tabla-tipo-statsmodels">5.3 Resumen estadístico (tabla tipo <code class="docutils literal notranslate"><span class="pre">statsmodels</span></code>)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intervalos-de-confianza-95-y-variables-significativas">5.4 Intervalos de confianza (95%) y variables significativas</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">5.5 Key takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos-y-modelo-base">8.1 Datos y modelo base</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparacion-de-especificaciones-reduccion-de-variables">8.2 Comparación de especificaciones (reducción de variables)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validacion-cruzada-k-fold-cv">8.3 Validación cruzada (K-Fold CV)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#seleccion-de-modelo-final">8.4 Selección de modelo final</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">8.5 Key takeaways</a></li>
 </ul>
   </nav></div>
 

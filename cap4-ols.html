@@ -62,6 +62,8 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'cap4-ols';</script>
     <link rel="canonical" href="https://efrainfernando.github.io/ames-housing-project/cap4-ols.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -181,6 +183,12 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Capítulo 4 · Formulación matricial del modelo OLS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cap5-inferencia.html">Capítulo 5 · Inferencia y grados de libertad</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cap6-supuestos.html">Capítulo 6 · Diagnóstico de supuestos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap7-robustos.html">Capítulo 7 · Remedios y métodos robustos (research)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap8-seleccion.html">Capítulo 8 · Selección de modelo y validación cruzada</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap9-regularizacion.html">Capítulo 9 · Regularización: Ridge y Lasso</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap10-elasticnet.html">Capítulo 10 · ElasticNet y comparación final de modelos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap11-conclusiones.html">Capítulo 11 · Conclusiones y trabajo futuro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliografia.html">Referencias bibliográficas</a></li>
 </ul>
 
     </div>
@@ -368,9 +376,10 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="capitulo-4-formulacion-matricial-del-modelo-ols">
 <h1>Capítulo 4 · Formulación matricial del modelo OLS<a class="headerlink" href="#capitulo-4-formulacion-matricial-del-modelo-ols" title="Permalink to this heading">#</a></h1>
 <blockquote>
-<div><p><strong>Objetivo:</strong> derivar y aplicar el estimador matricial de Mínimos Cuadrados Ordinarios (OLS)<br />
-[ \hat{\beta}=(X^\top X)^{-1}X^\top y ]<br />
-usando <strong>las variables candidatas</strong> seleccionadas en el Capítulo 3 y comparar con <code class="docutils literal notranslate"><span class="pre">statsmodels.OLS</span></code>.</p>
+<div><p><strong>Objetivo:</strong> derivar y aplicar el estimador matricial de Mínimos Cuadrados Ordinarios (OLS)</p>
+<div class="math notranslate nohighlight">
+\[ \hat{\beta} = (X^\top X)^{-1}X^\top y \]</div>
+<p>usando <strong>las variables candidatas</strong> seleccionadas en el Capítulo 3 y comparar con <code class="docutils literal notranslate"><span class="pre">statsmodels.OLS</span></code>.</p>
 </div></blockquote>
 <hr class="docutils" />
 <section id="datos-y-construccion-de-x-y-y">
@@ -382,17 +391,17 @@ Tomamos como objetivo (y = \texttt{SalePrice}) y elegimos <strong>hasta 12 varia
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="c1"># Localiza el CSV (compatible con tu estructura de proyecto)</span>
-<span class="n">CANDIDATE_PATHS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data/ames_housing.csv&quot;</span><span class="p">),</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;AmesHousing.csv&quot;</span><span class="p">)]</span>
+<span class="n">CANDIDATE_PATHS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;data/ames_housing.csv&#39;</span><span class="p">),</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;AmesHousing.csv&#39;</span><span class="p">)]</span>
 <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">CANDIDATE_PATHS</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="n">DATA_PATH</span> <span class="o">=</span> <span class="n">p</span>
         <span class="k">break</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;No se encontró data/ames_housing.csv ni AmesHousing.csv&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s1">&#39;No se encontró data/ames_housing.csv ni AmesHousing.csv&#39;</span><span class="p">)</span>
 
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">DATA_PATH</span><span class="p">)</span>
 
-<span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;SalePrice&quot;</span>
+<span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;SalePrice&#39;</span>
 
 <span class="c1"># Asegurar numérico y eliminar infinitos</span>
 <span class="n">num_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
@@ -433,14 +442,18 @@ Tomamos como objetivo (y = \texttt{SalePrice}) y elegimos <strong>hasta 12 varia
 <hr class="docutils" />
 <section id="derivacion-del-estimador-ols">
 <h2>4.2 Derivación del estimador OLS<a class="headerlink" href="#derivacion-del-estimador-ols" title="Permalink to this heading">#</a></h2>
-<p>Sea el problema de mínimos cuadrados: minimizar (S(\beta)=|y-X\beta|^2).<br />
-La condición de primer orden (ecuaciones normales) es
-[ X^\top X,\hat{\beta} = X^\top y. ]
-Si (X^\top X) es invertible (pleno rango), entonces
-[ \hat{\beta}=(X^\top X)^{-1}X^\top y. ]</p>
+<p>Sea el problema de mínimos cuadrados: minimizar</p>
+<div class="math notranslate nohighlight">
+\[ S(\beta) = \|y - X\beta\|^2 \]</div>
+<p>La condición de primer orden (ecuaciones normales) es</p>
+<div class="math notranslate nohighlight">
+\[ X^\top X\,\hat{\beta} = X^\top y \]</div>
+<p>Si ( X^\top X ) es invertible (pleno rango), entonces</p>
+<div class="math notranslate nohighlight">
+\[ \hat{\beta} = (X^\top X)^{-1} X^\top y \]</div>
 <blockquote>
-<div><p><strong>Invertibilidad:</strong> Se requiere (\operatorname{rango}(X)=p) (columnas linealmente independientes).<br />
-Con intercepto, (p=) número de predictores + 1.</p>
+<div><p><strong>Invertibilidad:</strong> Se requiere ( \operatorname{rango}(X) = p ) (columnas linealmente independientes).<br />
+Con intercepto, ( p = ) número de predictores + 1.</p>
 </div></blockquote>
 </section>
 <hr class="docutils" />
@@ -489,7 +502,7 @@ Con intercepto, (p=) número de predictores + 1.</p>
 
 <span class="c1"># Con statsmodels (agrega intercepto)</span>
 <span class="n">y_sm</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-<span class="n">X_sm</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">has_constant</span><span class="o">=</span><span class="s2">&quot;add&quot;</span><span class="p">)</span>
+<span class="n">X_sm</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">has_constant</span><span class="o">=</span><span class="s1">&#39;add&#39;</span><span class="p">)</span>
 
 <span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y_sm</span><span class="p">,</span> <span class="n">X_sm</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 
@@ -505,7 +518,7 @@ Verifica especialmente <code class="docutils literal notranslate"><span class="p
 <section id="discusion-invertibilidad-y-significado-de-cada-termino">
 <h2>4.5 Discusión: invertibilidad y significado de cada término<a class="headerlink" href="#discusion-invertibilidad-y-significado-de-cada-termino" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
-<li><p>(X^\top X) <strong>singular</strong> → ocurre con multicolinealidad perfecta (columnas duplicadas o combinación lineal exacta).</p></li>
+<li><p>( X^\top X ) <strong>singular</strong> → ocurre con multicolinealidad perfecta (columnas duplicadas o combinación lineal exacta).</p></li>
 <li><p>( \kappa(X^\top X) = \text{condición} ) <strong>alta</strong> → problemas de inestabilidad numérica; considerar eliminar predictores redundantes o regularización.</p></li>
 <li><p><strong>Interpretación:</strong></p>
 <ul>
@@ -522,7 +535,7 @@ Verifica especialmente <code class="docutils literal notranslate"><span class="p
 <section id="key-takeaways">
 <h2>4.6 Key takeaways<a class="headerlink" href="#key-takeaways" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
-<li><p>El estimador matricial ( (X^\top X)^{-1}X^\top y ) coincide con <code class="docutils literal notranslate"><span class="pre">statsmodels.OLS</span></code>.</p></li>
+<li><p>El estimador matricial  $<span class="math notranslate nohighlight">\( (X^\top X)^{-1}X^\top y \)</span>$  coincide con <code class="docutils literal notranslate"><span class="pre">statsmodels.OLS</span></code>.</p></li>
 <li><p>La <strong>invertibilidad</strong> depende del rango de (X); la colinealidad alta puede inflar varianzas y volver inestable la estimación.</p></li>
 <li><p>Usar variables <strong>candidatas</strong> reduce colinealidad y mejora interpretabilidad del modelo base que se ampliará en los siguientes capítulos.</p></li>
 </ul>
