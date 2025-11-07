@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>Capítulo 1 · Introducción y pregunta de investigación &#8212; Modelos de regresión lineal usando el Ames Housing Dataset</title>
+    <title>Capítulo 2 · Descripción y limpieza del dataset &#8212; Modelos de regresión lineal usando el Ames Housing Dataset</title>
   
   
   
@@ -62,12 +62,11 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'cap1-introduccion';</script>
-    <link rel="canonical" href="https://efrainfernando.github.io/ames-housing-project/cap1-introduccion.html" />
+    <script>DOCUMENTATION_OPTIONS.pagename = 'cap2-limpieza';</script>
+    <link rel="canonical" href="https://efrainfernando.github.io/ames-housing-project/cap2-limpieza.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Capítulo 2 · Descripción y limpieza del dataset" href="cap2-limpieza.html" />
-    <link rel="prev" title="Capítulo 0 · Instrucciones de reproducción y estructura del proyecto" href="cap0-instrucciones.html" />
+    <link rel="prev" title="Capítulo 1 · Introducción y pregunta de investigación" href="cap1-introduccion.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -175,8 +174,8 @@ const thebe_selector_output = ".output, .cell_output"
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Capítulo 1 · Introducción y pregunta de investigación</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cap2-limpieza.html">Capítulo 2 · Descripción y limpieza del dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap1-introduccion.html">Capítulo 1 · Introducción y pregunta de investigación</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Capítulo 2 · Descripción y limpieza del dataset</a></li>
 </ul>
 
     </div>
@@ -246,7 +245,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="_sources/cap1-introduccion.md" target="_blank"
+      <li><a href="_sources/cap2-limpieza.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -330,7 +329,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Capítulo 1 · Introducción y pregunta de investigación</h1>
+    <h1>Capítulo 2 · Descripción y limpieza del dataset</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -340,13 +339,12 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contexto-del-dataset">1.1 Contexto del dataset</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resumen-estadistico-inicial">Resumen estadístico inicial</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preguntas-de-investigacion">1.2 Preguntas de investigación</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#objetivos-especificos">1.3 Objetivos específicos</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#criterios-de-exito">1.4 Criterios de éxito</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fuente-y-estructura-del-dataset">2.1 Fuente y estructura del dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabla-de-tipos-de-variables-y-valores-faltantes">2.2 Tabla de tipos de variables y valores faltantes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#manejo-de-valores-faltantes">2.3 Manejo de valores faltantes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deteccion-y-tratamiento-de-outliers">2.4 Detección y tratamiento de outliers</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transformaciones-y-codificacion">2.5 Transformaciones y codificación</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entregable">2.6 Entregable</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">Key takeaways</a></li>
 </ul>
             </nav>
@@ -359,116 +357,121 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="capitulo-1-introduccion-y-pregunta-de-investigacion">
-<h1>Capítulo 1 · Introducción y pregunta de investigación<a class="headerlink" href="#capitulo-1-introduccion-y-pregunta-de-investigacion" title="Permalink to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="capitulo-2-descripcion-y-limpieza-del-dataset">
+<h1>Capítulo 2 · Descripción y limpieza del dataset<a class="headerlink" href="#capitulo-2-descripcion-y-limpieza-del-dataset" title="Permalink to this heading">#</a></h1>
 <blockquote>
 <div><p><strong>Overview:</strong><br />
-Este capítulo introduce el proyecto integrador, contextualiza el conjunto de datos <em>Ames Housing</em> y plantea las preguntas de investigación y objetivos que guían el análisis posterior.</p>
+Este capítulo describe el proceso de inspección, limpieza y preparación del conjunto de datos <em>Ames Housing</em>.<br />
+Se presentan sus características generales, el tratamiento de valores faltantes y la codificación de variables categóricas antes del modelado.</p>
 </div></blockquote>
 <hr class="docutils" />
-<section id="contexto-del-dataset">
-<h2>1.1 Contexto del dataset<a class="headerlink" href="#contexto-del-dataset" title="Permalink to this heading">#</a></h2>
-<p>El conjunto de datos <strong>Ames Housing</strong> fue compilado por <em>Dean De Cock (2011)</em> como una alternativa moderna al clásico <em>Boston Housing Dataset</em>.<br />
-Contiene información detallada sobre <strong>2930 viviendas</strong> en la ciudad de <em>Ames, Iowa (EE.UU.)</em>, con <strong>82 variables</strong> que describen características estructurales, de ubicación y de calidad de las propiedades.</p>
-<p>Entre sus variables más importantes se encuentran:</p>
+<section id="fuente-y-estructura-del-dataset">
+<h2>2.1 Fuente y estructura del dataset<a class="headerlink" href="#fuente-y-estructura-del-dataset" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">SalePrice</span></code>: precio de venta de la vivienda (variable respuesta principal).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">GrLivArea</span></code>: área habitable sobre el suelo.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">OverallQual</span></code>: calidad general del material y acabado.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">GarageCars</span></code>, <code class="docutils literal notranslate"><span class="pre">TotalBsmtSF</span></code>, <code class="docutils literal notranslate"><span class="pre">YearBuilt</span></code>, entre otras variables predictoras.</p></li>
+<li><p><strong>Fuente:</strong> Dataset público <em>Ames Housing</em> disponible en <a class="reference external" href="https://www.kaggle.com/datasets/prevek18/ames-housing-dataset">Kaggle</a>.</p></li>
+<li><p><strong>Tamaño:</strong> 2930 registros y 82 variables.</p></li>
+<li><p><strong>Licencia:</strong> Dominio público para uso educativo y académico.</p></li>
+<li><p><strong>Variables:</strong> Incluye tanto variables numéricas como categóricas relacionadas con aspectos estructurales, de calidad, ubicación y año de construcción.</p></li>
 </ul>
+</section>
 <hr class="docutils" />
-<section id="resumen-estadistico-inicial">
-<h3>Resumen estadístico inicial<a class="headerlink" href="#resumen-estadistico-inicial" title="Permalink to this heading">#</a></h3>
-<p>A continuación se muestra un resumen estadístico de las primeras variables del conjunto de datos:</p>
+<section id="tabla-de-tipos-de-variables-y-valores-faltantes">
+<h2>2.2 Tabla de tipos de variables y valores faltantes<a class="headerlink" href="#tabla-de-tipos-de-variables-y-valores-faltantes" title="Permalink to this heading">#</a></h2>
+<p>Se elabora una tabla con el tipo de variable (numérica o categórica) y el porcentaje de valores faltantes por columna.<br />
+Ejemplo:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Variable</p></th>
-<th class="head"><p>Conteo</p></th>
-<th class="head"><p>Media</p></th>
-<th class="head"><p>Desv. Est.</p></th>
-<th class="head"><p>Mínimo</p></th>
-<th class="head"><p>Máximo</p></th>
+<th class="head"><p>Tipo</p></th>
+<th class="head"><p>% Faltantes</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Order</p></td>
-<td><p>2930</p></td>
-<td><p>1465.50</p></td>
-<td><p>845.96</p></td>
-<td><p>1.00</p></td>
-<td><p>2930.00</p></td>
+<tr class="row-even"><td><p>LotFrontage</p></td>
+<td><p>Numérica</p></td>
+<td><p>17.7%</p></td>
 </tr>
-<tr class="row-odd"><td><p>PID</p></td>
-<td><p>2930</p></td>
-<td><p>714464496.99</p></td>
-<td><p>188730844.65</p></td>
-<td><p>526301100.00</p></td>
-<td><p>1007100110.00</p></td>
+<tr class="row-odd"><td><p>Alley</p></td>
+<td><p>Categórica</p></td>
+<td><p>93.2%</p></td>
 </tr>
-<tr class="row-even"><td><p>MS SubClass</p></td>
-<td><p>2930</p></td>
-<td><p>57.39</p></td>
-<td><p>42.64</p></td>
-<td><p>20.00</p></td>
-<td><p>190.00</p></td>
+<tr class="row-even"><td><p>MasVnrArea</p></td>
+<td><p>Numérica</p></td>
+<td><p>0.5%</p></td>
 </tr>
-<tr class="row-odd"><td><p>Lot Frontage</p></td>
-<td><p>2440</p></td>
-<td><p>69.22</p></td>
-<td><p>23.37</p></td>
-<td><p>21.00</p></td>
-<td><p>313.00</p></td>
-</tr>
-<tr class="row-even"><td><p>Lot Area</p></td>
-<td><p>2930</p></td>
-<td><p>10147.92</p></td>
-<td><p>7880.02</p></td>
-<td><p>1300.00</p></td>
-<td><p>215245.00</p></td>
+<tr class="row-odd"><td><p>Electrical</p></td>
+<td><p>Categórica</p></td>
+<td><p>0.1%</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-</section>
-</section>
-<hr class="docutils" />
-<section id="preguntas-de-investigacion">
-<h2>1.2 Preguntas de investigación<a class="headerlink" href="#preguntas-de-investigacion" title="Permalink to this heading">#</a></h2>
-<p>A partir de este contexto, se proponen las siguientes preguntas de investigación:</p>
-<ol class="arabic simple">
-<li><p><strong>¿Qué variables estructurales influyen más en el precio de venta (<code class="docutils literal notranslate"><span class="pre">SalePrice</span></code>) de las viviendas en Ames, Iowa?</strong></p></li>
-<li><p><strong>¿Qué tan estables son los coeficientes estimados bajo métodos de regresión robusta frente a los del modelo clásico de mínimos cuadrados ordinarios (OLS)?</strong></p></li>
-</ol>
-<p>Estas preguntas permitirán evaluar tanto el poder explicativo del modelo lineal como su <strong>sensibilidad ante violaciones de los supuestos clásicos</strong>.</p>
+<blockquote>
+<div><p>💡 <em>Interpretación:</em> Variables como <code class="docutils literal notranslate"><span class="pre">Alley</span></code> presentan gran cantidad de valores faltantes, por lo que se deben evaluar estrategias de imputación o exclusión.</p>
+</div></blockquote>
 </section>
 <hr class="docutils" />
-<section id="objetivos-especificos">
-<h2>1.3 Objetivos específicos<a class="headerlink" href="#objetivos-especificos" title="Permalink to this heading">#</a></h2>
+<section id="manejo-de-valores-faltantes">
+<h2>2.3 Manejo de valores faltantes<a class="headerlink" href="#manejo-de-valores-faltantes" title="Permalink to this heading">#</a></h2>
+<p>Los valores faltantes se tratan según el tipo de variable:</p>
 <ul class="simple">
-<li><p>Analizar la relación entre las variables predictoras más relevantes y el precio de venta (<code class="docutils literal notranslate"><span class="pre">SalePrice</span></code>).</p></li>
-<li><p>Comparar los resultados de la regresión lineal clásica con los obtenidos mediante <strong>métodos robustos</strong> (por ejemplo, M-estimadores).</p></li>
-<li><p>Evaluar la estabilidad de los coeficientes bajo diferentes estrategias de validación y diagnóstico de supuestos.</p></li>
-<li><p>Garantizar la <strong>reproducibilidad</strong> del análisis mediante el uso de un entorno controlado (<code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> o <code class="docutils literal notranslate"><span class="pre">environment.yml</span></code>).</p></li>
+<li><p><strong>Numéricas:</strong> Imputación con la <strong>mediana</strong> o mediante regresión simple.</p></li>
+<li><p><strong>Categóricas:</strong> Imputación con la <strong>moda</strong> o asignación de una categoría “No aplica”.</p></li>
+<li><p><strong>Altamente faltantes (&gt;90%)</strong>: Eliminación si su aporte informativo es bajo.</p></li>
 </ul>
 </section>
 <hr class="docutils" />
-<section id="criterios-de-exito">
-<h2>1.4 Criterios de éxito<a class="headerlink" href="#criterios-de-exito" title="Permalink to this heading">#</a></h2>
+<section id="deteccion-y-tratamiento-de-outliers">
+<h2>2.4 Detección y tratamiento de outliers<a class="headerlink" href="#deteccion-y-tratamiento-de-outliers" title="Permalink to this heading">#</a></h2>
+<p>Los valores atípicos se detectan mediante:</p>
 <ul class="simple">
-<li><p>Los modelos deben cumplir con los supuestos de <strong>linealidad</strong>, <strong>homocedasticidad</strong> y <strong>normalidad de residuos</strong>, o justificar su incumplimiento mediante métodos robustos.</p></li>
-<li><p>Todos los análisis deben ser <strong>reproducibles</strong> y acompañarse de interpretación estadística.</p></li>
-<li><p>La validación cruzada o el diagnóstico gráfico deben sustentar las conclusiones del modelo.</p></li>
-<li><p>El capítulo debe cerrar con una sección <strong>“Key takeaways”</strong> que resuma los hallazgos principales.</p></li>
+<li><p>Diagramas de caja y bigotes (Boxplots).</p></li>
+<li><p>Regla de 1.5×IQR (Rango intercuartílico).</p></li>
+<li><p>Comparación con los valores esperados del modelo OLS inicial.</p></li>
+</ul>
+<blockquote>
+<div><p>🔍 <em>Ejemplo:</em> <code class="docutils literal notranslate"><span class="pre">GrLivArea</span></code> y <code class="docutils literal notranslate"><span class="pre">SalePrice</span></code> suelen contener outliers asociados a casas de lujo o construcciones no típicas.</p>
+</div></blockquote>
+<p>Los outliers se pueden:</p>
+<ul class="simple">
+<li><p>Reemplazar por límites truncados.</p></li>
+<li><p>Ajustar mediante <strong>transformaciones logarítmicas</strong>.</p></li>
+<li><p>O mantener, si representan información relevante (p. ej., viviendas de alto valor).</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="transformaciones-y-codificacion">
+<h2>2.5 Transformaciones y codificación<a class="headerlink" href="#transformaciones-y-codificacion" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Transformaciones logarítmicas:</strong><br />
+Se aplican a variables sesgadas como <code class="docutils literal notranslate"><span class="pre">SalePrice</span></code>, <code class="docutils literal notranslate"><span class="pre">GrLivArea</span></code> y <code class="docutils literal notranslate"><span class="pre">LotArea</span></code> para mejorar la normalidad de los residuos.</p></li>
+<li><p><strong>Codificación de variables categóricas:</strong></p>
+<ul>
+<li><p><em>One-Hot Encoding</em> para variables nominales.</p></li>
+<li><p><em>Ordinal Encoding</em> para variables con jerarquía, como <code class="docutils literal notranslate"><span class="pre">OverallQual</span></code> o <code class="docutils literal notranslate"><span class="pre">ExterCond</span></code>.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="entregable">
+<h2>2.6 Entregable<a class="headerlink" href="#entregable" title="Permalink to this heading">#</a></h2>
+<p>El entregable de este capítulo consiste en una <strong>tabla comparativa “antes y después”</strong> del proceso de limpieza, mostrando:</p>
+<ul class="simple">
+<li><p>Número de observaciones y variables.</p></li>
+<li><p>Porcentaje total de valores faltantes.</p></li>
+<li><p>Número de outliers detectados y tratados.</p></li>
+<li><p>Transformaciones aplicadas y justificación.</p></li>
 </ul>
 </section>
 <hr class="docutils" />
 <section id="key-takeaways">
 <h2>Key takeaways<a class="headerlink" href="#key-takeaways" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
-<li><p>El dataset <em>Ames Housing</em> ofrece una base rica para estudiar relaciones entre variables estructurales y el precio de venta de viviendas.</p></li>
-<li><p>Las preguntas de investigación se centran en identificar las variables más influyentes y en evaluar la robustez de los coeficientes del modelo.</p></li>
-<li><p>Se establecerán criterios claros de reproducibilidad e interpretación para garantizar la validez del análisis estadístico.</p></li>
+<li><p>La limpieza de datos es esencial para asegurar la validez de los modelos de regresión.</p></li>
+<li><p>Las imputaciones deben documentarse y justificarse.</p></li>
+<li><p>Las transformaciones logarítmicas y codificaciones categóricas mejoran la interpretación y estabilidad del modelo.</p></li>
+<li><p>El capítulo concluye con un dataset limpio, listo para análisis exploratorio y modelado.</p></li>
 </ul>
 </section>
 </section>
@@ -504,22 +507,13 @@ Contiene información detallada sobre <strong>2930 viviendas</strong> en la ciud
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="cap0-instrucciones.html"
+       href="cap1-introduccion.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Capítulo 0 · Instrucciones de reproducción y estructura del proyecto</p>
+        <p class="prev-next-title">Capítulo 1 · Introducción y pregunta de investigación</p>
       </div>
-    </a>
-    <a class="right-next"
-       href="cap2-limpieza.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Capítulo 2 · Descripción y limpieza del dataset</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -537,13 +531,12 @@ Contiene información detallada sobre <strong>2930 viviendas</strong> en la ciud
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contexto-del-dataset">1.1 Contexto del dataset</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resumen-estadistico-inicial">Resumen estadístico inicial</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preguntas-de-investigacion">1.2 Preguntas de investigación</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#objetivos-especificos">1.3 Objetivos específicos</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#criterios-de-exito">1.4 Criterios de éxito</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fuente-y-estructura-del-dataset">2.1 Fuente y estructura del dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabla-de-tipos-de-variables-y-valores-faltantes">2.2 Tabla de tipos de variables y valores faltantes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#manejo-de-valores-faltantes">2.3 Manejo de valores faltantes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deteccion-y-tratamiento-de-outliers">2.4 Detección y tratamiento de outliers</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transformaciones-y-codificacion">2.5 Transformaciones y codificación</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entregable">2.6 Entregable</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">Key takeaways</a></li>
 </ul>
   </nav></div>
