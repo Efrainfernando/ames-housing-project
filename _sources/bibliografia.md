@@ -5,5 +5,4 @@ Este archivo se enlaza con `references.bib` para que Jupyter Book las formatee a
 
 ```{bibliography}
 :style: unsrt
-:filter: docname in docnames
 ```
