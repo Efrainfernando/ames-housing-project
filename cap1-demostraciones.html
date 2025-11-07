@@ -7,8 +7,9 @@
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; Modelos de regresión lineal usando el Ames Housing Dataset</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Capítulo 1 · Demostraciones solicitadas &#8212; Modelos de regresión lineal usando el Ames Housing Dataset</title>
   
   
   
@@ -61,10 +62,11 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
-    <link rel="canonical" href="https://efrainfernando.github.io/ames-housing-project/genindex.html" />
-    <link rel="index" title="Index" href="#" />
+    <script>DOCUMENTATION_OPTIONS.pagename = 'cap1-demostraciones';</script>
+    <link rel="canonical" href="https://efrainfernando.github.io/ames-housing-project/cap1-demostraciones.html" />
+    <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Capítulo 0 · Instrucciones de reproducción y estructura del proyecto" href="cap0-instrucciones.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -127,8 +129,6 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-        
-      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -173,8 +173,8 @@ const thebe_selector_output = ".output, .cell_output"
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="cap1-demostraciones.html">Capítulo 1 · Demostraciones solicitadas</a></li>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Capítulo 1 · Demostraciones solicitadas</a></li>
 </ul>
 
     </div>
@@ -234,6 +234,54 @@ const thebe_selector_output = ".output, .cell_output"
 
 
 
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/cap1-demostraciones.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
 <button onclick="toggleFullScreen()"
   class="btn btn-sm btn-fullscreen-button"
   title="Fullscreen mode"
@@ -267,7 +315,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -278,11 +328,24 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1></h1>
+    <h1>Capítulo 1 · Demostraciones solicitadas</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-de-regresion-lineal-simple">1.1 Modelo de regresión lineal simple</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#objetivo-de-la-demostracion">1.2 Objetivo de la demostración</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#marco-teorico">1.3 Marco teórico</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demostracion-paso-a-paso">1.4 Demostración paso a paso</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretacion">1.5 Interpretación</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">1.6 Key takeaways</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -292,13 +355,145 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
+  <section class="tex2jax_ignore mathjax_ignore" id="capitulo-1-demostraciones-solicitadas">
+<h1>Capítulo 1 · Demostraciones solicitadas<a class="headerlink" href="#capitulo-1-demostraciones-solicitadas" title="Permalink to this heading">#</a></h1>
+<blockquote>
+<div><p><strong>Overview:</strong><br />
+En este capítulo se presentan las demostraciones teóricas fundamentales del modelo de <strong>regresión lineal simple</strong>, enfocadas en la distribución de la suma de cuadrados de los residuos y el origen de los grados de libertad asociados.</p>
+</div></blockquote>
+<hr class="docutils" />
+<section id="modelo-de-regresion-lineal-simple">
+<h2>1.1 Modelo de regresión lineal simple<a class="headerlink" href="#modelo-de-regresion-lineal-simple" title="Permalink to this heading">#</a></h2>
+<p>Sea el modelo
+[
+y_i = \beta_0 + \beta_1 x_i + \varepsilon_i, \quad i=1,\ldots,n,
+]
+donde los errores cumplen:
+[
+\mathbb{E}(\varepsilon_i)=0, \qquad \operatorname{Var}(\varepsilon_i)=\sigma^2.
+]</p>
+<p>Definimos los <strong>residuos</strong>:
+[
+e_i = y_i - \hat{y}_i = y_i - (\hat{\beta}<em>0+\hat{\beta}<em>1 x_i),
+]
+y la <strong>suma de cuadrados de los residuos</strong>:
+[
+SS</em>{Res} = \sum</em>{i=1}^n e_i^2.
+]</p>
+</section>
+<hr class="docutils" />
+<section id="objetivo-de-la-demostracion">
+<h2>1.2 Objetivo de la demostración<a class="headerlink" href="#objetivo-de-la-demostracion" title="Permalink to this heading">#</a></h2>
+<p>Demostrar que:
+[
+\frac{SS_{Res}}{\sigma^2} \sim \chi^2_{n-2},
+]
+y explicar por qué se restan <strong>dos grados de libertad</strong> en el modelo de regresión simple (asociados a (\hat\beta_0) y (\hat\beta_1)).</p>
+</section>
+<hr class="docutils" />
+<section id="marco-teorico">
+<h2>1.3 Marco teórico<a class="headerlink" href="#marco-teorico" title="Permalink to this heading">#</a></h2>
+<p>En notación matricial:
+[
+y = X\beta + \varepsilon, \qquad X =
+\begin{bmatrix}
+1 &amp; x_1\
+1 &amp; x_2\
+\vdots &amp; \vdots\
+1 &amp; x_n
+\end{bmatrix}.
+]</p>
+<p>El estimador de mínimos cuadrados ordinarios (MCO) es:
+[
+\hat\beta = (X’X)^{-1}X’y,
+]
+y las predicciones se obtienen mediante la <strong>matriz sombrero</strong> (H = X(X’X)^{-1}X’):
+[
+\hat{y} = Hy, \qquad e = y - \hat{y} = (I-H)y.
+]</p>
+</section>
+<hr class="docutils" />
+<section id="demostracion-paso-a-paso">
+<h2>1.4 Demostración paso a paso<a class="headerlink" href="#demostracion-paso-a-paso" title="Permalink to this heading">#</a></h2>
+<ol class="arabic">
+<li><p><strong>Expresión de los residuos en función de los errores</strong></p>
+<p>Sustituyendo (y = X\beta + \varepsilon):
+[
+e = (I-H)(X\beta+\varepsilon) = (I-H)\varepsilon.
+]</p>
+</li>
+<li><p><strong>Suma de cuadrados de los residuos</strong>
+[
+SS_{Res} = e’e = \varepsilon’(I-H)\varepsilon.
+]</p></li>
+<li><p><strong>Propiedades clave de la matriz (I-H):</strong></p>
+<ul class="simple">
+<li><p>Es <strong>simétrica</strong>: ((I-H)’ = I-H),</p></li>
+<li><p>Es <strong>idempotente</strong>: ((I-H)^2 = I-H),</p></li>
+<li><p>Su rango es (n - p), donde (p) es el número de parámetros estimados.</p></li>
+</ul>
+<p>En el modelo simple, (p = 2) (intercepto y pendiente), por tanto (\operatorname{rango}(I-H) = n-2).</p>
+</li>
+<li><p><strong>Distribución del cuadrático:</strong></p>
+<p>Como (\varepsilon \sim \mathcal N(0,\sigma^2 I)),
+[
+\frac{\varepsilon’(I-H)\varepsilon}{\sigma^2} \sim \chi^2_{n-2}.
+]</p>
+<p>Por lo tanto:
+[
+\boxed{\displaystyle \frac{SS_{Res}}{\sigma^2} \sim \chi^2_{n-2}}.
+]</p>
+</li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="interpretacion">
+<h2>1.5 Interpretación<a class="headerlink" href="#interpretacion" title="Permalink to this heading">#</a></h2>
+<p>Los <strong>grados de libertad</strong> reflejan las restricciones impuestas por los parámetros estimados:</p>
+<ul class="simple">
+<li><p>Cada parámetro estimado (β₀, β₁) “consume” un grado de libertad.</p></li>
+<li><p>En total se restan 2 grados de libertad al número de observaciones (n).</p></li>
+</ul>
+<p>Por tanto, la estimación insesgada de la varianza del error es:
+[
+s^2 = \frac{SS_{Res}}{n-2}.
+]</p>
+</section>
+<hr class="docutils" />
+<section id="key-takeaways">
+<h2>1.6 Key takeaways<a class="headerlink" href="#key-takeaways" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>(H = X(X’X)^{-1}X’) es fundamental para expresar los residuos y entender su estructura.</p></li>
+<li><p>((I-H)) proyecta los errores sobre el subespacio ortogonal a (X).</p></li>
+<li><p>El estadístico (\tfrac{SS_{Res}}{\sigma^2}) sigue una distribución (\chi^2_{n-2}).</p></li>
+<li><p>Los dos grados de libertad perdidos corresponden a los parámetros estimados.</p></li>
+<li><p>Este resultado sustenta la inferencia sobre (\sigma^2) y los test t en regresión.</p></li>
+</ul>
+<hr class="docutils" />
+<p>📚 <strong>Referencia:</strong><br />
+Draper, N. R., &amp; Smith, H. (1998). <em>Applied Regression Analysis.</em> Wiley.</p>
+</section>
+</section>
 
-<h1 id="index">Index</h1>
-
-<div class="genindex-jumpbox">
- 
-</div>
-
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
 
                 </article>
               
@@ -310,12 +505,41 @@ document.write(`
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="cap0-instrucciones.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Capítulo 0 · Instrucciones de reproducción y estructura del proyecto</p>
+      </div>
+    </a>
 </div>
                 </footer>
               
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-de-regresion-lineal-simple">1.1 Modelo de regresión lineal simple</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#objetivo-de-la-demostracion">1.2 Objetivo de la demostración</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#marco-teorico">1.3 Marco teórico</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demostracion-paso-a-paso">1.4 Demostración paso a paso</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretacion">1.5 Interpretación</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">1.6 Key takeaways</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

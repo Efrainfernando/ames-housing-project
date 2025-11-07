@@ -1,0 +1,659 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Capítulo 0 · Instrucciones de reproducción y estructura del proyecto &#8212; Modelos de regresión lineal usando el Ames Housing Dataset</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'cap0-instrucciones';</script>
+    <link rel="canonical" href="https://efrainfernando.github.io/ames-housing-project/cap0-instrucciones.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Capítulo 1 · Demostraciones solicitadas" href="cap1-demostraciones.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="#">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Modelos de regresión lineal usando el Ames Housing Dataset - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Modelos de regresión lineal usando el Ames Housing Dataset - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1 current active">
+                <a class="reference internal" href="#">
+                    Capítulo 0 · Instrucciones de reproducción y estructura del proyecto
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="cap1-demostraciones.html">Capítulo 1 · Demostraciones solicitadas</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/cap0-instrucciones.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Capítulo 0 · Instrucciones de reproducción y estructura del proyecto</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#como-compilar-el-libro">0.1 Cómo compilar el libro</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencias">Dependencias</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#como-obtener-el-dataset">0.2 Cómo obtener el dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#control-de-versiones">0.3 Control de versiones</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducibilidad">0.4 Reproducibilidad</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#requisitos-tecnicos-del-entregable">0.5 Requisitos técnicos del entregable</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estructura-general-del-proyecto">0.6 Estructura general del proyecto</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#capitulo-0-instrucciones-de-reproduccion">0.6.1 Capítulo 0: Instrucciones de reproducción</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">0.7 Key takeaways</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="capitulo-0-instrucciones-de-reproduccion-y-estructura-del-proyecto">
+<h1>Capítulo 0 · Instrucciones de reproducción y estructura del proyecto<a class="headerlink" href="#capitulo-0-instrucciones-de-reproduccion-y-estructura-del-proyecto" title="Permalink to this heading">#</a></h1>
+<blockquote>
+<div><p><strong>Overview:</strong><br />
+Este capítulo presenta las instrucciones para compilar, reproducir y estructurar correctamente el libro del proyecto integrador <em>“Inferencia robusta y validación en modelos de regresión lineal usando el Ames Housing Dataset”</em>.<br />
+Se detallan los requerimientos técnicos, control de versiones y lineamientos de formato para todos los capítulos del libro.</p>
+</div></blockquote>
+<hr class="docutils" />
+<section id="como-compilar-el-libro">
+<h2>0.1 Cómo compilar el libro<a class="headerlink" href="#como-compilar-el-libro" title="Permalink to this heading">#</a></h2>
+<p>Ejecutar el siguiente comando en la terminal dentro de la carpeta raíz del proyecto:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter-book<span class="w"> </span>build<span class="w"> </span>.
+</pre></div>
+</div>
+<p>Los archivos compilados se generan en la carpeta <code class="docutils literal notranslate"><span class="pre">_build/html/</span></code>.</p>
+<section id="dependencias">
+<h3>Dependencias<a class="headerlink" href="#dependencias" title="Permalink to this heading">#</a></h3>
+<p>Instalar las librerías listadas en el archivo <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> o alternativamente usar un entorno con <code class="docutils literal notranslate"><span class="pre">environment.yml</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="como-obtener-el-dataset">
+<h2>0.2 Cómo obtener el dataset<a class="headerlink" href="#como-obtener-el-dataset" title="Permalink to this heading">#</a></h2>
+<p>El libro utiliza el conjunto de datos <strong>Ames Housing</strong>.<br />
+Se espera en la ruta:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="o">/</span><span class="n">ames_housing</span><span class="o">.</span><span class="n">csv</span>
+</pre></div>
+</div>
+<p>Puedes descargarlo manualmente o empleando la <strong>Kaggle API</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>kaggle<span class="w"> </span>datasets<span class="w"> </span>download<span class="w"> </span>-d<span class="w"> </span>prevek18/ames-housing-dataset<span class="w"> </span>-p<span class="w"> </span>data/<span class="w"> </span>--unzip
+mv<span class="w"> </span>data/AmesHousing.csv<span class="w"> </span>data/ames_housing.csv
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="control-de-versiones">
+<h2>0.3 Control de versiones<a class="headerlink" href="#control-de-versiones" title="Permalink to this heading">#</a></h2>
+<p>Estructura sugerida del proyecto:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>book/
+├──<span class="w"> </span>data/
+│<span class="w">   </span>└──<span class="w"> </span>ames_housing.csv
+├──<span class="w"> </span>notebooks/
+├──<span class="w"> </span>_build/
+├──<span class="w"> </span>_config.yml
+├──<span class="w"> </span>_toc.yml
+└──<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+<blockquote>
+<div><p>🔧 <strong>Consejo:</strong> usa control de versiones con Git y sincroniza los cambios del libro en GitHub antes de publicar.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="reproducibilidad">
+<h2>0.4 Reproducibilidad<a class="headerlink" href="#reproducibilidad" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Todos los experimentos deben fijar una <strong>semilla aleatoria</strong> (<code class="docutils literal notranslate"><span class="pre">random_state</span></code>) para garantizar resultados reproducibles.</p></li>
+<li><p>Se recomienda usar Python ≥ 3.10 y registrar las versiones principales de librerías (<code class="docutils literal notranslate"><span class="pre">numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">pandas</span></code>, <code class="docutils literal notranslate"><span class="pre">statsmodels</span></code>, <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>, <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code>).</p></li>
+<li><p>Cada notebook debe incluir celdas comentadas para permitir su ejecución desde cero sin errores.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="requisitos-tecnicos-del-entregable">
+<h2>0.5 Requisitos técnicos del entregable<a class="headerlink" href="#requisitos-tecnicos-del-entregable" title="Permalink to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>El Jupyter Book debe compilar sin errores:</strong></p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter-book<span class="w"> </span>build<span class="w"> </span>.
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p><strong>El libro debe incluir texto interpretativo y conclusiones.</strong><br />
+Ninguna figura, tabla o ecuación debe quedar sin análisis.</p></li>
+<li><p><strong>Todas las figuras, tablas y ecuaciones deben:</strong></p>
+<ul class="simple">
+<li><p>Estar numeradas.</p></li>
+<li><p>Tener referencia explícita en el texto.</p></li>
+<li><p>Ser citadas en formato académico (por ejemplo, «ver Figura 3.2»).</p></li>
+</ul>
+</li>
+<li><p><strong>Debe incluir un archivo de entorno:</strong></p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>requirements.txt
+</pre></div>
+</div>
+<p>o alternativamente</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>environment.yml
+</pre></div>
+</div>
+<p>Este archivo debe especificar la versión de Python y las librerías principales utilizadas.</p>
+<ol class="arabic simple" start="5">
+<li><p><strong>El libro debe estar publicado correctamente en GitHub Pages</strong> mediante:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ghp-import<span class="w"> </span>-n<span class="w"> </span>-p<span class="w"> </span>-f<span class="w"> </span>_build/html
+</pre></div>
+</div>
+<p>📘 <em>Sugerencia:</em> Antes de publicar, verifica que las rutas de imágenes, notebooks y datos sean relativas (por ejemplo, <code class="docutils literal notranslate"><span class="pre">../data/archivo.csv</span></code>)<br />
+y que la carpeta <code class="docutils literal notranslate"><span class="pre">_build/html</span></code> se genere sin advertencias.</p>
+</section>
+<hr class="docutils" />
+<section id="estructura-general-del-proyecto">
+<h2>0.6 Estructura general del proyecto<a class="headerlink" href="#estructura-general-del-proyecto" title="Permalink to this heading">#</a></h2>
+<p>Cada capítulo del libro debe iniciar con un <strong>Resumen (overview)</strong> de 3–5 líneas que explique brevemente su propósito y contenido,<br />
+y finalizar con una sección <strong>«Key takeaways»</strong> que sintetice los aprendizajes principales.</p>
+<hr class="docutils" />
+<section id="capitulo-0-instrucciones-de-reproduccion">
+<h3>0.6.1 Capítulo 0: Instrucciones de reproducción<a class="headerlink" href="#capitulo-0-instrucciones-de-reproduccion" title="Permalink to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Cómo compilar el libro:</strong></p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter-book<span class="w"> </span>build<span class="w"> </span>.
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Dependencias:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code></p></li>
+<li><p>o <code class="docutils literal notranslate"><span class="pre">environment.yml</span></code></p></li>
+</ul>
+</li>
+</ul>
+<ol class="arabic simple" start="2">
+<li><p><strong>Cómo obtener el dataset:</strong></p>
+<ul class="simple">
+<li><p>Ruta esperada: <code class="docutils literal notranslate"><span class="pre">data/ames_housing.csv</span></code></p></li>
+<li><p>Descarga manual o usando la <strong>Kaggle API</strong>:</p></li>
+</ul>
+</li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>kaggle<span class="w"> </span>datasets<span class="w"> </span>download<span class="w"> </span>-d<span class="w"> </span>prevek18/ames-housing-dataset<span class="w"> </span>-p<span class="w"> </span>data/<span class="w"> </span>--unzip
+mv<span class="w"> </span>data/AmesHousing.csv<span class="w"> </span>data/ames_housing.csv
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p><strong>Control de versiones:</strong></p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>book/
+├──<span class="w"> </span>data/
+├──<span class="w"> </span>notebooks/
+├──<span class="w"> </span>_build/
+└──<span class="w"> </span>_config.yml
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p><strong>Semillas reproducibles:</strong><br />
+Incluir el parámetro <code class="docutils literal notranslate"><span class="pre">random_state</span></code> en todos los experimentos.</p></li>
+<li><p><strong>Mapa del libro:</strong><br />
+Incluir la lista de capítulos con enlaces internos a cada sección.</p></li>
+</ol>
+</section>
+</section>
+<hr class="docutils" />
+<section id="key-takeaways">
+<h2>0.7 Key takeaways<a class="headerlink" href="#key-takeaways" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>El libro debe ser <strong>completamente reproducible</strong> y <strong>compilar sin errores</strong>.</p></li>
+<li><p>Se exige una estructura clara, con capítulos bien documentados y conclusiones interpretativas.</p></li>
+<li><p>Las figuras, tablas y ecuaciones deben integrarse dentro del texto con análisis contextual.</p></li>
+<li><p>La publicación final debe realizarse en <strong>GitHub Pages</strong> de forma funcional y accesible.</p></li>
+<li><p>Este capítulo sirve como <strong>guía técnica y metodológica</strong> para el desarrollo del proyecto completo.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<div class="toctree-wrapper compound">
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="right-next"
+       href="cap1-demostraciones.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Capítulo 1 · Demostraciones solicitadas</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#como-compilar-el-libro">0.1 Cómo compilar el libro</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencias">Dependencias</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#como-obtener-el-dataset">0.2 Cómo obtener el dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#control-de-versiones">0.3 Control de versiones</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducibilidad">0.4 Reproducibilidad</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#requisitos-tecnicos-del-entregable">0.5 Requisitos técnicos del entregable</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estructura-general-del-proyecto">0.6 Estructura general del proyecto</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#capitulo-0-instrucciones-de-reproduccion">0.6.1 Capítulo 0: Instrucciones de reproducción</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">0.7 Key takeaways</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Efraín Fernando Márquez
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
