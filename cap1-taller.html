@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>Notebooks with MyST Markdown &#8212; Proyecto integrador: Regresión Lineal (Ames Housing)</title>
+    <title>Capítulo 1 · Demostraciones solicitadas &#8212; Proyecto integrador: Regresión Lineal (Ames Housing)</title>
   
   
   
@@ -62,7 +62,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'markdown-notebooks';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'cap1-taller';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -147,7 +147,7 @@ const thebe_selector_output = ".output, .cell_output"
     
   
 
-<a class="navbar-brand logo" href="cap1-taller.html">
+<a class="navbar-brand logo" href="#">
   
   
   
@@ -167,8 +167,8 @@ const thebe_selector_output = ".output, .cell_output"
     <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
-            <li class="toctree-l1">
-                <a class="reference internal" href="cap1-taller.html">
+            <li class="toctree-l1 current active">
+                <a class="reference internal" href="#">
                     Capítulo 1 · Demostraciones solicitadas
                 </a>
             </li>
@@ -226,7 +226,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="_sources/markdown-notebooks.md" target="_blank"
+      <li><a href="_sources/cap1-taller.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -310,7 +310,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Notebooks with MyST Markdown</h1>
+    <h1>Capítulo 1 · Demostraciones solicitadas</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -320,9 +320,10 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#an-example-cell">An example cell</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-notebook-with-myst-markdown">Create a notebook with MyST Markdown</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quickly-add-yaml-metadata-for-myst-notebooks">Quickly add YAML metadata for MyST Notebooks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-y-objetivo">1.1 Modelo y objetivo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demostracion-via-algebra-matricial">1.2 Demostración (vía álgebra matricial)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#observaciones-practicas">1.3 Observaciones prácticas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#referencia">1.4 Referencia</a></li>
 </ul>
             </nav>
         </div>
@@ -334,45 +335,54 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="notebooks-with-myst-markdown">
-<h1>Notebooks with MyST Markdown<a class="headerlink" href="#notebooks-with-myst-markdown" title="Permalink to this heading">#</a></h1>
-<p>Jupyter Book also lets you write text-based notebooks using MyST Markdown.
-See <a class="reference external" href="https://jupyterbook.org/file-types/myst-notebooks.html">the Notebooks with MyST Markdown documentation</a> for more detailed instructions.
-This page shows off a notebook written in MyST Markdown.</p>
-<section id="an-example-cell">
-<h2>An example cell<a class="headerlink" href="#an-example-cell" title="Permalink to this heading">#</a></h2>
-<p>With MyST Markdown, you can define code cells with a directive like so:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>When your book is built, the contents of any <code class="docutils literal notranslate"><span class="pre">{code-cell}</span></code> blocks will be
-executed with your default Jupyter kernel, and their outputs will be displayed
-in-line with the rest of your content.</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p>Jupyter Book uses <a class="reference external" href="https://jupytext.readthedocs.io/en/latest/">Jupytext</a> to convert text-based files to notebooks, and can support <a class="reference external" href="https://jupyterbook.org/file-types/jupytext.html">many other text-based notebook files</a>.</p>
-</div>
+  <section class="tex2jax_ignore mathjax_ignore" id="capitulo-1-demostraciones-solicitadas">
+<h1>Capítulo 1 · Demostraciones solicitadas<a class="headerlink" href="#capitulo-1-demostraciones-solicitadas" title="Permalink to this heading">#</a></h1>
+<section id="modelo-y-objetivo">
+<h2>1.1 Modelo y objetivo<a class="headerlink" href="#modelo-y-objetivo" title="Permalink to this heading">#</a></h2>
+<p>Sea el modelo de <strong>regresión lineal simple</strong>
+[
+y_i=\beta_0+\beta_1 x_i+\varepsilon_i,\quad i=1,\ldots,n,
+]
+con (\mathbb E(\varepsilon_i)=0) y (\operatorname{Var}(\varepsilon_i)=\sigma^2), mutuamente independientes.</p>
+<p>Demuestre que la suma de cuadrados de los residuos dividida por (\sigma^2),
+[
+\frac{SS_{\text{Res}}}{\sigma^2}=\frac{\sum_{i=1}^n e_i^2}{\sigma^2},
+]
+es una <strong>combinación cuadrática</strong> de los errores y que
+[
+\frac{SS_{\text{Res}}}{\sigma^2}\sim\chi^2_{,n-2}.
+]
+Explique por qué se <strong>restan dos grados de libertad</strong> en el modelo simple (asociados a (\hat\beta_0) y (\hat\beta_1)).</p>
 </section>
-<section id="create-a-notebook-with-myst-markdown">
-<h2>Create a notebook with MyST Markdown<a class="headerlink" href="#create-a-notebook-with-myst-markdown" title="Permalink to this heading">#</a></h2>
-<p>MyST Markdown notebooks are defined by two things:</p>
-<ol class="arabic simple">
-<li><p>YAML metadata that is needed to understand if / how it should convert text files to notebooks (including information about the kernel needed).
-See the YAML at the top of this page for example.</p></li>
-<li><p>The presence of <code class="docutils literal notranslate"><span class="pre">{code-cell}</span></code> directives, which will be executed with your book.</p></li>
-</ol>
-<p>That’s all that is needed to get started!</p>
+<hr class="docutils" />
+<section id="demostracion-via-algebra-matricial">
+<h2>1.2 Demostración (vía álgebra matricial)<a class="headerlink" href="#demostracion-via-algebra-matricial" title="Permalink to this heading">#</a></h2>
+<p>Sea (X=[\mathbf 1,; x]\in\mathbb R^{n\times 2}), (H=X(X’X)^{-1}X’) la <strong>matriz sombrero</strong> y (M=I-H).
+Los residuos cumplen (e=My) y, dado que (y=X\beta+\varepsilon),
+[
+e=M(X\beta+\varepsilon)=M\varepsilon \quad\Rightarrow\quad
+SS_{\text{Res}}=e’e=\varepsilon’ M, \varepsilon.
+]
+Propiedades: (M) es <strong>simétrica</strong> e <strong>idempotente</strong> ((M^2=M)) y (\operatorname{rango}(M)=n-\operatorname{rango}(H)=n-2).
+Como (\varepsilon\sim \mathcal N(0,\sigma^2 I)), entonces
+[
+\frac{\varepsilon’ M, \varepsilon}{\sigma^2}\sim \chi^2_{,\operatorname{rango}(M)}=\chi^2_{,n-2}.
+]
+Por lo tanto, (\dfrac{SS_{\text{Res}}}{\sigma^2}\sim\chi^2_{,n-2}).</p>
+<p><strong>Interpretación.</strong> Los <strong>2 grados de libertad</strong> se consumen al estimar (\beta_0) y (\beta_1).</p>
 </section>
-<section id="quickly-add-yaml-metadata-for-myst-notebooks">
-<h2>Quickly add YAML metadata for MyST Notebooks<a class="headerlink" href="#quickly-add-yaml-metadata-for-myst-notebooks" title="Permalink to this heading">#</a></h2>
-<p>If you have a markdown file and you’d like to quickly add YAML metadata to it, so that Jupyter Book will treat it as a MyST Markdown Notebook, run the following command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">jupyter</span><span class="o">-</span><span class="n">book</span> <span class="n">myst</span> <span class="n">init</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">markdownfile</span><span class="o">.</span><span class="n">md</span>
-</pre></div>
-</div>
+<hr class="docutils" />
+<section id="observaciones-practicas">
+<h2>1.3 Observaciones prácticas<a class="headerlink" href="#observaciones-practicas" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>En el modelo con (p) parámetros (incluye intercepto), (\dfrac{SS_{\text{Res}}}{\sigma^2}\sim\chi^2_{,n-p}).</p></li>
+<li><p>Un estimador insesgado de (\sigma^2) es (s^2=SS_{\text{Res}}/(n-2)).</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="referencia">
+<h2>1.4 Referencia<a class="headerlink" href="#referencia" title="Permalink to this heading">#</a></h2>
+<p>Draper, N. R., &amp; Smith, H. (1998). <em>Applied Regression Analysis</em>. Wiley.</p>
 </section>
 </section>
 
@@ -422,9 +432,10 @@ See the YAML at the top of this page for example.</p></li>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#an-example-cell">An example cell</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-notebook-with-myst-markdown">Create a notebook with MyST Markdown</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quickly-add-yaml-metadata-for-myst-notebooks">Quickly add YAML metadata for MyST Notebooks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-y-objetivo">1.1 Modelo y objetivo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demostracion-via-algebra-matricial">1.2 Demostración (vía álgebra matricial)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#observaciones-practicas">1.3 Observaciones prácticas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#referencia">1.4 Referencia</a></li>
 </ul>
   </nav></div>
 
