@@ -242,7 +242,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="_sources/cap9-regularizacion.md" target="_blank"
+      <li><a href="_sources/cap9-regularizacion.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -252,7 +252,7 @@ const thebe_selector_output = ".output, .cell_output"
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.md</span>
+<span class="btn__text-container">.ipynb</span>
 </a>
 </li>
       
@@ -334,13 +334,15 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduccion-teorica">9.1 Introducción teórica</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preparacion-de-datos">9.2 Preparación de datos</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementacion-de-ridgecv-y-lassocv">9.3 Implementación de RidgeCV y LassoCV</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparacion-de-coeficientes-y-desempeno">9.4 Comparación de coeficientes y desempeño</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluacion-de-error-y-metricas">9.5 Evaluación de error y métricas</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizacion-de-shrinkage">9.6 Visualización de shrinkage</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">9.7 Key takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos-variables-seleccionadas-y-particion-entrenamiento-prueba">9.1 Datos, variables seleccionadas y partición entrenamiento/prueba</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-ols-base-sin-regularizacion">9.2 Modelo OLS base (sin regularización)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estandarizacion-de-predictores">9.3 Estandarización de predictores</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ridge-penalizacion-l2">9.4 Ridge (penalización L2)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lasso-penalizacion-l1">9.5 Lasso (penalización L1)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparacion-de-coeficientes-ols-vs-ridge-vs-lasso">9.6 Comparación de coeficientes: OLS vs Ridge vs Lasso</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparacion-de-desempeno-predictivo">9.7 Comparación de desempeño predictivo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trayectorias-de-coeficientes-paths-para-ridge-y-lasso">9.8 Trayectorias de coeficientes (paths) para Ridge y Lasso</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">9.9 Key takeaways</a></li>
 </ul>
             </nav>
         </div>
@@ -354,48 +356,53 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="capitulo-9-regularizacion-ridge-y-lasso">
 <h1>Capítulo 9 · Regularización: Ridge y Lasso<a class="headerlink" href="#capitulo-9-regularizacion-ridge-y-lasso" title="Permalink to this heading">#</a></h1>
-<blockquote>
-<div><p><strong>Objetivo:</strong> aplicar técnicas de <strong>regularización (Ridge y Lasso)</strong> para mitigar la multicolinealidad y mejorar la estabilidad de los estimadores, comparando su desempeño con el modelo OLS clásico.</p>
-</div></blockquote>
-<hr class="docutils" />
-<section id="introduccion-teorica">
-<h2>9.1 Introducción teórica<a class="headerlink" href="#introduccion-teorica" title="Permalink to this heading">#</a></h2>
-<p>La <strong>regularización</strong> introduce una penalización sobre el tamaño de los coeficientes para evitar sobreajuste.<br />
-Sea el modelo lineal clásico ( y = X\beta + \varepsilon ). Los estimadores se definen como:</p>
-<p><strong>Ridge (L2):</strong></p>
-<div class="math notranslate nohighlight">
-\[ \hat{\beta}_{ridge} = \arg\min_\beta \left\{ \|y - X\beta\|^2 + \lambda \|\beta\|_2^2 \right\} \]</div>
-<p><strong>Lasso (L1):</strong></p>
-<div class="math notranslate nohighlight">
-\[ \hat{\beta}_{lasso} = \arg\min_\beta \left\{ \|y - X\beta\|^2 + \lambda \|\beta\|_1 \right\} \]</div>
+<p><strong>Objetivo:</strong> aplicar técnicas de <strong>regularización</strong> para mejorar la estabilidad del modelo y manejar la multicolinealidad:</p>
 <ul class="simple">
-<li><p>Ridge reduce la varianza de los coeficientes correlacionados pero <strong>no los lleva a cero</strong>.</p></li>
-<li><p>Lasso puede <strong>anular completamente</strong> algunos coeficientes, realizando selección automática de variables.</p></li>
+<li><p><strong>Ridge</strong> (penalización L2) para estabilizar coeficientes.</p></li>
+<li><p><strong>Lasso</strong> (penalización L1) para realizar selección automática de variables.</p></li>
+<li><p>Comparar con el modelo OLS base en términos de:</p>
+<ul>
+<li><p>Coeficientes.</p></li>
+<li><p>Complejidad del modelo.</p></li>
+<li><p>Desempeño predictivo (<strong>RMSE</strong>, <span class="math notranslate nohighlight">\(R^2\)</span>).</p></li>
 </ul>
-</section>
-<hr class="docutils" />
-<section id="preparacion-de-datos">
-<h2>9.2 Preparación de datos<a class="headerlink" href="#preparacion-de-datos" title="Permalink to this heading">#</a></h2>
-<p>Reutilizamos el conjunto de <strong>variables candidatas</strong> de capítulos previos y estandarizamos las covariables antes de aplicar la penalización.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</li>
+</ul>
+<p>Usaremos las <strong>mismas variables candidatas</strong> que en los capítulos anteriores.</p>
+<section id="datos-variables-seleccionadas-y-particion-entrenamiento-prueba">
+<h2>9.1 Datos, variables seleccionadas y partición entrenamiento/prueba<a class="headerlink" href="#datos-variables-seleccionadas-y-particion-entrenamiento-prueba" title="Permalink to this heading">#</a></h2>
+<p>Partimos del mismo dataset <em>Ames Housing</em> y usamos un criterio automático para seleccionar hasta 12 variables candidatas altamente correlacionadas con <code class="docutils literal notranslate"><span class="pre">SalePrice</span></code> y con baja colinealidad entre sí.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ridge</span><span class="p">,</span> <span class="n">RidgeCV</span><span class="p">,</span> <span class="n">LassoCV</span><span class="p">,</span> <span class="n">LinearRegression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">r2_score</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
 
-<span class="c1"># Cargar dataset (misma estructura)</span>
-<span class="n">CANDIDATE_PATHS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data/ames_housing.csv&quot;</span><span class="p">),</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;AmesHousing.csv&quot;</span><span class="p">)]</span>
+<span class="c1"># Localizar dataset</span>
+<span class="n">CANDIDATE_PATHS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;data/ames_housing.csv&#39;</span><span class="p">),</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;AmesHousing.csv&#39;</span><span class="p">)]</span>
 <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">CANDIDATE_PATHS</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="n">DATA_PATH</span> <span class="o">=</span> <span class="n">p</span>
         <span class="k">break</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;No se encontró data/ames_housing.csv ni AmesHousing.csv&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s1">&#39;No se encontró data/ames_housing.csv ni AmesHousing.csv&#39;</span><span class="p">)</span>
 
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">DATA_PATH</span><span class="p">)</span>
+
 <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;SalePrice&quot;</span>
 
-<span class="c1"># Selección automática de variables candidatas</span>
+<span class="c1"># Numéricas y limpieza de infinitos</span>
 <span class="n">num_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+<span class="c1"># Pool de variables según correlación absoluta con SalePrice</span>
 <span class="n">corr_abs</span> <span class="o">=</span> <span class="n">num_df</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">numeric_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">pool</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">corr_abs</span><span class="o">.</span><span class="n">index</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="n">target</span><span class="p">][:</span><span class="mi">15</span><span class="p">]</span>
 
@@ -406,7 +413,7 @@ Sea el modelo lineal clásico ( y = X\beta + \varepsilon ). Los estimadores se d
         <span class="k">continue</span>
     <span class="n">ok</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">sel</span><span class="p">:</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">num_df</span><span class="p">[[</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">num_df</span><span class="p">[[</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mf">0.85</span><span class="p">:</span>
             <span class="n">ok</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">break</span>
@@ -416,118 +423,687 @@ Sea el modelo lineal clásico ( y = X\beta + \varepsilon ). Los estimadores se d
         <span class="k">break</span>
 
 <span class="n">data</span> <span class="o">=</span> <span class="n">num_df</span><span class="p">[[</span><span class="n">target</span><span class="p">]</span> <span class="o">+</span> <span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 
-<span class="n">sel</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+<span class="n">feature_names</span> <span class="o">=</span> <span class="n">sel</span>
+
+<span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">feature_names</span>
 </pre></div>
 </div>
-</section>
-<hr class="docutils" />
-<section id="implementacion-de-ridgecv-y-lassocv">
-<h2>9.3 Implementación de RidgeCV y LassoCV<a class="headerlink" href="#implementacion-de-ridgecv-y-lassocv" title="Permalink to this heading">#</a></h2>
-<p>Usamos <strong>validación cruzada (10-Fold)</strong> para determinar el valor óptimo de ( \lambda ) (alpha).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">RidgeCV</span><span class="p">,</span> <span class="n">LassoCV</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_pipeline</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">KFold</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">r2_score</span>
-
-<span class="n">kf</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="n">alphas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
-
-<span class="c1"># Ridge con validación cruzada automática</span>
-<span class="n">ridge</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">RidgeCV</span><span class="p">(</span><span class="n">alphas</span><span class="o">=</span><span class="n">alphas</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">kf</span><span class="p">))</span>
-<span class="n">ridge</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="n">ridge_alpha</span> <span class="o">=</span> <span class="n">ridge</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;ridgecv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">alpha_</span>
-
-<span class="c1"># Lasso con validación cruzada automática</span>
-<span class="n">lasso</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LassoCV</span><span class="p">(</span><span class="n">alphas</span><span class="o">=</span><span class="n">alphas</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">kf</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">10000</span><span class="p">))</span>
-<span class="n">lasso</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="n">lasso_alpha</span> <span class="o">=</span> <span class="n">lasso</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;lassocv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">alpha_</span>
-
-<span class="n">ridge_alpha</span><span class="p">,</span> <span class="n">lasso_alpha</span>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>((2748, 12),
+ (2748,),
+ [&#39;Overall Qual&#39;,
+  &#39;Gr Liv Area&#39;,
+  &#39;Garage Cars&#39;,
+  &#39;Total Bsmt SF&#39;,
+  &#39;1st Flr SF&#39;,
+  &#39;Year Built&#39;,
+  &#39;Full Bath&#39;,
+  &#39;Year Remod/Add&#39;,
+  &#39;Garage Yr Blt&#39;,
+  &#39;Mas Vnr Area&#39;,
+  &#39;TotRms AbvGrd&#39;,
+  &#39;Fireplaces&#39;])
 </pre></div>
 </div>
-</section>
-<hr class="docutils" />
-<section id="comparacion-de-coeficientes-y-desempeno">
-<h2>9.4 Comparación de coeficientes y desempeño<a class="headerlink" href="#comparacion-de-coeficientes-y-desempeno" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ajuste OLS clásico para comparar</span>
-<span class="n">X_sm</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">has_constant</span><span class="o">=</span><span class="s2">&quot;add&quot;</span><span class="p">)</span>
-<span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X_sm</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
-
-<span class="n">ridge_preds</span> <span class="o">=</span> <span class="n">ridge</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-<span class="n">lasso_preds</span> <span class="o">=</span> <span class="n">lasso</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-
-<span class="n">ridge_r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ridge_preds</span><span class="p">)</span>
-<span class="n">lasso_r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lasso_preds</span><span class="p">)</span>
-
-<span class="n">coef_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+</div>
+</div>
+<p>Mostramos las variables candidatas y su correlación absoluta con <code class="docutils literal notranslate"><span class="pre">SalePrice</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
     <span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">sel</span><span class="p">,</span>
-    <span class="s2">&quot;OLS_coef&quot;</span><span class="p">:</span> <span class="n">ols</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
-    <span class="s2">&quot;Ridge_coef&quot;</span><span class="p">:</span> <span class="n">ridge</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;ridgecv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span>
-    <span class="s2">&quot;Lasso_coef&quot;</span><span class="p">:</span> <span class="n">lasso</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;lassocv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">coef_</span>
-<span class="p">})</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-
-<span class="n">coef_df</span><span class="p">[</span><span class="s2">&quot;Lasso_Zero?&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coef_df</span><span class="p">[</span><span class="s2">&quot;Lasso_coef&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">)</span>
-<span class="n">coef_df</span>
+    <span class="s2">&quot;abs(corr SalePrice)&quot;</span><span class="p">:</span> <span class="n">corr_abs</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="p">})</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p><strong>Interpretación:</strong> Los coeficientes Ridge son una versión suavizada de OLS.<br />
-En Lasso, varios coeficientes pueden ser exactamente cero, indicando selección automática de variables.</p>
-</div></blockquote>
-</section>
-<hr class="docutils" />
-<section id="evaluacion-de-error-y-metricas">
-<h2>9.5 Evaluación de error y métricas<a class="headerlink" href="#evaluacion-de-error-y-metricas" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ridge_rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ridge_preds</span><span class="p">))</span>
-<span class="n">lasso_rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lasso_preds</span><span class="p">))</span>
-<span class="n">ols_rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ols</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_sm</span><span class="p">)))</span>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
-    <span class="s2">&quot;Modelo&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;OLS&quot;</span><span class="p">,</span> <span class="s2">&quot;Ridge&quot;</span><span class="p">,</span> <span class="s2">&quot;Lasso&quot;</span><span class="p">],</span>
-    <span class="s2">&quot;R²&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">ols</span><span class="o">.</span><span class="n">rsquared</span><span class="p">,</span> <span class="n">ridge_r2</span><span class="p">,</span> <span class="n">lasso_r2</span><span class="p">],</span>
-    <span class="s2">&quot;RMSE&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">ols_rmse</span><span class="p">,</span> <span class="n">ridge_rmse</span><span class="p">,</span> <span class="n">lasso_rmse</span><span class="p">],</span>
-    <span class="s2">&quot;Alpha óptimo&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">ridge_alpha</span><span class="p">,</span> <span class="n">lasso_alpha</span><span class="p">]</span>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Variable</th>
+      <th>abs(corr SalePrice)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Overall Qual</td>
+      <td>0.799</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Gr Liv Area</td>
+      <td>0.707</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Garage Cars</td>
+      <td>0.648</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Total Bsmt SF</td>
+      <td>0.632</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1st Flr SF</td>
+      <td>0.622</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Year Built</td>
+      <td>0.558</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Full Bath</td>
+      <td>0.546</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Year Remod/Add</td>
+      <td>0.533</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Garage Yr Blt</td>
+      <td>0.527</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>Mas Vnr Area</td>
+      <td>0.508</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>TotRms AbvGrd</td>
+      <td>0.495</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>Fireplaces</td>
+      <td>0.475</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Realizamos una partición entrenamiento/prueba (70% / 30%):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">X_test</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>((1923, 12), (825, 12))
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="modelo-ols-base-sin-regularizacion">
+<h2>9.2 Modelo OLS base (sin regularización)<a class="headerlink" href="#modelo-ols-base-sin-regularizacion" title="Permalink to this heading">#</a></h2>
+<p>Ajustamos primero un modelo de regresión lineal clásico sin penalización para usarlo como <strong>referencia</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ols_skl</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">ols_skl</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">y_train_pred_ols</span> <span class="o">=</span> <span class="n">ols_skl</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">y_test_pred_ols</span> <span class="o">=</span> <span class="n">ols_skl</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="n">rmse_train_ols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred_ols</span><span class="p">))</span>
+<span class="n">rmse_test_ols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred_ols</span><span class="p">))</span>
+<span class="n">r2_train_ols</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred_ols</span><span class="p">)</span>
+<span class="n">r2_test_ols</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred_ols</span><span class="p">)</span>
+
+<span class="n">rmse_train_ols</span><span class="p">,</span> <span class="n">rmse_test_ols</span><span class="p">,</span> <span class="n">r2_train_ols</span><span class="p">,</span> <span class="n">r2_test_ols</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(np.float64(36199.70732578323),
+ np.float64(34302.280689270854),
+ 0.7928837406644176,
+ 0.813620818779851)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Guardamos los coeficientes OLS (sin intercepto) para compararlos luego con Ridge y Lasso:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coef_ols</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">ols_skl</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">feature_names</span><span class="p">)</span>
+<span class="n">coef_ols</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Overall Qual      19413.9215
+Gr Liv Area          50.3840
+Garage Cars       14928.9791
+Total Bsmt SF        20.7325
+1st Flr SF           11.2901
+Year Built          151.5614
+Full Bath         -6644.2333
+Year Remod/Add      359.5447
+Garage Yr Blt        70.3224
+Mas Vnr Area         32.6375
+TotRms AbvGrd     -1917.0279
+Fireplaces         8588.6569
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="estandarizacion-de-predictores">
+<h2>9.3 Estandarización de predictores<a class="headerlink" href="#estandarizacion-de-predictores" title="Permalink to this heading">#</a></h2>
+<p>La regularización Ridge y Lasso requiere que las variables estén en <strong>escala comparable</strong>, por lo que estandarizamos:</p>
+<ul class="simple">
+<li><p>Media 0</p></li>
+<li><p>Desviación estándar 1</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+<span class="n">X_train_scaled</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">X_test_scaled</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="n">X_train_scaled</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[-0.8483711 , -1.1762113 , -1.3322942 , -0.3348402 , -0.6442113 ,
+        -0.07847238, -1.02952515,  0.83262602, -0.29724965, -0.40179443,
+        -0.93524871, -0.95938847],
+       [-0.11973438, -0.92537101,  0.22231851, -0.04715108, -0.32322843,
+        -0.24825456,  0.7768406 , -0.96063509, -0.49561551, -0.04149524,
+        -0.93524871, -0.95938847],
+       [-0.8483711 , -1.20560664, -1.3322942 , -1.30803857, -0.68182648,
+        -2.11585844, -1.02952515, -1.68763284, -1.88417655, -0.57648495,
+        -0.93524871, -0.95938847]])
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="ridge-penalizacion-l2">
+<h2>9.4 Ridge (penalización L2)<a class="headerlink" href="#ridge-penalizacion-l2" title="Permalink to this heading">#</a></h2>
+<p>Usamos <code class="docutils literal notranslate"><span class="pre">RidgeCV</span></code> con validación cruzada y una malla de valores de <span class="math notranslate nohighlight">\(\alpha\)</span> en escala logarítmica.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">alphas_ridge</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+
+<span class="n">ridge_cv</span> <span class="o">=</span> <span class="n">RidgeCV</span><span class="p">(</span><span class="n">alphas</span><span class="o">=</span><span class="n">alphas_ridge</span><span class="p">)</span>
+<span class="n">ridge_cv</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_scaled</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">alpha_ridge_best</span> <span class="o">=</span> <span class="n">ridge_cv</span><span class="o">.</span><span class="n">alpha_</span>
+<span class="n">alpha_ridge_best</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(92.36708571873865)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Evaluamos desempeño de Ridge y comparamos con OLS:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_train_pred_ridge</span> <span class="o">=</span> <span class="n">ridge_cv</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train_scaled</span><span class="p">)</span>
+<span class="n">y_test_pred_ridge</span> <span class="o">=</span> <span class="n">ridge_cv</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_scaled</span><span class="p">)</span>
+
+<span class="n">rmse_train_ridge</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred_ridge</span><span class="p">))</span>
+<span class="n">rmse_test_ridge</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred_ridge</span><span class="p">))</span>
+<span class="n">r2_train_ridge</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred_ridge</span><span class="p">)</span>
+<span class="n">r2_test_ridge</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred_ridge</span><span class="p">)</span>
+
+<span class="n">rmse_train_ridge</span><span class="p">,</span> <span class="n">rmse_test_ridge</span><span class="p">,</span> <span class="n">r2_train_ridge</span><span class="p">,</span> <span class="n">r2_test_ridge</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(np.float64(36281.2553095157),
+ np.float64(34276.402249856335),
+ 0.7919495376688287,
+ 0.8139019302910604)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Coeficientes Ridge (en la escala estandarizada de los predictores):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coef_ridge</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">ridge_cv</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">feature_names</span><span class="p">)</span>
+<span class="n">coef_ridge</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Overall Qual      25074.4748
+Gr Liv Area       21610.0694
+Garage Cars        9355.1281
+Total Bsmt SF      9103.1686
+1st Flr SF         5437.8894
+Year Built         4209.6329
+Full Bath         -2093.6113
+Year Remod/Add     7513.6876
+Garage Yr Blt      2374.3883
+Mas Vnr Area       6409.1573
+TotRms AbvGrd      -498.3574
+Fireplaces         6206.2802
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="lasso-penalizacion-l1">
+<h2>9.5 Lasso (penalización L1)<a class="headerlink" href="#lasso-penalizacion-l1" title="Permalink to this heading">#</a></h2>
+<p>Lasso agrega una penalización L1 que puede llevar algunos coeficientes exactamente a 0, realizando <strong>selección automática de variables</strong>.
+Usamos <code class="docutils literal notranslate"><span class="pre">LassoCV</span></code> con validación cruzada y una grilla de alphas.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">alphas_lasso</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+
+<span class="n">lasso_cv</span> <span class="o">=</span> <span class="n">LassoCV</span><span class="p">(</span><span class="n">alphas</span><span class="o">=</span><span class="n">alphas_lasso</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+<span class="n">lasso_cv</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_scaled</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">alpha_lasso_best</span> <span class="o">=</span> <span class="n">lasso_cv</span><span class="o">.</span><span class="n">alpha_</span>
+<span class="n">alpha_lasso_best</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(10.0)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Evaluamos desempeño de Lasso y lo comparamos con OLS y Ridge:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_train_pred_lasso</span> <span class="o">=</span> <span class="n">lasso_cv</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train_scaled</span><span class="p">)</span>
+<span class="n">y_test_pred_lasso</span> <span class="o">=</span> <span class="n">lasso_cv</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_scaled</span><span class="p">)</span>
+
+<span class="n">rmse_train_lasso</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred_lasso</span><span class="p">))</span>
+<span class="n">rmse_test_lasso</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred_lasso</span><span class="p">))</span>
+<span class="n">r2_train_lasso</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred_lasso</span><span class="p">)</span>
+<span class="n">r2_test_lasso</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred_lasso</span><span class="p">)</span>
+
+<span class="n">rmse_train_lasso</span><span class="p">,</span> <span class="n">rmse_test_lasso</span><span class="p">,</span> <span class="n">r2_train_lasso</span><span class="p">,</span> <span class="n">r2_test_lasso</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(np.float64(36199.73214825413),
+ np.float64(34301.49138375624),
+ 0.7928834566212878,
+ 0.8136293959601474)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Coeficientes Lasso (escala estandarizada):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coef_lasso</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">lasso_cv</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">feature_names</span><span class="p">)</span>
+<span class="n">coef_lasso</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Overall Qual      26649.1629
+Gr Liv Area       25643.7181
+Garage Cars        9593.8912
+Total Bsmt SF      9226.5711
+1st Flr SF         4503.5636
+Year Built         4455.7497
+Full Bath         -3638.4054
+Year Remod/Add     7410.5281
+Garage Yr Blt      1765.9696
+Mas Vnr Area       5977.2546
+TotRms AbvGrd     -2936.7641
+Fireplaces         5566.0129
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="comparacion-de-coeficientes-ols-vs-ridge-vs-lasso">
+<h2>9.6 Comparación de coeficientes: OLS vs Ridge vs Lasso<a class="headerlink" href="#comparacion-de-coeficientes-ols-vs-ridge-vs-lasso" title="Permalink to this heading">#</a></h2>
+<p>Comparamos los coeficientes estimados por cada método para las mismas variables.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coef_comp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;OLS&quot;</span><span class="p">:</span> <span class="n">coef_ols</span><span class="p">,</span>
+    <span class="s2">&quot;Ridge&quot;</span><span class="p">:</span> <span class="n">coef_ridge</span><span class="p">,</span>
+    <span class="s2">&quot;Lasso&quot;</span><span class="p">:</span> <span class="n">coef_lasso</span><span class="p">,</span>
 <span class="p">})</span>
+
+<span class="n">coef_comp</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p><strong>Conclusión:</strong> los modelos penalizados pueden mejorar el error cuadrático medio (RMSE) y reducir la varianza de los coeficientes, especialmente en presencia de multicolinealidad.</p>
-</div></blockquote>
-</section>
-<hr class="docutils" />
-<section id="visualizacion-de-shrinkage">
-<h2>9.6 Visualización de shrinkage<a class="headerlink" href="#visualizacion-de-shrinkage" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">coef_df</span><span class="p">[</span><span class="s2">&quot;OLS_coef&quot;</span><span class="p">],</span> <span class="n">coef_df</span><span class="p">[</span><span class="s2">&quot;Ridge_coef&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Ridge&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">coef_df</span><span class="p">[</span><span class="s2">&quot;OLS_coef&quot;</span><span class="p">],</span> <span class="n">coef_df</span><span class="p">[</span><span class="s2">&quot;Lasso_coef&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Lasso&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;OLS Coefficients&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Regularized Coefficients&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Comparación de shrinkage: Ridge y Lasso&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>OLS</th>
+      <th>Ridge</th>
+      <th>Lasso</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Overall Qual</th>
+      <td>19413.9215</td>
+      <td>25074.4748</td>
+      <td>26649.1629</td>
+    </tr>
+    <tr>
+      <th>Gr Liv Area</th>
+      <td>50.3840</td>
+      <td>21610.0694</td>
+      <td>25643.7181</td>
+    </tr>
+    <tr>
+      <th>Garage Cars</th>
+      <td>14928.9791</td>
+      <td>9355.1281</td>
+      <td>9593.8912</td>
+    </tr>
+    <tr>
+      <th>Total Bsmt SF</th>
+      <td>20.7325</td>
+      <td>9103.1686</td>
+      <td>9226.5711</td>
+    </tr>
+    <tr>
+      <th>1st Flr SF</th>
+      <td>11.2901</td>
+      <td>5437.8894</td>
+      <td>4503.5636</td>
+    </tr>
+    <tr>
+      <th>Year Built</th>
+      <td>151.5614</td>
+      <td>4209.6329</td>
+      <td>4455.7497</td>
+    </tr>
+    <tr>
+      <th>Full Bath</th>
+      <td>-6644.2333</td>
+      <td>-2093.6113</td>
+      <td>-3638.4054</td>
+    </tr>
+    <tr>
+      <th>Year Remod/Add</th>
+      <td>359.5447</td>
+      <td>7513.6876</td>
+      <td>7410.5281</td>
+    </tr>
+    <tr>
+      <th>Garage Yr Blt</th>
+      <td>70.3224</td>
+      <td>2374.3883</td>
+      <td>1765.9696</td>
+    </tr>
+    <tr>
+      <th>Mas Vnr Area</th>
+      <td>32.6375</td>
+      <td>6409.1573</td>
+      <td>5977.2546</td>
+    </tr>
+    <tr>
+      <th>TotRms AbvGrd</th>
+      <td>-1917.0279</td>
+      <td>-498.3574</td>
+      <td>-2936.7641</td>
+    </tr>
+    <tr>
+      <th>Fireplaces</th>
+      <td>8588.6569</td>
+      <td>6206.2802</td>
+      <td>5566.0129</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Gráfico de barras comparando coeficientes:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ax</span> <span class="o">=</span> <span class="n">coef_comp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Coeficiente&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Comparación de coeficientes: OLS vs Ridge vs Lasso&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p>El gráfico ilustra cómo Ridge reduce los coeficientes sin anularlos y cómo Lasso los <strong>contrae hacia cero</strong> (algunos completamente).</p>
-</div></blockquote>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/880b104dce13479c94b26741edefac61c260279dd2c7d4f7b3fe62a97d52a9dd.png" src="_images/880b104dce13479c94b26741edefac61c260279dd2c7d4f7b3fe62a97d52a9dd.png" />
+</div>
+</div>
 </section>
-<hr class="docutils" />
+<section id="comparacion-de-desempeno-predictivo">
+<h2>9.7 Comparación de desempeño predictivo<a class="headerlink" href="#comparacion-de-desempeno-predictivo" title="Permalink to this heading">#</a></h2>
+<p>Construimos una tabla resumen con RMSE y <span class="math notranslate nohighlight">\(R^2\)</span> en entrenamiento y prueba para cada método.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">metrics_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;RMSE_train&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">rmse_train_ols</span><span class="p">,</span> <span class="n">rmse_train_ridge</span><span class="p">,</span> <span class="n">rmse_train_lasso</span><span class="p">],</span>
+    <span class="s2">&quot;RMSE_test&quot;</span><span class="p">:</span>  <span class="p">[</span><span class="n">rmse_test_ols</span><span class="p">,</span>  <span class="n">rmse_test_ridge</span><span class="p">,</span>  <span class="n">rmse_test_lasso</span><span class="p">],</span>
+    <span class="s2">&quot;R2_train&quot;</span><span class="p">:</span>   <span class="p">[</span><span class="n">r2_train_ols</span><span class="p">,</span>   <span class="n">r2_train_ridge</span><span class="p">,</span>   <span class="n">r2_train_lasso</span><span class="p">],</span>
+    <span class="s2">&quot;R2_test&quot;</span><span class="p">:</span>    <span class="p">[</span><span class="n">r2_test_ols</span><span class="p">,</span>    <span class="n">r2_test_ridge</span><span class="p">,</span>    <span class="n">r2_test_lasso</span><span class="p">],</span>
+<span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;OLS&quot;</span><span class="p">,</span> <span class="s2">&quot;Ridge&quot;</span><span class="p">,</span> <span class="s2">&quot;Lasso&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="n">metrics_table</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>RMSE_train</th>
+      <th>RMSE_test</th>
+      <th>R2_train</th>
+      <th>R2_test</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>OLS</th>
+      <td>36199.7073</td>
+      <td>34302.2807</td>
+      <td>0.7929</td>
+      <td>0.8136</td>
+    </tr>
+    <tr>
+      <th>Ridge</th>
+      <td>36281.2553</td>
+      <td>34276.4022</td>
+      <td>0.7919</td>
+      <td>0.8139</td>
+    </tr>
+    <tr>
+      <th>Lasso</th>
+      <td>36199.7321</td>
+      <td>34301.4914</td>
+      <td>0.7929</td>
+      <td>0.8136</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Gráfico comparando RMSE en el conjunto de prueba:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ax</span> <span class="o">=</span> <span class="n">metrics_table</span><span class="p">[</span><span class="s2">&quot;RMSE_test&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;RMSE en test&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Comparación de RMSE en test: OLS vs Ridge vs Lasso&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/b2b965326ba8a6f46f9b02aff1ee8a5fddf9a04f84ef327b52eec41083ce0e70.png" src="_images/b2b965326ba8a6f46f9b02aff1ee8a5fddf9a04f84ef327b52eec41083ce0e70.png" />
+</div>
+</div>
+<p>Y también comparamos el <span class="math notranslate nohighlight">\(R^2\)</span> en prueba:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ax</span> <span class="o">=</span> <span class="n">metrics_table</span><span class="p">[</span><span class="s2">&quot;R2_test&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;R^2 en test&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">setTitle</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Comparación de R^2 en test: OLS vs Ridge vs Lasso&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/a673821bc00faf31b1972f8bbd41b63283b51d2b472cf0f9cb60bde8f491dad5.png" src="_images/a673821bc00faf31b1972f8bbd41b63283b51d2b472cf0f9cb60bde8f491dad5.png" />
+</div>
+</div>
+</section>
+<section id="trayectorias-de-coeficientes-paths-para-ridge-y-lasso">
+<h2>9.8 Trayectorias de coeficientes (paths) para Ridge y Lasso<a class="headerlink" href="#trayectorias-de-coeficientes-paths-para-ridge-y-lasso" title="Permalink to this heading">#</a></h2>
+<p>Para visualizar cómo actúa la penalización, observamos la evolución de los coeficientes al variar <span class="math notranslate nohighlight">\(\alpha\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Trayectoria de coeficientes para Ridge</span>
+<span class="n">alphas_ridge_path</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+<span class="n">coefs_ridge_path</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">alphas_ridge_path</span><span class="p">:</span>
+    <span class="n">ridge</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">ridge</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_scaled</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+    <span class="n">coefs_ridge_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ridge</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span>
+
+<span class="n">coefs_ridge_path</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coefs_ridge_path</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">coefs_ridge_path</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">alphas_ridge_path</span><span class="p">,</span> <span class="n">coefs_ridge_path</span><span class="p">[:,</span> <span class="n">j</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;alpha (Ridge)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Coeficientes&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Trayectorias de coeficientes Ridge&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/62d510c033c55b1b15b510c253a6cd16fe5033ed4bbb2708bbe16c8fc7c3e643.png" src="_images/62d510c033c55b1b15b510c253a6cd16fe5033ed4bbb2708bbe16c8fc7c3e643.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Trayectoria de coeficientes para Lasso</span>
+<span class="n">alphas_lasso_path</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+<span class="n">coefs_lasso_path</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">alphas_lasso_path</span><span class="p">:</span>
+    <span class="n">lasso</span> <span class="o">=</span> <span class="n">LassoCV</span><span class="p">(</span><span class="n">alphas</span><span class="o">=</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+    <span class="n">lasso</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_scaled</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+    <span class="n">coefs_lasso_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lasso</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span>
+
+<span class="n">coefs_lasso_path</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coefs_lasso_path</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">coefs_lasso_path</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">alphas_lasso_path</span><span class="p">,</span> <span class="n">coefs_lasso_path</span><span class="p">[:,</span> <span class="n">j</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;alpha (Lasso)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Coeficientes&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Trayectorias de coeficientes Lasso&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/8d2e91c3143bc54311d597147da1a520f1a5cbb1bdabb30f81ceaf1819ab3c6c.png" src="_images/8d2e91c3143bc54311d597147da1a520f1a5cbb1bdabb30f81ceaf1819ab3c6c.png" />
+</div>
+</div>
+</section>
 <section id="key-takeaways">
-<h2>9.7 Key takeaways<a class="headerlink" href="#key-takeaways" title="Permalink to this heading">#</a></h2>
+<h2>9.9 Key takeaways<a class="headerlink" href="#key-takeaways" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>Ridge (L2)</strong> mejora la estabilidad del modelo ante predictores correlacionados.</p></li>
-<li><p><strong>Lasso (L1)</strong> realiza selección automática de variables, mejorando la interpretabilidad.</p></li>
-<li><p>Ambos reducen la varianza de los estimadores y mitigan el sobreajuste.</p></li>
-<li><p>En aplicaciones reales, puede combinarse ambos enfoques en un modelo <strong>ElasticNet</strong>.</p></li>
+<li><p><strong>Ridge</strong> reduce la varianza de los coeficientes, especialmente en presencia de multicolinealidad, a costa de introducir sesgo controlado.</p></li>
+<li><p><strong>Lasso</strong> puede anular coeficientes (llevarlos exactamente a 0), realizando selección automática de variables.</p></li>
+<li><p>La comparación de <strong>RMSE</strong> y <strong><span class="math notranslate nohighlight">\(R^2\)</span></strong> en el conjunto de prueba permite evaluar si la regularización mejora la capacidad de generalización frente al OLS clásico.</p></li>
+<li><p>Las <strong>trayectorias de coeficientes</strong> ilustran cómo la penalización hace que los coeficientes se contraigan (Ridge) y se anulen (Lasso) al aumentar <span class="math notranslate nohighlight">\(\alpha\)</span>.</p></li>
 </ul>
+<p>En el siguiente capítulo se combinarán L1 y L2 mediante <strong>ElasticNet</strong>, y se construirá una comparación final de modelos.</p>
 </section>
 </section>
 
@@ -598,13 +1174,15 @@ En Lasso, varios coeficientes pueden ser exactamente cero, indicando selección 
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduccion-teorica">9.1 Introducción teórica</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preparacion-de-datos">9.2 Preparación de datos</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementacion-de-ridgecv-y-lassocv">9.3 Implementación de RidgeCV y LassoCV</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparacion-de-coeficientes-y-desempeno">9.4 Comparación de coeficientes y desempeño</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluacion-de-error-y-metricas">9.5 Evaluación de error y métricas</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizacion-de-shrinkage">9.6 Visualización de shrinkage</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">9.7 Key takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos-variables-seleccionadas-y-particion-entrenamiento-prueba">9.1 Datos, variables seleccionadas y partición entrenamiento/prueba</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-ols-base-sin-regularizacion">9.2 Modelo OLS base (sin regularización)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estandarizacion-de-predictores">9.3 Estandarización de predictores</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ridge-penalizacion-l2">9.4 Ridge (penalización L2)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lasso-penalizacion-l1">9.5 Lasso (penalización L1)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparacion-de-coeficientes-ols-vs-ridge-vs-lasso">9.6 Comparación de coeficientes: OLS vs Ridge vs Lasso</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparacion-de-desempeno-predictivo">9.7 Comparación de desempeño predictivo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trayectorias-de-coeficientes-paths-para-ridge-y-lasso">9.8 Trayectorias de coeficientes (paths) para Ridge y Lasso</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">9.9 Key takeaways</a></li>
 </ul>
   </nav></div>
 

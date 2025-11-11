@@ -242,7 +242,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="_sources/cap10-elasticnet.md" target="_blank"
+      <li><a href="_sources/cap10-elasticnet.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -252,7 +252,7 @@ const thebe_selector_output = ".output, .cell_output"
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.md</span>
+<span class="btn__text-container">.ipynb</span>
 </a>
 </li>
       
@@ -334,14 +334,16 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduccion-teorica">10.1 Introducción teórica</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos-y-construccion-de-variables-misma-logica-que-caps-49">10.2 Datos y construcción de variables (misma lógica que caps. 4–9)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelos-ridge-lasso-y-elasticnet-con-validacion-cruzada">10.3 Modelos Ridge, Lasso y ElasticNet con validación cruzada</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparacion-de-coeficientes">10.4 Comparación de coeficientes</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluacion-comparativa-r2-y-rmse-in-sample">10.5 Evaluación comparativa (R² y RMSE in-sample)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#graficas-de-comparacion">10.6 Gráficas de comparación</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#seleccion-final-y-conclusiones">10.7 Selección final y conclusiones</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">10.8 Key takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos-variables-seleccionadas-y-particion-entrenamiento-prueba">10.1 Datos, variables seleccionadas y partición entrenamiento/prueba</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-ols-base-referencia">10.2 Modelo OLS base (referencia)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estandarizacion-de-predictores">10.3 Estandarización de predictores</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recordatorio-ridge-y-lasso">10.4 Recordatorio: Ridge y Lasso</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elasticnet-l1-l2">10.5 ElasticNet (L1 + L2)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparacion-de-coeficientes-entre-todos-los-modelos">10.6 Comparación de coeficientes entre todos los modelos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparacion-de-desempeno-predictivo">10.7 Comparación de desempeño predictivo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complejidad-efectiva-numero-de-coeficientes-distintos-de-cero">10.8 Complejidad efectiva: número de coeficientes distintos de cero</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#observado-vs-predicho-para-el-modelo-elegido">10.9 Observado vs predicho para el modelo elegido</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">10.10 Key takeaways</a></li>
 </ul>
             </nav>
         </div>
@@ -355,42 +357,50 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="capitulo-10-elasticnet-y-comparacion-final-de-modelos">
 <h1>Capítulo 10 · ElasticNet y comparación final de modelos<a class="headerlink" href="#capitulo-10-elasticnet-y-comparacion-final-de-modelos" title="Permalink to this heading">#</a></h1>
-<blockquote>
-<div><p><strong>Objetivo:</strong> aplicar <strong>ElasticNet</strong> y comparar su desempeño con OLS, Ridge y Lasso, usando las mismas <strong>variables candidatas</strong> de capítulos previos.</p>
-</div></blockquote>
-<hr class="docutils" />
-<section id="introduccion-teorica">
-<h2>10.1 Introducción teórica<a class="headerlink" href="#introduccion-teorica" title="Permalink to this heading">#</a></h2>
-<p>ElasticNet combina las penalizaciones <strong>L1 (Lasso)</strong> y <strong>L2 (Ridge)</strong> en un único problema de optimización:</p>
-<div class="math notranslate nohighlight">
-\[ \hat{\beta}_{EN} = \arg\min_\beta \Big\{ \|y - X\beta\|^2 + \lambda \big[ \alpha \|\beta\|_1 + (1-\alpha)\|\beta\|_2^2 \big] \Big\} \]</div>
+<p><strong>Objetivo:</strong> combinar las penalizaciones L1 (Lasso) y L2 (Ridge) mediante <strong>ElasticNet</strong> y construir una <strong>comparación final</strong> entre:</p>
 <ul class="simple">
-<li><p>( \alpha \in [0,1] ): pondera entre Lasso (1) y Ridge (0).</p></li>
-<li><p>( \lambda &gt; 0 ): controla la intensidad de la regularización.</p></li>
+<li><p>Modelo lineal clásico (<strong>OLS</strong>)</p></li>
+<li><p><strong>Ridge</strong> (L2)</p></li>
+<li><p><strong>Lasso</strong> (L1)</p></li>
+<li><p><strong>ElasticNet</strong> (L1 + L2)</p></li>
 </ul>
-</section>
-<hr class="docutils" />
-<section id="datos-y-construccion-de-variables-misma-logica-que-caps-49">
-<h2>10.2 Datos y construcción de variables (misma lógica que caps. 4–9)<a class="headerlink" href="#datos-y-construccion-de-variables-misma-logica-que-caps-49" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<p>Usaremos las <strong>mismas variables candidatas</strong> que en los capítulos anteriores y el mismo esquema de partición entrenamiento/prueba.</p>
+<section id="datos-variables-seleccionadas-y-particion-entrenamiento-prueba">
+<h2>10.1 Datos, variables seleccionadas y partición entrenamiento/prueba<a class="headerlink" href="#datos-variables-seleccionadas-y-particion-entrenamiento-prueba" title="Permalink to this heading">#</a></h2>
+<p>Partimos del dataset <em>Ames Housing</em> y aplicamos el mismo criterio automático:</p>
+<ul class="simple">
+<li><p>Alta correlación absoluta con <code class="docutils literal notranslate"><span class="pre">SalePrice</span></code>.</p></li>
+<li><p>Colinealidad moderada entre predictores (|ρ| ≤ 0.85).</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
-<span class="c1"># Localiza el CSV</span>
-<span class="n">CANDIDATE_PATHS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data/ames_housing.csv&quot;</span><span class="p">),</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;AmesHousing.csv&quot;</span><span class="p">)]</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span><span class="p">,</span> <span class="n">RidgeCV</span><span class="p">,</span> <span class="n">LassoCV</span><span class="p">,</span> <span class="n">ElasticNetCV</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">r2_score</span>
+
+<span class="c1"># Localizar dataset</span>
+<span class="n">CANDIDATE_PATHS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;data/ames_housing.csv&#39;</span><span class="p">),</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;AmesHousing.csv&#39;</span><span class="p">)]</span>
 <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">CANDIDATE_PATHS</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="n">DATA_PATH</span> <span class="o">=</span> <span class="n">p</span>
         <span class="k">break</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;No se encontró data/ames_housing.csv ni AmesHousing.csv&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s1">&#39;No se encontró data/ames_housing.csv ni AmesHousing.csv&#39;</span><span class="p">)</span>
 
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">DATA_PATH</span><span class="p">)</span>
+
 <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;SalePrice&quot;</span>
 
-<span class="c1"># Selección de variables candidatas con control de colinealidad</span>
+<span class="c1"># Numéricas y limpieza de infinitos</span>
 <span class="n">num_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+<span class="c1"># Pool de variables según correlación absoluta con SalePrice</span>
 <span class="n">corr_abs</span> <span class="o">=</span> <span class="n">num_df</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">numeric_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">pool</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">corr_abs</span><span class="o">.</span><span class="n">index</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="n">target</span><span class="p">][:</span><span class="mi">15</span><span class="p">]</span>
 
@@ -401,7 +411,7 @@ document.write(`
         <span class="k">continue</span>
     <span class="n">ok</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">sel</span><span class="p">:</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">num_df</span><span class="p">[[</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">num_df</span><span class="p">[[</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mf">0.85</span><span class="p">:</span>
             <span class="n">ok</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">break</span>
@@ -411,148 +421,789 @@ document.write(`
         <span class="k">break</span>
 
 <span class="n">data</span> <span class="o">=</span> <span class="n">num_df</span><span class="p">[[</span><span class="n">target</span><span class="p">]</span> <span class="o">+</span> <span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 
-<span class="c1"># Ajuste OLS para comparación</span>
-<span class="n">X_sm</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">has_constant</span><span class="o">=</span><span class="s2">&quot;add&quot;</span><span class="p">)</span>
-<span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X_sm</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">feature_names</span> <span class="o">=</span> <span class="n">sel</span>
 
-<span class="n">sel</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">ols</span><span class="o">.</span><span class="n">rsquared_adj</span>
+<span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">feature_names</span>
 </pre></div>
 </div>
-</section>
-<hr class="docutils" />
-<section id="modelos-ridge-lasso-y-elasticnet-con-validacion-cruzada">
-<h2>10.3 Modelos Ridge, Lasso y ElasticNet con validación cruzada<a class="headerlink" href="#modelos-ridge-lasso-y-elasticnet-con-validacion-cruzada" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">RidgeCV</span><span class="p">,</span> <span class="n">LassoCV</span><span class="p">,</span> <span class="n">ElasticNetCV</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_pipeline</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">KFold</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">r2_score</span>
-
-<span class="n">kf</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="n">alphas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
-<span class="n">l1_ratios</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
-
-<span class="c1"># Ridge</span>
-<span class="n">ridge</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">RidgeCV</span><span class="p">(</span><span class="n">alphas</span><span class="o">=</span><span class="n">alphas</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">kf</span><span class="p">))</span>
-<span class="n">ridge</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="n">ridge_alpha</span> <span class="o">=</span> <span class="n">ridge</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;ridgecv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">alpha_</span>
-
-<span class="c1"># Lasso</span>
-<span class="n">lasso</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LassoCV</span><span class="p">(</span><span class="n">alphas</span><span class="o">=</span><span class="n">alphas</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">kf</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">10000</span><span class="p">))</span>
-<span class="n">lasso</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="n">lasso_alpha</span> <span class="o">=</span> <span class="n">lasso</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;lassocv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">alpha_</span>
-
-<span class="c1"># ElasticNet</span>
-<span class="n">elastic</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span>
-    <span class="n">StandardScaler</span><span class="p">(),</span>
-    <span class="n">ElasticNetCV</span><span class="p">(</span><span class="n">alphas</span><span class="o">=</span><span class="n">alphas</span><span class="p">,</span> <span class="n">l1_ratio</span><span class="o">=</span><span class="n">l1_ratios</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">kf</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">elastic</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="n">elastic_alpha</span> <span class="o">=</span> <span class="n">elastic</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;elasticnetcv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">alpha_</span>
-<span class="n">elastic_l1ratio</span> <span class="o">=</span> <span class="n">elastic</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;elasticnetcv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">l1_ratio_</span>
-
-<span class="n">ridge_alpha</span><span class="p">,</span> <span class="n">lasso_alpha</span><span class="p">,</span> <span class="p">(</span><span class="n">elastic_alpha</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">elastic_l1ratio</span><span class="p">))</span>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>((2748, 12),
+ (2748,),
+ [&#39;Overall Qual&#39;,
+  &#39;Gr Liv Area&#39;,
+  &#39;Garage Cars&#39;,
+  &#39;Total Bsmt SF&#39;,
+  &#39;1st Flr SF&#39;,
+  &#39;Year Built&#39;,
+  &#39;Full Bath&#39;,
+  &#39;Year Remod/Add&#39;,
+  &#39;Garage Yr Blt&#39;,
+  &#39;Mas Vnr Area&#39;,
+  &#39;TotRms AbvGrd&#39;,
+  &#39;Fireplaces&#39;])
 </pre></div>
 </div>
-</section>
-<hr class="docutils" />
-<section id="comparacion-de-coeficientes">
-<h2>10.4 Comparación de coeficientes<a class="headerlink" href="#comparacion-de-coeficientes" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">elastic_coefs</span> <span class="o">=</span> <span class="n">elastic</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;elasticnetcv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">coef_</span>
-
-<span class="n">coef_comp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+</div>
+</div>
+<p>Mostramos las variables candidatas ordenadas por correlación absoluta con <code class="docutils literal notranslate"><span class="pre">SalePrice</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
     <span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">sel</span><span class="p">,</span>
-    <span class="s2">&quot;OLS&quot;</span><span class="p">:</span> <span class="n">ols</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
-    <span class="s2">&quot;Ridge&quot;</span><span class="p">:</span> <span class="n">ridge</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;ridgecv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span>
-    <span class="s2">&quot;Lasso&quot;</span><span class="p">:</span> <span class="n">lasso</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;lassocv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">coef_</span>
-<span class="p">})</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-
-<span class="n">coef_comp</span><span class="p">[</span><span class="s2">&quot;ElasticNet&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">elastic_coefs</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-<span class="n">coef_comp</span><span class="p">[</span><span class="s2">&quot;ElasticNet_Zero?&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coef_comp</span><span class="p">[</span><span class="s2">&quot;ElasticNet&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">)</span>
-<span class="n">coef_comp</span>
+    <span class="s2">&quot;abs(corr SalePrice)&quot;</span><span class="p">:</span> <span class="n">corr_abs</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="p">})</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p><strong>Lectura:</strong> ElasticNet combina la estabilidad de Ridge y la parsimonia de Lasso; algunos coeficientes pueden quedar exactamente en cero.</p>
-</div></blockquote>
-</section>
-<hr class="docutils" />
-<section id="evaluacion-comparativa-r2-y-rmse-in-sample">
-<h2>10.5 Evaluación comparativa (R² y RMSE in-sample)<a class="headerlink" href="#evaluacion-comparativa-r2-y-rmse-in-sample" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ridge_preds</span> <span class="o">=</span> <span class="n">ridge</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-<span class="n">lasso_preds</span> <span class="o">=</span> <span class="n">lasso</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-<span class="n">elastic_preds</span> <span class="o">=</span> <span class="n">elastic</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">r2_score</span>
-<span class="n">ridge_r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ridge_preds</span><span class="p">)</span>
-<span class="n">lasso_r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lasso_preds</span><span class="p">)</span>
-<span class="n">elastic_r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">elastic_preds</span><span class="p">)</span>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
 
-<span class="n">ridge_rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ridge_preds</span><span class="p">))</span>
-<span class="n">lasso_rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lasso_preds</span><span class="p">))</span>
-<span class="n">elastic_rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">elastic_preds</span><span class="p">))</span>
-<span class="n">ols_rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ols</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_sm</span><span class="p">)))</span>
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Variable</th>
+      <th>abs(corr SalePrice)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Overall Qual</td>
+      <td>0.799</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Gr Liv Area</td>
+      <td>0.707</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Garage Cars</td>
+      <td>0.648</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Total Bsmt SF</td>
+      <td>0.632</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1st Flr SF</td>
+      <td>0.622</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Year Built</td>
+      <td>0.558</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Full Bath</td>
+      <td>0.546</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Year Remod/Add</td>
+      <td>0.533</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Garage Yr Blt</td>
+      <td>0.527</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>Mas Vnr Area</td>
+      <td>0.508</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>TotRms AbvGrd</td>
+      <td>0.495</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>Fireplaces</td>
+      <td>0.475</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Usamos la misma partición entrenamiento/prueba (70% / 30%):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
 
-<span class="n">comparison</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
-    <span class="s2">&quot;Modelo&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;OLS&quot;</span><span class="p">,</span> <span class="s2">&quot;Ridge&quot;</span><span class="p">,</span> <span class="s2">&quot;Lasso&quot;</span><span class="p">,</span> <span class="s2">&quot;ElasticNet&quot;</span><span class="p">],</span>
-    <span class="s2">&quot;R²&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">ols</span><span class="o">.</span><span class="n">rsquared</span><span class="p">,</span> <span class="n">ridge_r2</span><span class="p">,</span> <span class="n">lasso_r2</span><span class="p">,</span> <span class="n">elastic_r2</span><span class="p">],</span>
-    <span class="s2">&quot;RMSE&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">ols_rmse</span><span class="p">,</span> <span class="n">ridge_rmse</span><span class="p">,</span> <span class="n">lasso_rmse</span><span class="p">,</span> <span class="n">elastic_rmse</span><span class="p">]</span>
-<span class="p">})</span>
-<span class="n">comparison</span>
+<span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">X_test</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 </div>
-</section>
-<hr class="docutils" />
-<section id="graficas-de-comparacion">
-<h2>10.6 Gráficas de comparación<a class="headerlink" href="#graficas-de-comparacion" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-
-<span class="c1"># RMSE</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">comparison</span><span class="p">[</span><span class="s2">&quot;Modelo&quot;</span><span class="p">],</span> <span class="n">comparison</span><span class="p">[</span><span class="s2">&quot;RMSE&quot;</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;RMSE&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Comparación de error (RMSE)&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-<span class="c1"># R²</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">comparison</span><span class="p">[</span><span class="s2">&quot;Modelo&quot;</span><span class="p">],</span> <span class="n">comparison</span><span class="p">[</span><span class="s2">&quot;R²&quot;</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;R²&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Comparación de desempeño (R²)&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>((1923, 12), (825, 12))
 </pre></div>
 </div>
-<blockquote>
-<div><p><em>Nota:</em> para una comparación más realista, usar <strong>validación cruzada</strong> fuera de muestra (ver Cap. 8).</p>
-</div></blockquote>
+</div>
+</div>
 </section>
-<hr class="docutils" />
-<section id="seleccion-final-y-conclusiones">
-<h2>10.7 Selección final y conclusiones<a class="headerlink" href="#seleccion-final-y-conclusiones" title="Permalink to this heading">#</a></h2>
+<section id="modelo-ols-base-referencia">
+<h2>10.2 Modelo OLS base (referencia)<a class="headerlink" href="#modelo-ols-base-referencia" title="Permalink to this heading">#</a></h2>
+<p>Ajustamos un modelo de regresión lineal clásico sin regularización (OLS) para usarlo como base de comparación.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ols</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">ols</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">y_train_pred_ols</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">y_test_pred_ols</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="n">rmse_train_ols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred_ols</span><span class="p">))</span>
+<span class="n">rmse_test_ols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred_ols</span><span class="p">))</span>
+<span class="n">r2_train_ols</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred_ols</span><span class="p">)</span>
+<span class="n">r2_test_ols</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred_ols</span><span class="p">)</span>
+
+<span class="n">coef_ols</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">ols</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">feature_names</span><span class="p">)</span>
+
+<span class="n">rmse_train_ols</span><span class="p">,</span> <span class="n">rmse_test_ols</span><span class="p">,</span> <span class="n">r2_train_ols</span><span class="p">,</span> <span class="n">r2_test_ols</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(np.float64(36199.70732578323),
+ np.float64(34302.280689270854),
+ 0.7928837406644176,
+ 0.813620818779851)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Coeficientes OLS para las variables seleccionadas:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coef_ols</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Overall Qual      19413.9215
+Gr Liv Area          50.3840
+Garage Cars       14928.9791
+Total Bsmt SF        20.7325
+1st Flr SF           11.2901
+Year Built          151.5614
+Full Bath         -6644.2333
+Year Remod/Add      359.5447
+Garage Yr Blt        70.3224
+Mas Vnr Area         32.6375
+TotRms AbvGrd     -1917.0279
+Fireplaces         8588.6569
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="estandarizacion-de-predictores">
+<h2>10.3 Estandarización de predictores<a class="headerlink" href="#estandarizacion-de-predictores" title="Permalink to this heading">#</a></h2>
+<p>Para las técnicas de regularización (Ridge, Lasso y ElasticNet) es importante que las variables estén en la misma escala, por lo que estandarizamos:</p>
 <ul class="simple">
-<li><p>Si <strong>ElasticNet</strong> logra <strong>RMSE</strong> bajo y <strong>R²</strong> alto con buena parsimonia, se recomienda como <strong>modelo final</strong>.</p></li>
-<li><p><strong>Ridge</strong> es preferible con muchos predictores correlacionados relevantes.</p></li>
-<li><p><strong>Lasso</strong> útil para identificar un subconjunto mínimo de variables.</p></li>
-<li><p>Parámetros óptimos hallados:</p>
+<li><p>Media 0</p></li>
+<li><p>Desviación estándar 1</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+<span class="n">X_train_scaled</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">X_test_scaled</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="n">X_train_scaled</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[-0.8483711 , -1.1762113 , -1.3322942 , -0.3348402 , -0.6442113 ,
+        -0.07847238, -1.02952515,  0.83262602, -0.29724965, -0.40179443,
+        -0.93524871, -0.95938847],
+       [-0.11973438, -0.92537101,  0.22231851, -0.04715108, -0.32322843,
+        -0.24825456,  0.7768406 , -0.96063509, -0.49561551, -0.04149524,
+        -0.93524871, -0.95938847],
+       [-0.8483711 , -1.20560664, -1.3322942 , -1.30803857, -0.68182648,
+        -2.11585844, -1.02952515, -1.68763284, -1.88417655, -0.57648495,
+        -0.93524871, -0.95938847]])
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="recordatorio-ridge-y-lasso">
+<h2>10.4 Recordatorio: Ridge y Lasso<a class="headerlink" href="#recordatorio-ridge-y-lasso" title="Permalink to this heading">#</a></h2>
+<p>Reajustamos Ridge y Lasso (como en el capítulo anterior) para tener todos los modelos en el mismo notebook y poder compararlos con ElasticNet.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ridge</span>
+<span class="n">alphas_ridge</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+<span class="n">ridge_cv</span> <span class="o">=</span> <span class="n">RidgeCV</span><span class="p">(</span><span class="n">alphas</span><span class="o">=</span><span class="n">alphas_ridge</span><span class="p">)</span>
+<span class="n">ridge_cv</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_scaled</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">alpha_ridge_best</span> <span class="o">=</span> <span class="n">ridge_cv</span><span class="o">.</span><span class="n">alpha_</span>
+
+<span class="n">y_train_pred_ridge</span> <span class="o">=</span> <span class="n">ridge_cv</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train_scaled</span><span class="p">)</span>
+<span class="n">y_test_pred_ridge</span> <span class="o">=</span> <span class="n">ridge_cv</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_scaled</span><span class="p">)</span>
+
+<span class="n">rmse_train_ridge</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred_ridge</span><span class="p">))</span>
+<span class="n">rmse_test_ridge</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred_ridge</span><span class="p">))</span>
+<span class="n">r2_train_ridge</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred_ridge</span><span class="p">)</span>
+<span class="n">r2_test_ridge</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred_ridge</span><span class="p">)</span>
+
+<span class="n">coef_ridge</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">ridge_cv</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">feature_names</span><span class="p">)</span>
+
+<span class="n">alpha_ridge_best</span><span class="p">,</span> <span class="n">rmse_test_ridge</span><span class="p">,</span> <span class="n">r2_test_ridge</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(np.float64(92.36708571873865),
+ np.float64(34276.402249856335),
+ 0.8139019302910604)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Lasso</span>
+<span class="n">alphas_lasso</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+<span class="n">lasso_cv</span> <span class="o">=</span> <span class="n">LassoCV</span><span class="p">(</span><span class="n">alphas</span><span class="o">=</span><span class="n">alphas_lasso</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+<span class="n">lasso_cv</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_scaled</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">alpha_lasso_best</span> <span class="o">=</span> <span class="n">lasso_cv</span><span class="o">.</span><span class="n">alpha_</span>
+
+<span class="n">y_train_pred_lasso</span> <span class="o">=</span> <span class="n">lasso_cv</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train_scaled</span><span class="p">)</span>
+<span class="n">y_test_pred_lasso</span> <span class="o">=</span> <span class="n">lasso_cv</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_scaled</span><span class="p">)</span>
+
+<span class="n">rmse_train_lasso</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred_lasso</span><span class="p">))</span>
+<span class="n">rmse_test_lasso</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred_lasso</span><span class="p">))</span>
+<span class="n">r2_train_lasso</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred_lasso</span><span class="p">)</span>
+<span class="n">r2_test_lasso</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred_lasso</span><span class="p">)</span>
+
+<span class="n">coef_lasso</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">lasso_cv</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">feature_names</span><span class="p">)</span>
+
+<span class="n">alpha_lasso_best</span><span class="p">,</span> <span class="n">rmse_test_lasso</span><span class="p">,</span> <span class="n">r2_test_lasso</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(np.float64(10.0), np.float64(34301.49138375624), 0.8136293959601474)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="elasticnet-l1-l2">
+<h2>10.5 ElasticNet (L1 + L2)<a class="headerlink" href="#elasticnet-l1-l2" title="Permalink to this heading">#</a></h2>
+<p>ElasticNet combina las penalizaciones L1 y L2 mediante los parámetros:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\alpha\)</span>: intensidad global de la penalización.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">l1_ratio</span></code> <span class="math notranslate nohighlight">\(\in [0, 1]\)</span>: peso relativo de L1 vs L2</p>
 <ul>
-<li><p>Ridge: ( \lambda^* = ) <code class="docutils literal notranslate"><span class="pre">ridge_alpha</span></code></p></li>
-<li><p>Lasso: ( \lambda^* = ) <code class="docutils literal notranslate"><span class="pre">lasso_alpha</span></code></p></li>
-<li><p>ElasticNet: ( \lambda^* = ) <code class="docutils literal notranslate"><span class="pre">elastic_alpha</span></code>, ( \alpha^* = ) <code class="docutils literal notranslate"><span class="pre">elastic_l1ratio</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">l1_ratio</span> <span class="pre">=</span> <span class="pre">1</span></code> → Lasso</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">l1_ratio</span> <span class="pre">=</span> <span class="pre">0</span></code> → Ridge</p></li>
 </ul>
 </li>
 </ul>
+<p>Usamos <code class="docutils literal notranslate"><span class="pre">ElasticNetCV</span></code> para seleccionar automáticamente <span class="math notranslate nohighlight">\(\alpha\)</span> y <code class="docutils literal notranslate"><span class="pre">l1_ratio</span></code> por validación cruzada.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">l1_grid</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]</span>
+<span class="n">alphas_enet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+
+<span class="n">enet_cv</span> <span class="o">=</span> <span class="n">ElasticNetCV</span><span class="p">(</span>
+    <span class="n">l1_ratio</span><span class="o">=</span><span class="n">l1_grid</span><span class="p">,</span>
+    <span class="n">alphas</span><span class="o">=</span><span class="n">alphas_enet</span><span class="p">,</span>
+    <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+    <span class="n">max_iter</span><span class="o">=</span><span class="mi">10000</span>
+<span class="p">)</span>
+<span class="n">enet_cv</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_scaled</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">alpha_enet_best</span> <span class="o">=</span> <span class="n">enet_cv</span><span class="o">.</span><span class="n">alpha_</span>
+<span class="n">l1ratio_enet_best</span> <span class="o">=</span> <span class="n">enet_cv</span><span class="o">.</span><span class="n">l1_ratio_</span>
+
+<span class="n">alpha_enet_best</span><span class="p">,</span> <span class="n">l1ratio_enet_best</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(np.float64(0.11937766417144358), np.float64(0.7))
+</pre></div>
+</div>
+</div>
+</div>
+<p>Evaluamos el desempeño de ElasticNet:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_train_pred_enet</span> <span class="o">=</span> <span class="n">enet_cv</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train_scaled</span><span class="p">)</span>
+<span class="n">y_test_pred_enet</span> <span class="o">=</span> <span class="n">enet_cv</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_scaled</span><span class="p">)</span>
+
+<span class="n">rmse_train_enet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred_enet</span><span class="p">))</span>
+<span class="n">rmse_test_enet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred_enet</span><span class="p">))</span>
+<span class="n">r2_train_enet</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred_enet</span><span class="p">)</span>
+<span class="n">r2_test_enet</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred_enet</span><span class="p">)</span>
+
+<span class="n">rmse_train_enet</span><span class="p">,</span> <span class="n">rmse_test_enet</span><span class="p">,</span> <span class="n">r2_train_enet</span><span class="p">,</span> <span class="n">r2_test_enet</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(np.float64(36249.78184760485),
+ np.float64(34266.542053707475),
+ 0.7923103426117015,
+ 0.8140089835067096)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Coeficientes ElasticNet (escala estandarizada):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coef_enet</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">enet_cv</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">feature_names</span><span class="p">)</span>
+<span class="n">coef_enet</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Overall Qual      25464.3468
+Gr Liv Area       22438.3519
+Garage Cars        9409.1082
+Total Bsmt SF      9122.1792
+1st Flr SF         5251.1961
+Year Built         4238.9828
+Full Bath         -2437.8669
+Year Remod/Add     7499.8755
+Garage Yr Blt      2248.5929
+Mas Vnr Area       6322.5864
+TotRms AbvGrd      -998.6363
+Fireplaces         6077.5435
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
 </section>
-<hr class="docutils" />
-<section id="key-takeaways">
-<h2>10.8 Key takeaways<a class="headerlink" href="#key-takeaways" title="Permalink to this heading">#</a></h2>
+<section id="comparacion-de-coeficientes-entre-todos-los-modelos">
+<h2>10.6 Comparación de coeficientes entre todos los modelos<a class="headerlink" href="#comparacion-de-coeficientes-entre-todos-los-modelos" title="Permalink to this heading">#</a></h2>
+<p>Construimos una tabla con los coeficientes estimados por cada modelo:</p>
 <ul class="simple">
-<li><p><strong>ElasticNet</strong> equilibra selección de variables y estabilidad numérica.</p></li>
-<li><p>La <strong>regularización</strong> mitiga multicolinealidad y reduce varianza de los estimadores.</p></li>
-<li><p>La comparación conjunta OLS–Ridge–Lasso–ElasticNet facilita una <strong>decisión informada</strong> del modelo final.</p></li>
+<li><p>OLS</p></li>
+<li><p>Ridge</p></li>
+<li><p>Lasso</p></li>
+<li><p>ElasticNet</p></li>
 </ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coef_comp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;OLS&quot;</span><span class="p">:</span> <span class="n">coef_ols</span><span class="p">,</span>
+    <span class="s2">&quot;Ridge&quot;</span><span class="p">:</span> <span class="n">coef_ridge</span><span class="p">,</span>
+    <span class="s2">&quot;Lasso&quot;</span><span class="p">:</span> <span class="n">coef_lasso</span><span class="p">,</span>
+    <span class="s2">&quot;ElasticNet&quot;</span><span class="p">:</span> <span class="n">coef_enet</span><span class="p">,</span>
+<span class="p">})</span>
+
+<span class="n">coef_comp</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>OLS</th>
+      <th>Ridge</th>
+      <th>Lasso</th>
+      <th>ElasticNet</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Overall Qual</th>
+      <td>19413.9215</td>
+      <td>25074.4748</td>
+      <td>26649.1629</td>
+      <td>25464.3468</td>
+    </tr>
+    <tr>
+      <th>Gr Liv Area</th>
+      <td>50.3840</td>
+      <td>21610.0694</td>
+      <td>25643.7181</td>
+      <td>22438.3519</td>
+    </tr>
+    <tr>
+      <th>Garage Cars</th>
+      <td>14928.9791</td>
+      <td>9355.1281</td>
+      <td>9593.8912</td>
+      <td>9409.1082</td>
+    </tr>
+    <tr>
+      <th>Total Bsmt SF</th>
+      <td>20.7325</td>
+      <td>9103.1686</td>
+      <td>9226.5711</td>
+      <td>9122.1792</td>
+    </tr>
+    <tr>
+      <th>1st Flr SF</th>
+      <td>11.2901</td>
+      <td>5437.8894</td>
+      <td>4503.5636</td>
+      <td>5251.1961</td>
+    </tr>
+    <tr>
+      <th>Year Built</th>
+      <td>151.5614</td>
+      <td>4209.6329</td>
+      <td>4455.7497</td>
+      <td>4238.9828</td>
+    </tr>
+    <tr>
+      <th>Full Bath</th>
+      <td>-6644.2333</td>
+      <td>-2093.6113</td>
+      <td>-3638.4054</td>
+      <td>-2437.8669</td>
+    </tr>
+    <tr>
+      <th>Year Remod/Add</th>
+      <td>359.5447</td>
+      <td>7513.6876</td>
+      <td>7410.5281</td>
+      <td>7499.8755</td>
+    </tr>
+    <tr>
+      <th>Garage Yr Blt</th>
+      <td>70.3224</td>
+      <td>2374.3883</td>
+      <td>1765.9696</td>
+      <td>2248.5929</td>
+    </tr>
+    <tr>
+      <th>Mas Vnr Area</th>
+      <td>32.6375</td>
+      <td>6409.1573</td>
+      <td>5977.2546</td>
+      <td>6322.5864</td>
+    </tr>
+    <tr>
+      <th>TotRms AbvGrd</th>
+      <td>-1917.0279</td>
+      <td>-498.3574</td>
+      <td>-2936.7641</td>
+      <td>-998.6363</td>
+    </tr>
+    <tr>
+      <th>Fireplaces</th>
+      <td>8588.6569</td>
+      <td>6206.2802</td>
+      <td>5566.0129</td>
+      <td>6077.5435</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Gráfico de barras comparando coeficientes por variable:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ax</span> <span class="o">=</span> <span class="n">coef_comp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Coeficiente&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Comparación de coeficientes: OLS, Ridge, Lasso, ElasticNet&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/1035221dd41bbab00581740c0abe8ccf8d3001bd443e58bd220fc8850447f32b.png" src="_images/1035221dd41bbab00581740c0abe8ccf8d3001bd443e58bd220fc8850447f32b.png" />
+</div>
+</div>
+</section>
+<section id="comparacion-de-desempeno-predictivo">
+<h2>10.7 Comparación de desempeño predictivo<a class="headerlink" href="#comparacion-de-desempeno-predictivo" title="Permalink to this heading">#</a></h2>
+<p>Resumimos <strong>RMSE</strong> y <strong><span class="math notranslate nohighlight">\(R^2\)</span></strong> en entrenamiento y prueba para los cuatro modelos.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">metrics_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;RMSE_train&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">rmse_train_ols</span><span class="p">,</span> <span class="n">rmse_train_ridge</span><span class="p">,</span> <span class="n">rmse_train_lasso</span><span class="p">,</span> <span class="n">rmse_train_enet</span><span class="p">],</span>
+    <span class="s2">&quot;RMSE_test&quot;</span><span class="p">:</span>  <span class="p">[</span><span class="n">rmse_test_ols</span><span class="p">,</span>  <span class="n">rmse_test_ridge</span><span class="p">,</span>  <span class="n">rmse_test_lasso</span><span class="p">,</span>  <span class="n">rmse_test_enet</span><span class="p">],</span>
+    <span class="s2">&quot;R2_train&quot;</span><span class="p">:</span>   <span class="p">[</span><span class="n">r2_train_ols</span><span class="p">,</span>   <span class="n">r2_train_ridge</span><span class="p">,</span>   <span class="n">r2_train_lasso</span><span class="p">,</span>   <span class="n">r2_train_enet</span><span class="p">],</span>
+    <span class="s2">&quot;R2_test&quot;</span><span class="p">:</span>    <span class="p">[</span><span class="n">r2_test_ols</span><span class="p">,</span>    <span class="n">r2_test_ridge</span><span class="p">,</span>    <span class="n">r2_test_lasso</span><span class="p">,</span>    <span class="n">r2_test_enet</span><span class="p">],</span>
+<span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;OLS&quot;</span><span class="p">,</span> <span class="s2">&quot;Ridge&quot;</span><span class="p">,</span> <span class="s2">&quot;Lasso&quot;</span><span class="p">,</span> <span class="s2">&quot;ElasticNet&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="n">metrics_table</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>RMSE_train</th>
+      <th>RMSE_test</th>
+      <th>R2_train</th>
+      <th>R2_test</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>OLS</th>
+      <td>36199.7073</td>
+      <td>34302.2807</td>
+      <td>0.7929</td>
+      <td>0.8136</td>
+    </tr>
+    <tr>
+      <th>Ridge</th>
+      <td>36281.2553</td>
+      <td>34276.4022</td>
+      <td>0.7919</td>
+      <td>0.8139</td>
+    </tr>
+    <tr>
+      <th>Lasso</th>
+      <td>36199.7321</td>
+      <td>34301.4914</td>
+      <td>0.7929</td>
+      <td>0.8136</td>
+    </tr>
+    <tr>
+      <th>ElasticNet</th>
+      <td>36249.7818</td>
+      <td>34266.5421</td>
+      <td>0.7923</td>
+      <td>0.8140</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Gráfico comparando RMSE en el conjunto de prueba:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ax</span> <span class="o">=</span> <span class="n">metrics_table</span><span class="p">[</span><span class="s2">&quot;RMSE_test&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;RMSE en test&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Comparación de RMSE en test: OLS, Ridge, Lasso, ElasticNet&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/03285e1fa72f3b06b2c6c94dc8952619faf38b834ab8e44a8f830106eca1a822.png" src="_images/03285e1fa72f3b06b2c6c94dc8952619faf38b834ab8e44a8f830106eca1a822.png" />
+</div>
+</div>
+<p>Y también comparamos el <span class="math notranslate nohighlight">\(R^2\)</span> en prueba:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ax</span> <span class="o">=</span> <span class="n">metrics_table</span><span class="p">[</span><span class="s2">&quot;R2_test&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;R^2 en test&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Comparación de R^2 en test: OLS, Ridge, Lasso, ElasticNet&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/78a901e047536aefd64499b5e70b4c897e589bb6c619514546a8a1264fb2c632.png" src="_images/78a901e047536aefd64499b5e70b4c897e589bb6c619514546a8a1264fb2c632.png" />
+</div>
+</div>
+</section>
+<section id="complejidad-efectiva-numero-de-coeficientes-distintos-de-cero">
+<h2>10.8 Complejidad efectiva: número de coeficientes distintos de cero<a class="headerlink" href="#complejidad-efectiva-numero-de-coeficientes-distintos-de-cero" title="Permalink to this heading">#</a></h2>
+<p>Contamos cuántos coeficientes quedan diferentes de 0 en cada método (particularmente relevante para Lasso y ElasticNet).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">nonzero_count</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">)</span>
+
+<span class="n">nz_ols</span>  <span class="o">=</span> <span class="n">nonzero_count</span><span class="p">(</span><span class="n">coef_ols</span><span class="p">)</span>
+<span class="n">nz_ridge</span> <span class="o">=</span> <span class="n">nonzero_count</span><span class="p">(</span><span class="n">coef_ridge</span><span class="p">)</span>
+<span class="n">nz_lasso</span> <span class="o">=</span> <span class="n">nonzero_count</span><span class="p">(</span><span class="n">coef_lasso</span><span class="p">)</span>
+<span class="n">nz_enet</span>  <span class="o">=</span> <span class="n">nonzero_count</span><span class="p">(</span><span class="n">coef_enet</span><span class="p">)</span>
+
+<span class="n">nz_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;n_coef_no_cero&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">nz_ols</span><span class="p">,</span> <span class="n">nz_ridge</span><span class="p">,</span> <span class="n">nz_lasso</span><span class="p">,</span> <span class="n">nz_enet</span><span class="p">]</span>
+<span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;OLS&quot;</span><span class="p">,</span> <span class="s2">&quot;Ridge&quot;</span><span class="p">,</span> <span class="s2">&quot;Lasso&quot;</span><span class="p">,</span> <span class="s2">&quot;ElasticNet&quot;</span><span class="p">])</span>
+
+<span class="n">nz_table</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>n_coef_no_cero</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>OLS</th>
+      <td>12</td>
+    </tr>
+    <tr>
+      <th>Ridge</th>
+      <td>12</td>
+    </tr>
+    <tr>
+      <th>Lasso</th>
+      <td>12</td>
+    </tr>
+    <tr>
+      <th>ElasticNet</th>
+      <td>12</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Gráfico del número de coeficientes no nulos por modelo:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ax</span> <span class="o">=</span> <span class="n">nz_table</span><span class="p">[</span><span class="s2">&quot;n_coef_no_cero&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Número de coeficientes ≠ 0&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Complejidad efectiva del modelo&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/cd64b911e1e5c09d2e9af6113548905eaab91d8cb1d9bdfe36f020c8740d3f64.png" src="_images/cd64b911e1e5c09d2e9af6113548905eaab91d8cb1d9bdfe36f020c8740d3f64.png" />
+</div>
+</div>
+</section>
+<section id="observado-vs-predicho-para-el-modelo-elegido">
+<h2>10.9 Observado vs predicho para el modelo elegido<a class="headerlink" href="#observado-vs-predicho-para-el-modelo-elegido" title="Permalink to this heading">#</a></h2>
+<p>Podemos elegir como <strong>modelo final</strong> el que muestre mejor compromiso entre:</p>
+<ul class="simple">
+<li><p>Bajo RMSE en prueba.</p></li>
+<li><p>Alto <span class="math notranslate nohighlight">\(R^2\)</span> en prueba.</p></li>
+<li><p>Complejidad razonable (no demasiados coeficientes activos).</p></li>
+</ul>
+<p>A modo de ejemplo, graficamos observados vs predichos para <strong>ElasticNet</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred_enet</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="n">min_val</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">y_test</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">y_test_pred_enet</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+<span class="n">max_val</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">y_test</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">y_test_pred_enet</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span><span class="p">],</span> <span class="p">[</span><span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span><span class="p">],</span> <span class="s2">&quot;--&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Valor observado SalePrice&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Valor predicho SalePrice (ElasticNet)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Observado vs predicho (ElasticNet)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/eea16ef453742cd3efe6e2bb7719d2d1f168cbf46c672d07ebe674c8940b9a2b.png" src="_images/eea16ef453742cd3efe6e2bb7719d2d1f168cbf46c672d07ebe674c8940b9a2b.png" />
+</div>
+</div>
+</section>
+<section id="key-takeaways">
+<h2>10.10 Key takeaways<a class="headerlink" href="#key-takeaways" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>ElasticNet</strong> combina las ventajas de Ridge y Lasso:</p>
+<ul>
+<li><p>Control de multicolinealidad vía penalización L2.</p></li>
+<li><p>Selección de variables vía penalización L1.</p></li>
+</ul>
+</li>
+<li><p>La comparación conjunta de:</p>
+<ul>
+<li><p>Coeficientes,</p></li>
+<li><p>RMSE / <span class="math notranslate nohighlight">\(R^2\)</span> en prueba,</p></li>
+<li><p>Número de coeficientes no nulos,
+permite elegir un modelo final adecuado al compromiso <strong>sesgo–varianza</strong>.</p></li>
+</ul>
+</li>
+<li><p>En la práctica, es común:</p>
+<ul>
+<li><p>Usar OLS como modelo de referencia interpretativo.</p></li>
+<li><p>Compararlo con modelos regularizados (Ridge/Lasso/ElasticNet) para mejorar generalización en datos nuevos.</p></li>
+</ul>
+</li>
+</ul>
+<p>Con este capítulo se cierra el ciclo de modelamiento lineal para el dataset <em>Ames Housing</em>, dejando una base sólida para extender a modelos no lineales o técnicas más avanzadas.</p>
 </section>
 </section>
 
@@ -623,14 +1274,16 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduccion-teorica">10.1 Introducción teórica</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos-y-construccion-de-variables-misma-logica-que-caps-49">10.2 Datos y construcción de variables (misma lógica que caps. 4–9)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelos-ridge-lasso-y-elasticnet-con-validacion-cruzada">10.3 Modelos Ridge, Lasso y ElasticNet con validación cruzada</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparacion-de-coeficientes">10.4 Comparación de coeficientes</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluacion-comparativa-r2-y-rmse-in-sample">10.5 Evaluación comparativa (R² y RMSE in-sample)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#graficas-de-comparacion">10.6 Gráficas de comparación</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#seleccion-final-y-conclusiones">10.7 Selección final y conclusiones</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">10.8 Key takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos-variables-seleccionadas-y-particion-entrenamiento-prueba">10.1 Datos, variables seleccionadas y partición entrenamiento/prueba</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-ols-base-referencia">10.2 Modelo OLS base (referencia)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estandarizacion-de-predictores">10.3 Estandarización de predictores</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recordatorio-ridge-y-lasso">10.4 Recordatorio: Ridge y Lasso</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elasticnet-l1-l2">10.5 ElasticNet (L1 + L2)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparacion-de-coeficientes-entre-todos-los-modelos">10.6 Comparación de coeficientes entre todos los modelos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparacion-de-desempeno-predictivo">10.7 Comparación de desempeño predictivo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complejidad-efectiva-numero-de-coeficientes-distintos-de-cero">10.8 Complejidad efectiva: número de coeficientes distintos de cero</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#observado-vs-predicho-para-el-modelo-elegido">10.9 Observado vs predicho para el modelo elegido</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">10.10 Key takeaways</a></li>
 </ul>
   </nav></div>
 
