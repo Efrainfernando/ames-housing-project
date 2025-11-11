@@ -1,0 +1,1528 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Capítulo 7 · Remedios y métodos robustos &#8212; Modelos de regresión lineal usando el Ames Housing Dataset</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'cap7-remedios';</script>
+    <link rel="canonical" href="https://efrainfernando.github.io/ames-housing-project/cap7-remedios.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Capítulo 8 · Selección de modelo y validación cruzada" href="cap8-seleccion.html" />
+    <link rel="prev" title="Capítulo 6 · Diagnóstico de supuestos del modelo OLS" href="cap6-supuestos.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="cap0-instrucciones.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="cap0-instrucciones.html">
+                    Capítulo 0 · Instrucciones de reproducción y estructura del proyecto
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="cap1-introduccion.html">Capítulo 1 · Introducción y pregunta de investigación</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap2-limpieza.html">Capítulo 2 · Descripción y limpieza del dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap3-eda.html">Capítulo 3 · Análisis exploratorio (EDA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap4-ols.html">Capítulo 4 · Formulación matricial del modelo OLS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap5-inferencia.html">Capítulo 5 · Inferencia y grados de libertad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap6-supuestos.html">Capítulo 6 · Diagnóstico de supuestos del modelo OLS</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Capítulo 7 · Remedios y métodos robustos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap8-seleccion.html">Capítulo 8 · Selección de modelo y validación cruzada</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap9-regularizacion.html">Capítulo 9 · Regularización: Ridge y Lasso</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap10-elasticnet.html">Capítulo 10 · ElasticNet y comparación final de modelos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap11-conclusiones.html">Capítulo 11 · Conclusiones y trabajo futuro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliografia.html">Referencias bibliográficas</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/cap7-remedios.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Capítulo 7 · Remedios y métodos robustos</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos-y-modelo-base">7.1 Datos y modelo base</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ols-clasico-y-evidencia-de-heterocedasticidad">7.2 OLS clásico y evidencia de heterocedasticidad</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#correcciones-robustas-hc0hc3">7.3 Correcciones robustas HC0–HC3</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelos-robustos-rlm-huber-y-tukey">7.4 Modelos robustos RLM (Huber y Tukey)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bootstrap-de-coeficientes-ols">7.5 Bootstrap de coeficientes OLS</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabla-comparativa-final">7.6 Tabla comparativa final</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">7.7 Key takeaways</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="capitulo-7-remedios-y-metodos-robustos">
+<h1>Capítulo 7 · Remedios y métodos robustos<a class="headerlink" href="#capitulo-7-remedios-y-metodos-robustos" title="Permalink to this heading">#</a></h1>
+<p><strong>Objetivo:</strong> aplicar y comparar distintos métodos para corregir o mitigar violaciones de supuestos en el modelo OLS:**</p>
+<ul class="simple">
+<li><p>Correcciones robustas a la heterocedasticidad (HC0–HC3).</p></li>
+<li><p>Modelos robustos <code class="docutils literal notranslate"><span class="pre">RLM</span></code> (Huber y Tukey).</p></li>
+<li><p>Estimación bootstrap de errores estándar e intervalos de confianza.</p></li>
+</ul>
+<p>Al final construiremos tablas y <strong>gráficas comparativas</strong> entre métodos.</p>
+<section id="datos-y-modelo-base">
+<h2>7.1 Datos y modelo base<a class="headerlink" href="#datos-y-modelo-base" title="Permalink to this heading">#</a></h2>
+<p>Reutilizamos las <strong>variables candidatas</strong> seleccionadas en capítulos anteriores, usando el mismo criterio:</p>
+<ul class="simple">
+<li><p>Alta correlación con <code class="docutils literal notranslate"><span class="pre">SalePrice</span></code>.</p></li>
+<li><p>Baja colinealidad entre predictores (|ρ| ≤ 0.85).</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.stats.diagnostic</span><span class="w"> </span><span class="kn">import</span> <span class="n">het_breuschpagan</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.robust.norms</span><span class="w"> </span><span class="kn">import</span> <span class="n">HuberT</span><span class="p">,</span> <span class="n">TukeyBiweight</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">resample</span>
+
+<span class="c1"># Localizar dataset</span>
+<span class="n">CANDIDATE_PATHS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;data/ames_housing.csv&#39;</span><span class="p">),</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;AmesHousing.csv&#39;</span><span class="p">)]</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">CANDIDATE_PATHS</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">DATA_PATH</span> <span class="o">=</span> <span class="n">p</span>
+        <span class="k">break</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s1">&#39;No se encontró data/ames_housing.csv ni AmesHousing.csv&#39;</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">DATA_PATH</span><span class="p">)</span>
+
+<span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;SalePrice&quot;</span>
+
+<span class="c1"># Numéricas y limpieza de infinitos</span>
+<span class="n">num_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+<span class="c1"># Pool de variables según correlación absoluta con SalePrice</span>
+<span class="n">corr_abs</span> <span class="o">=</span> <span class="n">num_df</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">numeric_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">pool</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">corr_abs</span><span class="o">.</span><span class="n">index</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="n">target</span><span class="p">][:</span><span class="mi">15</span><span class="p">]</span>
+
+<span class="n">sel</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pool</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sel</span><span class="p">:</span>
+        <span class="n">sel</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">continue</span>
+    <span class="n">ok</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">sel</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">num_df</span><span class="p">[[</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mf">0.85</span><span class="p">:</span>
+            <span class="n">ok</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">break</span>
+    <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+        <span class="n">sel</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">12</span><span class="p">:</span>
+        <span class="k">break</span>
+
+<span class="c1"># Datos finales</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">num_df</span><span class="p">[[</span><span class="n">target</span><span class="p">]</span> <span class="o">+</span> <span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">has_constant</span><span class="o">=</span><span class="s2">&quot;add&quot;</span><span class="p">)</span>
+
+<span class="n">param_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;const&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">sel</span>
+
+<span class="nb">len</span><span class="p">(</span><span class="n">sel</span><span class="p">),</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(12, (2748, 13), (2748,))
+</pre></div>
+</div>
+</div>
+</div>
+<p>Mostramos las variables utilizadas en el modelo base:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">sel</span><span class="p">,</span> <span class="s2">&quot;abs(corr SalePrice)&quot;</span><span class="p">:</span> <span class="n">corr_abs</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">})</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Variable</th>
+      <th>abs(corr SalePrice)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Overall Qual</td>
+      <td>0.799</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Gr Liv Area</td>
+      <td>0.707</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Garage Cars</td>
+      <td>0.648</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Total Bsmt SF</td>
+      <td>0.632</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1st Flr SF</td>
+      <td>0.622</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Year Built</td>
+      <td>0.558</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Full Bath</td>
+      <td>0.546</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Year Remod/Add</td>
+      <td>0.533</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Garage Yr Blt</td>
+      <td>0.527</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>Mas Vnr Area</td>
+      <td>0.508</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>TotRms AbvGrd</td>
+      <td>0.495</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>Fireplaces</td>
+      <td>0.475</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+<section id="ols-clasico-y-evidencia-de-heterocedasticidad">
+<h2>7.2 OLS clásico y evidencia de heterocedasticidad<a class="headerlink" href="#ols-clasico-y-evidencia-de-heterocedasticidad" title="Permalink to this heading">#</a></h2>
+<p>Primero ajustamos el modelo OLS estándar y verificamos la presencia de heterocedasticidad con la prueba de <strong>Breusch–Pagan</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ols</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.800
+Model:                            OLS   Adj. R-squared:                  0.799
+Method:                 Least Squares   F-statistic:                     909.9
+Date:                Tue, 11 Nov 2025   Prob (F-statistic):               0.00
+Time:                        02:06:38   Log-Likelihood:                -32698.
+No. Observations:                2748   AIC:                         6.542e+04
+Df Residuals:                    2735   BIC:                         6.550e+04
+Df Model:                          12                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P&gt;|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const      -1.258e+06   9.42e+04    -13.357      0.000   -1.44e+06   -1.07e+06
+x1          1.875e+04    812.249     23.088      0.000    1.72e+04    2.03e+04
+x2            49.1831      3.015     16.315      0.000      43.272      55.094
+x3          1.385e+04   1516.938      9.128      0.000    1.09e+04    1.68e+04
+x4            22.2139      2.812      7.899      0.000      16.700      27.728
+x5            12.1134      3.212      3.772      0.000       5.816      18.411
+x6           216.4772     46.743      4.631      0.000     124.822     308.132
+x7         -7950.1848   1836.455     -4.329      0.000   -1.16e+04   -4349.205
+x8           376.3075     47.104      7.989      0.000     283.945     468.670
+x9            11.9275     55.913      0.213      0.831     -97.709     121.564
+x10           35.7916      4.369      8.192      0.000      27.224      44.359
+x11         -868.7341    766.437     -1.133      0.257   -2371.588     634.120
+x12         8697.6657   1236.964      7.031      0.000    6272.187    1.11e+04
+==============================================================================
+Omnibus:                     1164.902   Durbin-Watson:                   1.534
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):           134958.524
+Skew:                          -1.007   Prob(JB):                         0.00
+Kurtosis:                      37.273   Cond. No.                     5.65e+05
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The condition number is large, 5.65e+05. This might indicate that there are
+strong multicollinearity or other numerical problems.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Prueba de Breusch–Pagan sobre residuos vs predictores</span>
+<span class="n">resid</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">resid</span>
+<span class="n">bp_test</span> <span class="o">=</span> <span class="n">het_breuschpagan</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;LM stat&quot;</span><span class="p">,</span> <span class="s2">&quot;LM p-value&quot;</span><span class="p">,</span> <span class="s2">&quot;F stat&quot;</span><span class="p">,</span> <span class="s2">&quot;F p-value&quot;</span><span class="p">]</span>
+<span class="n">bp_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">bp_test</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
+<span class="n">bp_results</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>LM stat        7.051415e+02
+LM p-value    3.497135e-143
+F stat         7.867089e+01
+F p-value     3.561338e-166
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p>Un p-valor pequeño sugiere <strong>heterocedasticidad</strong>, motivando el uso de correcciones robustas HC o modelos robustos.</p>
+</div></blockquote>
+</section>
+<section id="correcciones-robustas-hc0hc3">
+<h2>7.3 Correcciones robustas HC0–HC3<a class="headerlink" href="#correcciones-robustas-hc0hc3" title="Permalink to this heading">#</a></h2>
+<p>Usamos <code class="docutils literal notranslate"><span class="pre">get_robustcov_results</span></code> para obtener errores estándar robustos a la heterocedasticidad:</p>
+<ul class="simple">
+<li><p><strong>HC0</strong>: estimador de White.</p></li>
+<li><p><strong>HC1</strong>: corrección por grados de libertad.</p></li>
+<li><p><strong>HC2</strong>: pondera por leverage (puntos influyentes).</p></li>
+<li><p><strong>HC3</strong>: aproximación tipo jackknife (más conservadora).</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hc_types</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;HC0&quot;</span><span class="p">,</span> <span class="s2">&quot;HC1&quot;</span><span class="p">,</span> <span class="s2">&quot;HC2&quot;</span><span class="p">,</span> <span class="s2">&quot;HC3&quot;</span><span class="p">]</span>
+<span class="n">robust_results</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="p">:</span> <span class="n">ols</span><span class="o">.</span><span class="n">get_robustcov_results</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">hc_types</span><span class="p">}</span>
+
+<span class="c1"># Tabla de errores estándar por método</span>
+<span class="n">se_ols</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">bse</span>
+<span class="n">se_hc</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="p">:</span> <span class="n">robust_results</span><span class="p">[</span><span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">bse</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">hc_types</span><span class="p">}</span>
+
+<span class="n">se_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">&quot;OLS&quot;</span><span class="p">:</span> <span class="n">se_ols</span><span class="p">,</span>
+     <span class="s2">&quot;HC0&quot;</span><span class="p">:</span> <span class="n">se_hc</span><span class="p">[</span><span class="s2">&quot;HC0&quot;</span><span class="p">],</span>
+     <span class="s2">&quot;HC1&quot;</span><span class="p">:</span> <span class="n">se_hc</span><span class="p">[</span><span class="s2">&quot;HC1&quot;</span><span class="p">],</span>
+     <span class="s2">&quot;HC2&quot;</span><span class="p">:</span> <span class="n">se_hc</span><span class="p">[</span><span class="s2">&quot;HC2&quot;</span><span class="p">],</span>
+     <span class="s2">&quot;HC3&quot;</span><span class="p">:</span> <span class="n">se_hc</span><span class="p">[</span><span class="s2">&quot;HC3&quot;</span><span class="p">]},</span>
+    <span class="n">index</span><span class="o">=</span><span class="n">param_names</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="n">se_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>OLS</th>
+      <th>HC0</th>
+      <th>HC1</th>
+      <th>HC2</th>
+      <th>HC3</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>const</th>
+      <td>94166.7931</td>
+      <td>105742.5174</td>
+      <td>105993.5271</td>
+      <td>108198.0852</td>
+      <td>110801.8390</td>
+    </tr>
+    <tr>
+      <th>Overall Qual</th>
+      <td>812.2495</td>
+      <td>1324.2945</td>
+      <td>1327.4380</td>
+      <td>1366.6754</td>
+      <td>1411.5896</td>
+    </tr>
+    <tr>
+      <th>Gr Liv Area</th>
+      <td>3.0146</td>
+      <td>9.9259</td>
+      <td>9.9495</td>
+      <td>10.2729</td>
+      <td>10.6392</td>
+    </tr>
+    <tr>
+      <th>Garage Cars</th>
+      <td>1516.9382</td>
+      <td>2686.3687</td>
+      <td>2692.7456</td>
+      <td>2786.1600</td>
+      <td>2891.5570</td>
+    </tr>
+    <tr>
+      <th>Total Bsmt SF</th>
+      <td>2.8121</td>
+      <td>7.6867</td>
+      <td>7.7050</td>
+      <td>8.0225</td>
+      <td>8.3766</td>
+    </tr>
+    <tr>
+      <th>1st Flr SF</th>
+      <td>3.2118</td>
+      <td>4.3735</td>
+      <td>4.3839</td>
+      <td>4.4786</td>
+      <td>4.5890</td>
+    </tr>
+    <tr>
+      <th>Year Built</th>
+      <td>46.7429</td>
+      <td>39.7796</td>
+      <td>39.8740</td>
+      <td>40.0911</td>
+      <td>40.4068</td>
+    </tr>
+    <tr>
+      <th>Full Bath</th>
+      <td>1836.4550</td>
+      <td>3252.0103</td>
+      <td>3259.7299</td>
+      <td>3352.4205</td>
+      <td>3458.3813</td>
+    </tr>
+    <tr>
+      <th>Year Remod/Add</th>
+      <td>47.1037</td>
+      <td>37.2853</td>
+      <td>37.3738</td>
+      <td>37.5389</td>
+      <td>37.8000</td>
+    </tr>
+    <tr>
+      <th>Garage Yr Blt</th>
+      <td>55.9132</td>
+      <td>54.2226</td>
+      <td>54.3513</td>
+      <td>55.2492</td>
+      <td>56.3347</td>
+    </tr>
+    <tr>
+      <th>Mas Vnr Area</th>
+      <td>4.3692</td>
+      <td>7.6955</td>
+      <td>7.7137</td>
+      <td>7.7845</td>
+      <td>7.8760</td>
+    </tr>
+    <tr>
+      <th>TotRms AbvGrd</th>
+      <td>766.4372</td>
+      <td>1438.4537</td>
+      <td>1441.8682</td>
+      <td>1470.7940</td>
+      <td>1505.0190</td>
+    </tr>
+    <tr>
+      <th>Fireplaces</th>
+      <td>1236.9640</td>
+      <td>1623.5003</td>
+      <td>1627.3541</td>
+      <td>1648.3831</td>
+      <td>1674.2822</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Podemos visualizar cómo cambian los errores estándar robustos respecto al OLS clásico:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">se_df_no_const</span> <span class="o">=</span> <span class="n">se_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># sin intercepto para que la escala sea más comparable</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">se_df_no_const</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Error estándar&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Comparación de errores estándar: OLS vs HC0–HC3&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/76f503f1de3ab79d2e2b8132919f2f23ccedb6f229ab4b13e0ead78276221e78.png" src="_images/76f503f1de3ab79d2e2b8132919f2f23ccedb6f229ab4b13e0ead78276221e78.png" />
+</div>
+</div>
+</section>
+<section id="modelos-robustos-rlm-huber-y-tukey">
+<h2>7.4 Modelos robustos RLM (Huber y Tukey)<a class="headerlink" href="#modelos-robustos-rlm-huber-y-tukey" title="Permalink to this heading">#</a></h2>
+<p>Aplicamos <code class="docutils literal notranslate"><span class="pre">statsmodels.RLM</span></code> con dos funciones de pérdida robustas:</p>
+<ul class="simple">
+<li><p><strong>HuberT</strong>: transición de cuadrático a lineal (suaviza outliers moderados).</p></li>
+<li><p><strong>TukeyBiweight</strong>: reduce fuertemente la influencia de outliers extremos.</p></li>
+</ul>
+<p>Compararemos los coeficientes con OLS.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rlm_huber</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">RLM</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">HuberT</span><span class="p">())</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">rlm_tukey</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">RLM</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">TukeyBiweight</span><span class="p">())</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="n">coef_rlm_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;OLS&quot;</span><span class="p">:</span> <span class="n">ols</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+        <span class="s2">&quot;RLM_Huber&quot;</span><span class="p">:</span> <span class="n">rlm_huber</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+        <span class="s2">&quot;RLM_Tukey&quot;</span><span class="p">:</span> <span class="n">rlm_tukey</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">index</span><span class="o">=</span><span class="n">param_names</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="n">coef_rlm_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>OLS</th>
+      <th>RLM_Huber</th>
+      <th>RLM_Tukey</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>const</th>
+      <td>-1.257775e+06</td>
+      <td>-1.312490e+06</td>
+      <td>-1.313966e+06</td>
+    </tr>
+    <tr>
+      <th>Overall Qual</th>
+      <td>1.875345e+04</td>
+      <td>1.545312e+04</td>
+      <td>1.412857e+04</td>
+    </tr>
+    <tr>
+      <th>Gr Liv Area</th>
+      <td>4.918310e+01</td>
+      <td>5.709900e+01</td>
+      <td>5.544200e+01</td>
+    </tr>
+    <tr>
+      <th>Garage Cars</th>
+      <td>1.384683e+04</td>
+      <td>1.002649e+04</td>
+      <td>9.252621e+03</td>
+    </tr>
+    <tr>
+      <th>Total Bsmt SF</th>
+      <td>2.221390e+01</td>
+      <td>2.853620e+01</td>
+      <td>2.681220e+01</td>
+    </tr>
+    <tr>
+      <th>1st Flr SF</th>
+      <td>1.211340e+01</td>
+      <td>1.225610e+01</td>
+      <td>1.034860e+01</td>
+    </tr>
+    <tr>
+      <th>Year Built</th>
+      <td>2.164772e+02</td>
+      <td>2.510283e+02</td>
+      <td>2.836074e+02</td>
+    </tr>
+    <tr>
+      <th>Full Bath</th>
+      <td>-7.950185e+03</td>
+      <td>-1.027915e+04</td>
+      <td>-8.521765e+03</td>
+    </tr>
+    <tr>
+      <th>Year Remod/Add</th>
+      <td>3.763075e+02</td>
+      <td>3.588140e+02</td>
+      <td>3.490812e+02</td>
+    </tr>
+    <tr>
+      <th>Garage Yr Blt</th>
+      <td>1.192750e+01</td>
+      <td>3.177980e+01</td>
+      <td>1.703480e+01</td>
+    </tr>
+    <tr>
+      <th>Mas Vnr Area</th>
+      <td>3.579160e+01</td>
+      <td>2.652930e+01</td>
+      <td>1.728020e+01</td>
+    </tr>
+    <tr>
+      <th>TotRms AbvGrd</th>
+      <td>-8.687341e+02</td>
+      <td>-1.666314e+03</td>
+      <td>-1.972186e+03</td>
+    </tr>
+    <tr>
+      <th>Fireplaces</th>
+      <td>8.697666e+03</td>
+      <td>6.747583e+03</td>
+      <td>7.159760e+03</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Gráfico comparando los coeficientes (sin el intercepto para mejor escala):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coef_rlm_no_const</span> <span class="o">=</span> <span class="n">coef_rlm_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">coef_rlm_no_const</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Coeficiente&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Comparación de coeficientes: OLS vs RLM (Huber, Tukey)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/c21ad415bfe270df5653d818d44c387a6992eec27f046f63831953d9f09e3459.png" src="_images/c21ad415bfe270df5653d818d44c387a6992eec27f046f63831953d9f09e3459.png" />
+</div>
+</div>
+</section>
+<section id="bootstrap-de-coeficientes-ols">
+<h2>7.5 Bootstrap de coeficientes OLS<a class="headerlink" href="#bootstrap-de-coeficientes-ols" title="Permalink to this heading">#</a></h2>
+<p>Implementamos un procedimiento bootstrap para los coeficientes del modelo OLS:</p>
+<ol class="arabic simple">
+<li><p>Fijar número de réplicas <span class="math notranslate nohighlight">\(B\)</span> (por ejemplo, 1000).</p></li>
+<li><p>Para cada réplica:</p>
+<ul class="simple">
+<li><p>Remuestrear las filas <span class="math notranslate nohighlight">\((X, y)\)</span> con reemplazo.</p></li>
+<li><p>Ajustar el modelo OLS.</p></li>
+<li><p>Guardar los coeficientes.</p></li>
+</ul>
+</li>
+<li><p>Calcular:</p>
+<ul class="simple">
+<li><p>Error estándar bootstrap (desviación estándar de la distribución de coeficientes).</p></li>
+<li><p>Intervalos de confianza percentiles (2.5% y 97.5%).</p></li>
+</ul>
+</li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">B</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># puedes reducirlo (por ej. 300) si tarda mucho</span>
+<span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+<span class="n">boot_betas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">B</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">B</span><span class="p">):</span>
+    <span class="n">X_b</span><span class="p">,</span> <span class="n">y_b</span> <span class="o">=</span> <span class="n">resample</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">beta_b</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y_b</span><span class="p">,</span> <span class="n">X_b</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span><span class="o">.</span><span class="n">params</span>
+    <span class="n">boot_betas</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">beta_b</span>
+
+<span class="n">boot_se</span> <span class="o">=</span> <span class="n">boot_betas</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">boot_ci_lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">boot_betas</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">boot_ci_upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">boot_betas</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">boot_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;coef_OLS&quot;</span><span class="p">:</span> <span class="n">ols</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+        <span class="s2">&quot;SE_boot&quot;</span><span class="p">:</span> <span class="n">boot_se</span><span class="p">,</span>
+        <span class="s2">&quot;IC_boot_2.5%&quot;</span><span class="p">:</span> <span class="n">boot_ci_lower</span><span class="p">,</span>
+        <span class="s2">&quot;IC_boot_97.5%&quot;</span><span class="p">:</span> <span class="n">boot_ci_upper</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">index</span><span class="o">=</span><span class="n">param_names</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="n">boot_table</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>coef_OLS</th>
+      <th>SE_boot</th>
+      <th>IC_boot_2.5%</th>
+      <th>IC_boot_97.5%</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>const</th>
+      <td>-1.257775e+06</td>
+      <td>103229.4360</td>
+      <td>-1.460910e+06</td>
+      <td>-1.055539e+06</td>
+    </tr>
+    <tr>
+      <th>Overall Qual</th>
+      <td>1.875345e+04</td>
+      <td>1252.7474</td>
+      <td>1.624413e+04</td>
+      <td>2.111949e+04</td>
+    </tr>
+    <tr>
+      <th>Gr Liv Area</th>
+      <td>4.918310e+01</td>
+      <td>9.1936</td>
+      <td>3.261220e+01</td>
+      <td>6.689850e+01</td>
+    </tr>
+    <tr>
+      <th>Garage Cars</th>
+      <td>1.384683e+04</td>
+      <td>2529.1792</td>
+      <td>8.821913e+03</td>
+      <td>1.879206e+04</td>
+    </tr>
+    <tr>
+      <th>Total Bsmt SF</th>
+      <td>2.221390e+01</td>
+      <td>7.1604</td>
+      <td>9.184500e+00</td>
+      <td>3.571760e+01</td>
+    </tr>
+    <tr>
+      <th>1st Flr SF</th>
+      <td>1.211340e+01</td>
+      <td>4.3216</td>
+      <td>3.407300e+00</td>
+      <td>2.067340e+01</td>
+    </tr>
+    <tr>
+      <th>Year Built</th>
+      <td>2.164772e+02</td>
+      <td>39.6951</td>
+      <td>1.364376e+02</td>
+      <td>2.938859e+02</td>
+    </tr>
+    <tr>
+      <th>Full Bath</th>
+      <td>-7.950185e+03</td>
+      <td>3105.0779</td>
+      <td>-1.407705e+04</td>
+      <td>-1.979462e+03</td>
+    </tr>
+    <tr>
+      <th>Year Remod/Add</th>
+      <td>3.763075e+02</td>
+      <td>38.4743</td>
+      <td>3.003087e+02</td>
+      <td>4.524896e+02</td>
+    </tr>
+    <tr>
+      <th>Garage Yr Blt</th>
+      <td>1.192750e+01</td>
+      <td>52.5624</td>
+      <td>-8.408190e+01</td>
+      <td>1.145858e+02</td>
+    </tr>
+    <tr>
+      <th>Mas Vnr Area</th>
+      <td>3.579160e+01</td>
+      <td>7.6170</td>
+      <td>2.092400e+01</td>
+      <td>5.131650e+01</td>
+    </tr>
+    <tr>
+      <th>TotRms AbvGrd</th>
+      <td>-8.687341e+02</td>
+      <td>1371.8283</td>
+      <td>-3.497480e+03</td>
+      <td>1.832840e+03</td>
+    </tr>
+    <tr>
+      <th>Fireplaces</th>
+      <td>8.697666e+03</td>
+      <td>1588.8511</td>
+      <td>5.756842e+03</td>
+      <td>1.180590e+04</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Comparación de errores estándar OLS vs Bootstrap:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">se_comp_boot</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;SE_OLS&quot;</span><span class="p">:</span> <span class="n">ols</span><span class="o">.</span><span class="n">bse</span><span class="p">,</span>
+        <span class="s2">&quot;SE_boot&quot;</span><span class="p">:</span> <span class="n">boot_se</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">index</span><span class="o">=</span><span class="n">param_names</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="n">se_comp_boot</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>SE_OLS</th>
+      <th>SE_boot</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>const</th>
+      <td>94166.7931</td>
+      <td>103229.4360</td>
+    </tr>
+    <tr>
+      <th>Overall Qual</th>
+      <td>812.2495</td>
+      <td>1252.7474</td>
+    </tr>
+    <tr>
+      <th>Gr Liv Area</th>
+      <td>3.0146</td>
+      <td>9.1936</td>
+    </tr>
+    <tr>
+      <th>Garage Cars</th>
+      <td>1516.9382</td>
+      <td>2529.1792</td>
+    </tr>
+    <tr>
+      <th>Total Bsmt SF</th>
+      <td>2.8121</td>
+      <td>7.1604</td>
+    </tr>
+    <tr>
+      <th>1st Flr SF</th>
+      <td>3.2118</td>
+      <td>4.3216</td>
+    </tr>
+    <tr>
+      <th>Year Built</th>
+      <td>46.7429</td>
+      <td>39.6951</td>
+    </tr>
+    <tr>
+      <th>Full Bath</th>
+      <td>1836.4550</td>
+      <td>3105.0779</td>
+    </tr>
+    <tr>
+      <th>Year Remod/Add</th>
+      <td>47.1037</td>
+      <td>38.4743</td>
+    </tr>
+    <tr>
+      <th>Garage Yr Blt</th>
+      <td>55.9132</td>
+      <td>52.5624</td>
+    </tr>
+    <tr>
+      <th>Mas Vnr Area</th>
+      <td>4.3692</td>
+      <td>7.6170</td>
+    </tr>
+    <tr>
+      <th>TotRms AbvGrd</th>
+      <td>766.4372</td>
+      <td>1371.8283</td>
+    </tr>
+    <tr>
+      <th>Fireplaces</th>
+      <td>1236.9640</td>
+      <td>1588.8511</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">se_comp_boot_no_const</span> <span class="o">=</span> <span class="n">se_comp_boot</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">se_comp_boot_no_const</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Error estándar&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Comparación de errores estándar: OLS vs Bootstrap&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/e76d6ce32e534eb31912a3b47caf305919562bc90900e50dbd84309673aeb5b9.png" src="_images/e76d6ce32e534eb31912a3b47caf305919562bc90900e50dbd84309673aeb5b9.png" />
+</div>
+</div>
+</section>
+<section id="tabla-comparativa-final">
+<h2>7.6 Tabla comparativa final<a class="headerlink" href="#tabla-comparativa-final" title="Permalink to this heading">#</a></h2>
+<p>Resumimos errores estándar para un subconjunto de métodos:</p>
+<ul class="simple">
+<li><p>OLS clásico</p></li>
+<li><p>HC3 (robusto a heterocedasticidad)</p></li>
+<li><p>Bootstrap</p></li>
+<li><p>RLM (Huber) – usando errores estándar de RLM</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">se_final</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;SE_OLS&quot;</span><span class="p">:</span> <span class="n">ols</span><span class="o">.</span><span class="n">bse</span><span class="p">,</span>
+        <span class="s2">&quot;SE_HC3&quot;</span><span class="p">:</span> <span class="n">se_hc</span><span class="p">[</span><span class="s2">&quot;HC3&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;SE_boot&quot;</span><span class="p">:</span> <span class="n">boot_se</span><span class="p">,</span>
+        <span class="s2">&quot;SE_RLM_Huber&quot;</span><span class="p">:</span> <span class="n">rlm_huber</span><span class="o">.</span><span class="n">bse</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">index</span><span class="o">=</span><span class="n">param_names</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="n">se_final</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>SE_OLS</th>
+      <th>SE_HC3</th>
+      <th>SE_boot</th>
+      <th>SE_RLM_Huber</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>const</th>
+      <td>94166.7931</td>
+      <td>110801.8390</td>
+      <td>103229.4360</td>
+      <td>67588.1693</td>
+    </tr>
+    <tr>
+      <th>Overall Qual</th>
+      <td>812.2495</td>
+      <td>1411.5896</td>
+      <td>1252.7474</td>
+      <td>582.9917</td>
+    </tr>
+    <tr>
+      <th>Gr Liv Area</th>
+      <td>3.0146</td>
+      <td>10.6392</td>
+      <td>9.1936</td>
+      <td>2.1638</td>
+    </tr>
+    <tr>
+      <th>Garage Cars</th>
+      <td>1516.9382</td>
+      <td>2891.5570</td>
+      <td>2529.1792</td>
+      <td>1088.7817</td>
+    </tr>
+    <tr>
+      <th>Total Bsmt SF</th>
+      <td>2.8121</td>
+      <td>8.3766</td>
+      <td>7.1604</td>
+      <td>2.0184</td>
+    </tr>
+    <tr>
+      <th>1st Flr SF</th>
+      <td>3.2118</td>
+      <td>4.5890</td>
+      <td>4.3216</td>
+      <td>2.3052</td>
+    </tr>
+    <tr>
+      <th>Year Built</th>
+      <td>46.7429</td>
+      <td>40.4068</td>
+      <td>39.6951</td>
+      <td>33.5497</td>
+    </tr>
+    <tr>
+      <th>Full Bath</th>
+      <td>1836.4550</td>
+      <td>3458.3813</td>
+      <td>3105.0779</td>
+      <td>1318.1147</td>
+    </tr>
+    <tr>
+      <th>Year Remod/Add</th>
+      <td>47.1037</td>
+      <td>37.8000</td>
+      <td>38.4743</td>
+      <td>33.8086</td>
+    </tr>
+    <tr>
+      <th>Garage Yr Blt</th>
+      <td>55.9132</td>
+      <td>56.3347</td>
+      <td>52.5624</td>
+      <td>40.1316</td>
+    </tr>
+    <tr>
+      <th>Mas Vnr Area</th>
+      <td>4.3692</td>
+      <td>7.8760</td>
+      <td>7.6170</td>
+      <td>3.1360</td>
+    </tr>
+    <tr>
+      <th>TotRms AbvGrd</th>
+      <td>766.4372</td>
+      <td>1505.0190</td>
+      <td>1371.8283</td>
+      <td>550.1099</td>
+    </tr>
+    <tr>
+      <th>Fireplaces</th>
+      <td>1236.9640</td>
+      <td>1674.2822</td>
+      <td>1588.8511</td>
+      <td>887.8303</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+<section id="key-takeaways">
+<h2>7.7 Key takeaways<a class="headerlink" href="#key-takeaways" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Las correcciones <strong>HC0–HC3</strong> ajustan los errores estándar sin cambiar los coeficientes OLS.</p></li>
+<li><p><strong>HC3</strong> suele recomendarse con tamaños de muestra moderados, al ser más conservadora.</p></li>
+<li><p>Los modelos <strong>RLM (Huber, Tukey)</strong> modifican tanto coeficientes como errores estándar, reduciendo la influencia de outliers.</p></li>
+<li><p>El <strong>Bootstrap</strong> proporciona errores estándar e intervalos de confianza sin depender fuertemente de supuestos de normalidad.</p></li>
+<li><p>La comparación de métodos ayuda a elegir un enfoque robusto cuando se detectan violaciones relevantes de los supuestos OLS clásicos.</p></li>
+</ul>
+<p>Este capítulo cierra el bloque de <strong>remedios robustos</strong>, preparando el camino para la <strong>regularización (Ridge, Lasso, ElasticNet)</strong> en los siguientes capítulos.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="cap6-supuestos.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Capítulo 6 · Diagnóstico de supuestos del modelo OLS</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="cap8-seleccion.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Capítulo 8 · Selección de modelo y validación cruzada</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos-y-modelo-base">7.1 Datos y modelo base</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ols-clasico-y-evidencia-de-heterocedasticidad">7.2 OLS clásico y evidencia de heterocedasticidad</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#correcciones-robustas-hc0hc3">7.3 Correcciones robustas HC0–HC3</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelos-robustos-rlm-huber-y-tukey">7.4 Modelos robustos RLM (Huber y Tukey)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bootstrap-de-coeficientes-ols">7.5 Bootstrap de coeficientes OLS</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabla-comparativa-final">7.6 Tabla comparativa final</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">7.7 Key takeaways</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Efraín Fernando Márquez
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

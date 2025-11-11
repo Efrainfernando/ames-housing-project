@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Capítulo 6 · Diagnóstico de supuestos &#8212; Modelos de regresión lineal usando el Ames Housing Dataset</title>
+    <title>Capítulo 6 · Diagnóstico de supuestos del modelo OLS &#8212; Modelos de regresión lineal usando el Ames Housing Dataset</title>
   
   
   
@@ -62,11 +62,13 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'cap6-supuestos';</script>
     <link rel="canonical" href="https://efrainfernando.github.io/ames-housing-project/cap6-supuestos.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Capítulo 7 · Remedios y métodos robustos (research)" href="cap7-robustos.html" />
+    <link rel="next" title="Capítulo 7 · Remedios y métodos robustos" href="cap7-remedios.html" />
     <link rel="prev" title="Capítulo 5 · Inferencia y grados de libertad" href="cap5-inferencia.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -164,8 +166,8 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="cap3-eda.html">Capítulo 3 · Análisis exploratorio (EDA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cap4-ols.html">Capítulo 4 · Formulación matricial del modelo OLS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cap5-inferencia.html">Capítulo 5 · Inferencia y grados de libertad</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Capítulo 6 · Diagnóstico de supuestos</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cap7-robustos.html">Capítulo 7 · Remedios y métodos robustos (research)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Capítulo 6 · Diagnóstico de supuestos del modelo OLS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cap7-remedios.html">Capítulo 7 · Remedios y métodos robustos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cap8-seleccion.html">Capítulo 8 · Selección de modelo y validación cruzada</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cap9-regularizacion.html">Capítulo 9 · Regularización: Ridge y Lasso</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cap10-elasticnet.html">Capítulo 10 · ElasticNet y comparación final de modelos</a></li>
@@ -240,7 +242,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="_sources/cap6-supuestos.md" target="_blank"
+      <li><a href="_sources/cap6-supuestos.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -250,7 +252,7 @@ const thebe_selector_output = ".output, .cell_output"
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.md</span>
+<span class="btn__text-container">.ipynb</span>
 </a>
 </li>
       
@@ -322,7 +324,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Capítulo 6 · Diagnóstico de supuestos</h1>
+    <h1>Capítulo 6 · Diagnóstico de supuestos del modelo OLS</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -332,14 +334,15 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ajuste-del-modelo-reutilizando-logica-del-cap-5">6.1 Ajuste del modelo (reutilizando lógica del Cap. 5)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linealidad-residual-vs-fitted">6.2 Linealidad: Residual vs Fitted</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#homocedasticidad-breuschpagan-y-white">6.3 Homocedasticidad: Breusch–Pagan y White</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#normalidad-de-residuos-qq-plot-y-shapirowilk">6.4 Normalidad de residuos: QQ-plot y Shapiro–Wilk</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#autocorrelacion-durbinwatson">6.5 Autocorrelación: Durbin–Watson</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multicolinealidad-vif">6.6 Multicolinealidad: VIF</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resumen-y-decisiones">6.7 Resumen y decisiones</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">6.8 Key takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos-y-modelo-base">6.1 Datos y modelo base</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ajuste-del-modelo-y-residuos">6.2 Ajuste del modelo y residuos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grafico-de-residuos-vs-valores-ajustados">6.3 Gráfico de residuos vs. valores ajustados</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#normalidad-de-residuos-histograma-y-qq-plot">6.4 Normalidad de residuos: histograma y QQ-plot</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prueba-de-homocedasticidad-breuschpagan">6.5 Prueba de homocedasticidad: Breusch–Pagan</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#independencia-de-errores-estadistico-de-durbinwatson">6.6 Independencia de errores: estadístico de Durbin–Watson</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#influencia-leverage-y-distancias-de-cook">6.7 Influencia, leverage y distancias de Cook</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multicolinealidad-factor-de-inflacion-de-la-varianza-vif">6.8 Multicolinealidad: Factor de Inflación de la Varianza (VIF)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">6.9 Key takeaways</a></li>
 </ul>
             </nav>
         </div>
@@ -351,33 +354,49 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="capitulo-6-diagnostico-de-supuestos">
-<h1>Capítulo 6 · Diagnóstico de supuestos<a class="headerlink" href="#capitulo-6-diagnostico-de-supuestos" title="Permalink to this heading">#</a></h1>
-<blockquote>
-<div><p><strong>Objetivo:</strong> verificar los supuestos clásicos del modelo OLS ajustado (mismas <strong>variables candidatas</strong> de los capítulos 4–5) y presentar una <strong>tabla resumen</strong> con decisiones.</p>
-</div></blockquote>
-<hr class="docutils" />
-<section id="ajuste-del-modelo-reutilizando-logica-del-cap-5">
-<h2>6.1 Ajuste del modelo (reutilizando lógica del Cap. 5)<a class="headerlink" href="#ajuste-del-modelo-reutilizando-logica-del-cap-5" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+  <section class="tex2jax_ignore mathjax_ignore" id="capitulo-6-diagnostico-de-supuestos-del-modelo-ols">
+<h1>Capítulo 6 · Diagnóstico de supuestos del modelo OLS<a class="headerlink" href="#capitulo-6-diagnostico-de-supuestos-del-modelo-ols" title="Permalink to this heading">#</a></h1>
+<p><strong>Objetivo:</strong> evaluar los principales <strong>supuestos del modelo de regresión lineal</strong> ajustado en capítulos previos:</p>
+<ul class="simple">
+<li><p>Linealidad y forma funcional</p></li>
+<li><p>Normalidad de residuos</p></li>
+<li><p>Homocedasticidad</p></li>
+<li><p>Independencia (autocorrelación)</p></li>
+<li><p>Influencia y valores atípicos</p></li>
+<li><p>Multicolinealidad (VIF)</p></li>
+</ul>
+<p>Este cuaderno genera <strong>todos los gráficos diagnósticos</strong> y tablas necesarias para interpretar la calidad del ajuste OLS.</p>
+<section id="datos-y-modelo-base">
+<h2>6.1 Datos y modelo base<a class="headerlink" href="#datos-y-modelo-base" title="Permalink to this heading">#</a></h2>
+<p>Reutilizamos las <strong>variables candidatas</strong> seleccionadas con el mismo criterio de los capítulos 3–5
+(correlación alta con <code class="docutils literal notranslate"><span class="pre">SalePrice</span></code> y baja colinealidad entre predictores).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.stats.diagnostic</span><span class="w"> </span><span class="kn">import</span> <span class="n">het_breuschpagan</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.stats.outliers_influence</span><span class="w"> </span><span class="kn">import</span> <span class="n">variance_inflation_factor</span>
 
-<span class="c1"># Localiza el CSV</span>
-<span class="n">CANDIDATE_PATHS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data/ames_housing.csv&quot;</span><span class="p">),</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;AmesHousing.csv&quot;</span><span class="p">)]</span>
+<span class="c1"># Localizar dataset</span>
+<span class="n">CANDIDATE_PATHS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;data/ames_housing.csv&#39;</span><span class="p">),</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;AmesHousing.csv&#39;</span><span class="p">)]</span>
 <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">CANDIDATE_PATHS</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="n">DATA_PATH</span> <span class="o">=</span> <span class="n">p</span>
         <span class="k">break</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;No se encontró data/ames_housing.csv ni AmesHousing.csv&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s1">&#39;No se encontró data/ames_housing.csv ni AmesHousing.csv&#39;</span><span class="p">)</span>
 
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">DATA_PATH</span><span class="p">)</span>
+
 <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;SalePrice&quot;</span>
 
-<span class="c1"># Selección automática de variables candidatas (idéntica a Cap. 4–5)</span>
+<span class="c1"># Numéricas y limpieza de infinitos</span>
 <span class="n">num_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+<span class="c1"># Pool de variables según correlación absoluta con SalePrice</span>
 <span class="n">corr_abs</span> <span class="o">=</span> <span class="n">num_df</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">numeric_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">pool</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">corr_abs</span><span class="o">.</span><span class="n">index</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="n">target</span><span class="p">][:</span><span class="mi">15</span><span class="p">]</span>
 
@@ -388,7 +407,7 @@ document.write(`
         <span class="k">continue</span>
     <span class="n">ok</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">sel</span><span class="p">:</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">num_df</span><span class="p">[[</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">num_df</span><span class="p">[[</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mf">0.85</span><span class="p">:</span>
             <span class="n">ok</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">break</span>
@@ -397,146 +416,523 @@ document.write(`
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">12</span><span class="p">:</span>
         <span class="k">break</span>
 
+<span class="c1"># Datos finales</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">num_df</span><span class="p">[[</span><span class="n">target</span><span class="p">]</span> <span class="o">+</span> <span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 <span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">has_constant</span><span class="o">=</span><span class="s2">&quot;add&quot;</span><span class="p">)</span>
 
-<span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
-<span class="n">sel</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">rsquared</span>
+<span class="n">sel</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>([&#39;Overall Qual&#39;,
+  &#39;Gr Liv Area&#39;,
+  &#39;Garage Cars&#39;,
+  &#39;Total Bsmt SF&#39;,
+  &#39;1st Flr SF&#39;,
+  &#39;Year Built&#39;,
+  &#39;Full Bath&#39;,
+  &#39;Year Remod/Add&#39;,
+  &#39;Garage Yr Blt&#39;,
+  &#39;Mas Vnr Area&#39;,
+  &#39;TotRms AbvGrd&#39;,
+  &#39;Fireplaces&#39;],
+ (2748, 13),
+ (2748,))
+</pre></div>
+</div>
+</div>
+</div>
+<p>Mostramos las variables utilizadas en el modelo:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">sel</span><span class="p">,</span> <span class="s2">&quot;abs(corr SalePrice)&quot;</span><span class="p">:</span> <span class="n">corr_abs</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">})</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Variable</th>
+      <th>abs(corr SalePrice)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Overall Qual</td>
+      <td>0.799</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Gr Liv Area</td>
+      <td>0.707</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Garage Cars</td>
+      <td>0.648</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Total Bsmt SF</td>
+      <td>0.632</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1st Flr SF</td>
+      <td>0.622</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Year Built</td>
+      <td>0.558</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Full Bath</td>
+      <td>0.546</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Year Remod/Add</td>
+      <td>0.533</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Garage Yr Blt</td>
+      <td>0.527</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>Mas Vnr Area</td>
+      <td>0.508</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>TotRms AbvGrd</td>
+      <td>0.495</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>Fireplaces</td>
+      <td>0.475</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
 </section>
-<hr class="docutils" />
-<section id="linealidad-residual-vs-fitted">
-<h2>6.2 Linealidad: Residual vs Fitted<a class="headerlink" href="#linealidad-residual-vs-fitted" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<section id="ajuste-del-modelo-y-residuos">
+<h2>6.2 Ajuste del modelo y residuos<a class="headerlink" href="#ajuste-del-modelo-y-residuos" title="Permalink to this heading">#</a></h2>
+<p>Ajustamos el modelo OLS y extraemos:</p>
+<ul class="simple">
+<li><p>Valores ajustados (fitted)</p></li>
+<li><p>Residuos</p></li>
+<li><p>Residuos estandarizados</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 
-<span class="n">fitted</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fittedvalues</span>
-<span class="n">resid</span>  <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">resid</span>
+<span class="n">fitted</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">fittedvalues</span>
+<span class="n">resid</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">resid</span>
+<span class="n">influence</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">get_influence</span><span class="p">()</span>
+<span class="n">resid_student</span> <span class="o">=</span> <span class="n">influence</span><span class="o">.</span><span class="n">resid_studentized_internal</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ols</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>            <td>y</td>        <th>  R-squared:         </th> <td>   0.800</td> 
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.799</td> 
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   909.9</td> 
+</tr>
+<tr>
+  <th>Date:</th>             <td>Tue, 11 Nov 2025</td> <th>  Prob (F-statistic):</th>  <td>  0.00</td>  
+</tr>
+<tr>
+  <th>Time:</th>                 <td>01:41:21</td>     <th>  Log-Likelihood:    </th> <td> -32698.</td> 
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>  2748</td>      <th>  AIC:               </th> <td>6.542e+04</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>  2735</td>      <th>  BIC:               </th> <td>6.550e+04</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>    12</td>      <th>                     </th>     <td> </td>    
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>     <td> </td>    
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+    <td></td>       <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>const</th> <td>-1.258e+06</td> <td> 9.42e+04</td> <td>  -13.357</td> <td> 0.000</td> <td>-1.44e+06</td> <td>-1.07e+06</td>
+</tr>
+<tr>
+  <th>x1</th>    <td> 1.875e+04</td> <td>  812.249</td> <td>   23.088</td> <td> 0.000</td> <td> 1.72e+04</td> <td> 2.03e+04</td>
+</tr>
+<tr>
+  <th>x2</th>    <td>   49.1831</td> <td>    3.015</td> <td>   16.315</td> <td> 0.000</td> <td>   43.272</td> <td>   55.094</td>
+</tr>
+<tr>
+  <th>x3</th>    <td> 1.385e+04</td> <td> 1516.938</td> <td>    9.128</td> <td> 0.000</td> <td> 1.09e+04</td> <td> 1.68e+04</td>
+</tr>
+<tr>
+  <th>x4</th>    <td>   22.2139</td> <td>    2.812</td> <td>    7.899</td> <td> 0.000</td> <td>   16.700</td> <td>   27.728</td>
+</tr>
+<tr>
+  <th>x5</th>    <td>   12.1134</td> <td>    3.212</td> <td>    3.772</td> <td> 0.000</td> <td>    5.816</td> <td>   18.411</td>
+</tr>
+<tr>
+  <th>x6</th>    <td>  216.4772</td> <td>   46.743</td> <td>    4.631</td> <td> 0.000</td> <td>  124.822</td> <td>  308.132</td>
+</tr>
+<tr>
+  <th>x7</th>    <td>-7950.1848</td> <td> 1836.455</td> <td>   -4.329</td> <td> 0.000</td> <td>-1.16e+04</td> <td>-4349.205</td>
+</tr>
+<tr>
+  <th>x8</th>    <td>  376.3075</td> <td>   47.104</td> <td>    7.989</td> <td> 0.000</td> <td>  283.945</td> <td>  468.670</td>
+</tr>
+<tr>
+  <th>x9</th>    <td>   11.9275</td> <td>   55.913</td> <td>    0.213</td> <td> 0.831</td> <td>  -97.709</td> <td>  121.564</td>
+</tr>
+<tr>
+  <th>x10</th>   <td>   35.7916</td> <td>    4.369</td> <td>    8.192</td> <td> 0.000</td> <td>   27.224</td> <td>   44.359</td>
+</tr>
+<tr>
+  <th>x11</th>   <td> -868.7341</td> <td>  766.437</td> <td>   -1.133</td> <td> 0.257</td> <td>-2371.588</td> <td>  634.120</td>
+</tr>
+<tr>
+  <th>x12</th>   <td> 8697.6657</td> <td> 1236.964</td> <td>    7.031</td> <td> 0.000</td> <td> 6272.187</td> <td> 1.11e+04</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td>1164.902</td> <th>  Durbin-Watson:     </th>  <td>   1.534</td> 
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th>  <td> 0.000</td>  <th>  Jarque-Bera (JB):  </th> <td>134958.524</td>
+</tr>
+<tr>
+  <th>Skew:</th>           <td>-1.007</td>  <th>  Prob(JB):          </th>  <td>    0.00</td> 
+</tr>
+<tr>
+  <th>Kurtosis:</th>       <td>37.273</td>  <th>  Cond. No.          </th>  <td>5.65e+05</td> 
+</tr>
+</table><br/><br/>Notes:<br/>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.<br/>[2] The condition number is large, 5.65e+05. This might indicate that there are<br/>strong multicollinearity or other numerical problems.</div></div>
+</div>
+</section>
+<section id="grafico-de-residuos-vs-valores-ajustados">
+<h2>6.3 Gráfico de residuos vs. valores ajustados<a class="headerlink" href="#grafico-de-residuos-vs-valores-ajustados" title="Permalink to this heading">#</a></h2>
+<p>Este gráfico permite evaluar:</p>
+<ul class="simple">
+<li><p>Linealidad (los residuos deberían oscilar alrededor de 0 sin patrón claro)</p></li>
+<li><p>Homocedasticidad (varianza aproximadamente constante a lo largo del eje de ajustados)</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">fitted</span><span class="p">,</span> <span class="n">resid</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Residual vs Fitted&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Fitted values&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Residuals&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Valores ajustados&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Residuos&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Residuos vs. valores ajustados&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p><strong>Interpretación esperada:</strong> patrón aleatorio alrededor de 0 → <strong>ok</strong> (linealidad). Tendencias curvas sugieren especificación incorrecta o necesidad de transformaciones.</p>
-</div></blockquote>
-</section>
-<hr class="docutils" />
-<section id="homocedasticidad-breuschpagan-y-white">
-<h2>6.3 Homocedasticidad: Breusch–Pagan y White<a class="headerlink" href="#homocedasticidad-breuschpagan-y-white" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.stats.diagnostic</span><span class="w"> </span><span class="kn">import</span> <span class="n">het_breuschpagan</span><span class="p">,</span> <span class="n">het_white</span>
-
-<span class="n">bp_test</span> <span class="o">=</span> <span class="n">het_breuschpagan</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">exog</span><span class="p">)</span>
-<span class="n">white_test</span> <span class="o">=</span> <span class="n">het_white</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">exog</span><span class="p">)</span>
-
-<span class="n">bp_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;LM stat&quot;</span><span class="p">,</span> <span class="s2">&quot;LM p-value&quot;</span><span class="p">,</span> <span class="s2">&quot;F stat&quot;</span><span class="p">,</span> <span class="s2">&quot;F p-value&quot;</span><span class="p">]</span>
-<span class="n">white_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;LM stat&quot;</span><span class="p">,</span> <span class="s2">&quot;LM p-value&quot;</span><span class="p">,</span> <span class="s2">&quot;F stat&quot;</span><span class="p">,</span> <span class="s2">&quot;F p-value&quot;</span><span class="p">]</span>
-
-<span class="n">bp_res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">bp_labels</span><span class="p">,</span> <span class="n">bp_test</span><span class="p">))</span>
-<span class="n">white_res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">white_labels</span><span class="p">,</span> <span class="n">white_test</span><span class="p">))</span>
-
-<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;Breusch-Pagan&quot;</span><span class="p">:</span> <span class="n">bp_res</span><span class="p">,</span> <span class="s2">&quot;White&quot;</span><span class="p">:</span> <span class="n">white_res</span><span class="p">})</span>
-</pre></div>
 </div>
-<blockquote>
-<div><p><strong>Decisión:</strong> p-value &gt; 0.05 → <strong>no se rechaza</strong> homocedasticidad (ok).</p>
-</div></blockquote>
+<div class="cell_output docutils container">
+<img alt="_images/5c66ca689e09366bd6f9c0a7d536c0e5da5790d8b3a9413ad01d49e62a268039.png" src="_images/5c66ca689e09366bd6f9c0a7d536c0e5da5790d8b3a9413ad01d49e62a268039.png" />
+</div>
+</div>
 </section>
-<hr class="docutils" />
-<section id="normalidad-de-residuos-qq-plot-y-shapirowilk">
-<h2>6.4 Normalidad de residuos: QQ-plot y Shapiro–Wilk<a class="headerlink" href="#normalidad-de-residuos-qq-plot-y-shapirowilk" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+<section id="normalidad-de-residuos-histograma-y-qq-plot">
+<h2>6.4 Normalidad de residuos: histograma y QQ-plot<a class="headerlink" href="#normalidad-de-residuos-histograma-y-qq-plot" title="Permalink to this heading">#</a></h2>
+<p>Evaluamos la aproximación a normalidad mediante:</p>
+<ul class="simple">
+<li><p>Histograma de residuos</p></li>
+<li><p>QQ-plot comparando con una distribución normal teórica</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Histograma de residuos</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Residuos&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Frecuencia&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Histograma de residuos&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 <span class="c1"># QQ-plot</span>
-<span class="n">sm</span><span class="o">.</span><span class="n">qqplot</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="s1">&#39;45&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;QQ-plot de residuos&#39;</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">qqplot</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="s2">&quot;45&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;QQ-plot de residuos&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/9b9691a33f7329e0136c25beaa9180f487e81bf9b01b1ff8eebe373473f0a96c.png" src="_images/9b9691a33f7329e0136c25beaa9180f487e81bf9b01b1ff8eebe373473f0a96c.png" />
+<img alt="_images/43327b25353af34a4aef4a09d660e7a0a472d6fe7f91b0dd3176c7f489466c41.png" src="_images/43327b25353af34a4aef4a09d660e7a0a472d6fe7f91b0dd3176c7f489466c41.png" />
+</div>
+</div>
+</section>
+<section id="prueba-de-homocedasticidad-breuschpagan">
+<h2>6.5 Prueba de homocedasticidad: Breusch–Pagan<a class="headerlink" href="#prueba-de-homocedasticidad-breuschpagan" title="Permalink to this heading">#</a></h2>
+<p>Contrastamos:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(H_0\)</span>: homocedasticidad (varianza constante de los errores)</p></li>
+<li><p><span class="math notranslate nohighlight">\(H_1\)</span>: heterocedasticidad</p></li>
+</ul>
+<p>Usamos la prueba de Breusch–Pagan sobre los residuos vs. predictores.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bp_test</span> <span class="o">=</span> <span class="n">het_breuschpagan</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;LM stat&quot;</span><span class="p">,</span> <span class="s2">&quot;LM p-value&quot;</span><span class="p">,</span> <span class="s2">&quot;F stat&quot;</span><span class="p">,</span> <span class="s2">&quot;F p-value&quot;</span><span class="p">]</span>
+<span class="n">bp_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">bp_test</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
+<span class="n">bp_results</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>LM stat        7.051415e+02
+LM p-value    3.497135e-143
+F stat         7.867089e+01
+F p-value     3.561338e-166
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p>Interpretación: un p-valor pequeño (por ejemplo &lt; 0.05) sugiere <strong>rechazar</strong> homocedasticidad y considerar remedios (transformaciones, HC3, modelos robustos, etc.).</p>
+</div></blockquote>
+</section>
+<section id="independencia-de-errores-estadistico-de-durbinwatson">
+<h2>6.6 Independencia de errores: estadístico de Durbin–Watson<a class="headerlink" href="#independencia-de-errores-estadistico-de-durbinwatson" title="Permalink to this heading">#</a></h2>
+<p>El estadístico de Durbin–Watson toma valores cercanos a 2 bajo ausencia de autocorrelación:</p>
+<ul class="simple">
+<li><p>Cerca de 2: sin autocorrelación fuerte.</p></li>
+<li><p>Mucho menor que 2: autocorrelación positiva.</p></li>
+<li><p>Mucho mayor que 2: autocorrelación negativa.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dw</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">durbin_watson</span><span class="p">(</span><span class="n">resid</span><span class="p">)</span>
+<span class="n">dw</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(1.534280417848114)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="influencia-leverage-y-distancias-de-cook">
+<h2>6.7 Influencia, leverage y distancias de Cook<a class="headerlink" href="#influencia-leverage-y-distancias-de-cook" title="Permalink to this heading">#</a></h2>
+<p>Analizamos:</p>
+<ul class="simple">
+<li><p><strong>Leverage</strong> (diagonal de la matriz sombrero): puntos con valores extremos en el espacio de predictores.</p></li>
+<li><p><strong>Distancia de Cook</strong>: medida global de influencia de cada observación sobre los estimadores.</p></li>
+</ul>
+<p>Un valor de Cook alto (por ejemplo, superior a <span class="math notranslate nohighlight">\(4/n\)</span>) puede indicar observaciones muy influyentes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Leverage y Cook&#39;s distance</span>
+<span class="n">lev</span> <span class="o">=</span> <span class="n">influence</span><span class="o">.</span><span class="n">hat_matrix_diag</span>
+<span class="n">cooks_d</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">influence</span><span class="o">.</span><span class="n">cooks_distance</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">threshold_cook</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">/</span> <span class="n">n</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">cooks_d</span><span class="p">,</span> <span class="n">basefmt</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">threshold_cook</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Índice de observación&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Distancia de Cook&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Distancia de Cook por observación&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-<span class="c1"># Shapiro (cuidado: sensible con n grande; usar como orientación)</span>
-<span class="n">W</span><span class="p">,</span> <span class="n">p_shapiro</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">shapiro</span><span class="p">(</span><span class="n">resid</span><span class="p">[:</span><span class="mi">5000</span><span class="p">])</span>  <span class="c1"># limitar tamaño por restricción de la prueba</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;Shapiro-Wilk&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;W&quot;</span><span class="p">:</span> <span class="n">W</span><span class="p">,</span> <span class="s2">&quot;p-value&quot;</span><span class="p">:</span> <span class="n">p_shapiro</span><span class="p">}})</span>
+<span class="c1"># Gráfico leverage vs residuos estudentizados</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">lev</span><span class="p">,</span> <span class="n">resid_student</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Leverage&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Residuos studentizados&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Leverage vs residuos studentizados&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p><strong>Decisión:</strong> puntos ~ línea (QQ-plot) y p-value Shapiro &gt; 0.05 → <strong>ok</strong> (aprox. normalidad).</p>
-</div></blockquote>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/ebe7ec9ad5fb6d54f54cbe0df6114a413dd3e7eadc8ef8e6c96b352e86b7be73.png" src="_images/ebe7ec9ad5fb6d54f54cbe0df6114a413dd3e7eadc8ef8e6c96b352e86b7be73.png" />
+<img alt="_images/63716861f094f624120165229229886288183aec674df20ae42dda0a17558dc3.png" src="_images/63716861f094f624120165229229886288183aec674df20ae42dda0a17558dc3.png" />
+</div>
+</div>
 </section>
-<hr class="docutils" />
-<section id="autocorrelacion-durbinwatson">
-<h2>6.5 Autocorrelación: Durbin–Watson<a class="headerlink" href="#autocorrelacion-durbinwatson" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.stats.stattools</span><span class="w"> </span><span class="kn">import</span> <span class="n">durbin_watson</span>
-<span class="n">dw</span> <span class="o">=</span> <span class="n">durbin_watson</span><span class="p">(</span><span class="n">resid</span><span class="p">)</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;Durbin-Watson&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;stat&quot;</span><span class="p">:</span> <span class="n">dw</span><span class="p">}})</span>
-</pre></div>
-</div>
-<blockquote>
-<div><p><strong>Regla práctica:</strong> valores cercanos a <strong>2</strong> sugieren ausencia de autocorrelación (ok).</p>
-</div></blockquote>
-</section>
-<hr class="docutils" />
-<section id="multicolinealidad-vif">
-<h2>6.6 Multicolinealidad: VIF<a class="headerlink" href="#multicolinealidad-vif" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.stats.outliers_influence</span><span class="w"> </span><span class="kn">import</span> <span class="n">variance_inflation_factor</span>
-
-<span class="n">X_noint</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>  <span class="c1"># sin intercepto</span>
-<span class="n">vif</span> <span class="o">=</span> <span class="p">[</span><span class="n">variance_inflation_factor</span><span class="p">(</span><span class="n">X_noint</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X_noint</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
-
-<span class="n">vif_tbl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="n">sel</span><span class="p">,</span> <span class="s2">&quot;VIF&quot;</span><span class="p">:</span> <span class="n">vif</span><span class="p">})</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;VIF&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">vif_tbl</span>
-</pre></div>
-</div>
-<blockquote>
-<div><p><strong>Criterio:</strong> VIF &lt; 5 → aceptable; VIF 5–10 → revisar; VIF &gt; 10 → fuerte colinealidad.</p>
-</div></blockquote>
-</section>
-<hr class="docutils" />
-<section id="resumen-y-decisiones">
-<h2>6.7 Resumen y decisiones<a class="headerlink" href="#resumen-y-decisiones" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compactamos resultados clave</span>
-<span class="n">summary</span> <span class="o">=</span> <span class="p">{}</span>
-
-<span class="c1"># Homocedasticidad</span>
-<span class="n">summary</span><span class="p">[</span><span class="s2">&quot;BP p-value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bp_res</span><span class="p">[</span><span class="s2">&quot;LM p-value&quot;</span><span class="p">]</span>
-<span class="n">summary</span><span class="p">[</span><span class="s2">&quot;White p-value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">white_res</span><span class="p">[</span><span class="s2">&quot;LM p-value&quot;</span><span class="p">]</span>
-
-<span class="c1"># Normalidad</span>
-<span class="n">summary</span><span class="p">[</span><span class="s2">&quot;Shapiro p-value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_shapiro</span>
-
-<span class="c1"># Autocorrelación</span>
-<span class="n">summary</span><span class="p">[</span><span class="s2">&quot;Durbin-Watson&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dw</span>
-
-<span class="c1"># VIF (máximo y mediana)</span>
-<span class="n">summary</span><span class="p">[</span><span class="s2">&quot;VIF max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">vif</span><span class="p">))</span>
-<span class="n">summary</span><span class="p">[</span><span class="s2">&quot;VIF median&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">vif</span><span class="p">))</span>
-
-<span class="c1"># Tabla final</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;resultado&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
-</pre></div>
-</div>
-<blockquote>
-<div><p><strong>Interpretación:</strong></p>
+<section id="multicolinealidad-factor-de-inflacion-de-la-varianza-vif">
+<h2>6.8 Multicolinealidad: Factor de Inflación de la Varianza (VIF)<a class="headerlink" href="#multicolinealidad-factor-de-inflacion-de-la-varianza-vif" title="Permalink to this heading">#</a></h2>
+<p>El <strong>VIF</strong> de cada predictor mide cuánta varianza adicional se introduce en el estimador de su coeficiente debido a la colinealidad:</p>
 <ul class="simple">
-<li><p><strong>Linealidad:</strong> observar gráfico Residual vs Fitted (aleatorio → ok).</p></li>
-<li><p><strong>Homocedasticidad:</strong> p &gt; 0.05 en BP/White → ok.</p></li>
-<li><p><strong>Normalidad:</strong> QQ-plot alineado y p Shapiro &gt; 0.05 → ok (orientativo).</p></li>
-<li><p><strong>Autocorrelación:</strong> Durbin–Watson ~ 2 → ok.</p></li>
-<li><p><strong>Multicolinealidad:</strong> VIF máx. &lt; 5 (ideal) o &lt; 10 (tolerable).</p></li>
+<li><p><span class="math notranslate nohighlight">\(VIF_j = 1\)</span>: sin colinealidad.</p></li>
+<li><p><span class="math notranslate nohighlight">\(VIF_j \in [5,10)\)</span>: colinealidad moderada.</p></li>
+<li><p><span class="math notranslate nohighlight">\(VIF_j \geq 10\)</span>: colinealidad severa (alerta).</p></li>
 </ul>
-</div></blockquote>
+<p>Calculamos VIF para cada predictor (sin incluir la constante).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_no_const</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+<span class="n">vif_values</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X_no_const</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+    <span class="n">vif</span> <span class="o">=</span> <span class="n">variance_inflation_factor</span><span class="p">(</span><span class="n">X_no_const</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">vif_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vif</span><span class="p">)</span>
+
+<span class="n">vif_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">sel</span><span class="p">,</span>
+    <span class="s2">&quot;VIF&quot;</span><span class="p">:</span> <span class="n">vif_values</span>
+<span class="p">})</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">vif_table</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Variable</th>
+      <th>VIF</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Overall Qual</td>
+      <td>48.178</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Gr Liv Area</td>
+      <td>49.675</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Garage Cars</td>
+      <td>17.713</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Total Bsmt SF</td>
+      <td>22.599</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1st Flr SF</td>
+      <td>33.861</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Year Built</td>
+      <td>18233.930</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Full Bath</td>
+      <td>18.327</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Year Remod/Add</td>
+      <td>12438.082</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Garage Yr Blt</td>
+      <td>23861.498</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>Mas Vnr Area</td>
+      <td>1.844</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>TotRms AbvGrd</td>
+      <td>55.151</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>Fireplaces</td>
+      <td>2.663</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
 </section>
-<hr class="docutils" />
 <section id="key-takeaways">
-<h2>6.8 Key takeaways<a class="headerlink" href="#key-takeaways" title="Permalink to this heading">#</a></h2>
+<h2>6.9 Key takeaways<a class="headerlink" href="#key-takeaways" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
-<li><p>El diagnóstico de supuestos valida la pertinencia del modelo OLS y guía ajustes (transformaciones, selección de variables, métodos robustos).</p></li>
-<li><p>Documentar decisiones (qué se acepta/rechaza) permite trazabilidad y reproducibilidad del análisis.</p></li>
+<li><p>El gráfico de <strong>residuos vs ajustados</strong> permite evaluar linealidad y homocedasticidad visualmente.</p></li>
+<li><p>El <strong>histograma</strong> y <strong>QQ-plot</strong> de residuos ayudan a juzgar la normalidad aproximada.</p></li>
+<li><p>La prueba de <strong>Breusch–Pagan</strong> contrasta formalmente la homocedasticidad.</p></li>
+<li><p>El estadístico de <strong>Durbin–Watson</strong> resume la posible autocorrelación de los errores.</p></li>
+<li><p>Las métricas de influencia (leverage, distancia de Cook, residuos studentizados) identifican observaciones potencialmente problemáticas.</p></li>
+<li><p>El <strong>VIF</strong> cuantifica la multicolinealidad y motiva el uso de técnicas de regularización (Ridge, Lasso, ElasticNet) vistas en capítulos posteriores.</p></li>
 </ul>
+<p>Este diagnóstico completa la evaluación del modelo OLS clásico previo a la aplicación de <strong>remedios robustos</strong> y <strong>regularización</strong>.</p>
 </section>
 </section>
 
@@ -581,11 +977,11 @@ document.write(`
       </div>
     </a>
     <a class="right-next"
-       href="cap7-robustos.html"
+       href="cap7-remedios.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Capítulo 7 · Remedios y métodos robustos (research)</p>
+        <p class="prev-next-title">Capítulo 7 · Remedios y métodos robustos</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -607,14 +1003,15 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ajuste-del-modelo-reutilizando-logica-del-cap-5">6.1 Ajuste del modelo (reutilizando lógica del Cap. 5)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linealidad-residual-vs-fitted">6.2 Linealidad: Residual vs Fitted</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#homocedasticidad-breuschpagan-y-white">6.3 Homocedasticidad: Breusch–Pagan y White</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#normalidad-de-residuos-qq-plot-y-shapirowilk">6.4 Normalidad de residuos: QQ-plot y Shapiro–Wilk</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#autocorrelacion-durbinwatson">6.5 Autocorrelación: Durbin–Watson</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multicolinealidad-vif">6.6 Multicolinealidad: VIF</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resumen-y-decisiones">6.7 Resumen y decisiones</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">6.8 Key takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datos-y-modelo-base">6.1 Datos y modelo base</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ajuste-del-modelo-y-residuos">6.2 Ajuste del modelo y residuos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grafico-de-residuos-vs-valores-ajustados">6.3 Gráfico de residuos vs. valores ajustados</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#normalidad-de-residuos-histograma-y-qq-plot">6.4 Normalidad de residuos: histograma y QQ-plot</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prueba-de-homocedasticidad-breuschpagan">6.5 Prueba de homocedasticidad: Breusch–Pagan</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#independencia-de-errores-estadistico-de-durbinwatson">6.6 Independencia de errores: estadístico de Durbin–Watson</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#influencia-leverage-y-distancias-de-cook">6.7 Influencia, leverage y distancias de Cook</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multicolinealidad-factor-de-inflacion-de-la-varianza-vif">6.8 Multicolinealidad: Factor de Inflación de la Varianza (VIF)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">6.9 Key takeaways</a></li>
 </ul>
   </nav></div>
 
