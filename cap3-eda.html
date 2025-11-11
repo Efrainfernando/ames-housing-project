@@ -371,70 +371,201 @@ document.write(`
 <h2>3.1 Carga del dataset y preparación mínima<a class="headerlink" href="#carga-del-dataset-y-preparacion-minima" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from pathlib import Path
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-# Ruta estándar del proyecto
-DATA_PATHS = [Path(&#39;data/ames_housing.csv&#39;), Path(&#39;AmesHousing.csv&#39;)]
-for p in DATA_PATHS:
-    if p.exists():
-        DATA_PATH = p
-        break
-else:
-    raise FileNotFoundError(&#39;No se encontró data/ames_housing.csv ni AmesHousing.csv&#39;)
+<span class="c1"># Ruta estándar del proyecto</span>
+<span class="n">DATA_PATHS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;data/ames_housing.csv&#39;</span><span class="p">),</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;AmesHousing.csv&#39;</span><span class="p">)]</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">DATA_PATHS</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">DATA_PATH</span> <span class="o">=</span> <span class="n">p</span>
+        <span class="k">break</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s1">&#39;No se encontró data/ames_housing.csv ni AmesHousing.csv&#39;</span><span class="p">)</span>
 
-df = pd.read_csv(DATA_PATH)
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">DATA_PATH</span><span class="p">)</span>
 
-# Variables de interés inicial
-target = &#39;SalePrice&#39;
-basic_feats = [&#39;GrLivArea&#39;, &#39;OverallQual&#39;, &#39;TotalBsmtSF&#39;, &#39;GarageCars&#39;, &#39;GarageArea&#39;,
-               &#39;YearBuilt&#39;, &#39;FullBath&#39;, &#39;LotArea&#39;]
+<span class="c1"># Variables de interés inicial</span>
+<span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;SalePrice&#39;</span>
+<span class="n">basic_feats</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;GrLivArea&#39;</span><span class="p">,</span> <span class="s1">&#39;OverallQual&#39;</span><span class="p">,</span> <span class="s1">&#39;TotalBsmtSF&#39;</span><span class="p">,</span> <span class="s1">&#39;GarageCars&#39;</span><span class="p">,</span> <span class="s1">&#39;GarageArea&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;YearBuilt&#39;</span><span class="p">,</span> <span class="s1">&#39;FullBath&#39;</span><span class="p">,</span> <span class="s1">&#39;LotArea&#39;</span><span class="p">]</span>
 
-# Asegurar tipos
-if df[target].dtype == &#39;O&#39;:
-    df[target] = pd.to_numeric(df[target], errors=&#39;coerce&#39;)
+<span class="c1"># Asegurar tipos</span>
+<span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;O&#39;</span><span class="p">:</span>
+    <span class="n">df</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">target</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span>
 
-# Vista general
-print(df.shape)
-df.head(3)
+<span class="c1"># Vista general</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(2930, 82)
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Order</th>
+      <th>PID</th>
+      <th>MS SubClass</th>
+      <th>MS Zoning</th>
+      <th>Lot Frontage</th>
+      <th>Lot Area</th>
+      <th>Street</th>
+      <th>Alley</th>
+      <th>Lot Shape</th>
+      <th>Land Contour</th>
+      <th>...</th>
+      <th>Pool Area</th>
+      <th>Pool QC</th>
+      <th>Fence</th>
+      <th>Misc Feature</th>
+      <th>Misc Val</th>
+      <th>Mo Sold</th>
+      <th>Yr Sold</th>
+      <th>Sale Type</th>
+      <th>Sale Condition</th>
+      <th>SalePrice</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>526301100</td>
+      <td>20</td>
+      <td>RL</td>
+      <td>141.0</td>
+      <td>31770</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>IR1</td>
+      <td>Lvl</td>
+      <td>...</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>5</td>
+      <td>2010</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>215000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>526350040</td>
+      <td>20</td>
+      <td>RH</td>
+      <td>80.0</td>
+      <td>11622</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>...</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>MnPrv</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>6</td>
+      <td>2010</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>105000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>526351010</td>
+      <td>20</td>
+      <td>RL</td>
+      <td>81.0</td>
+      <td>14267</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>IR1</td>
+      <td>Lvl</td>
+      <td>...</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Gar2</td>
+      <td>12500</td>
+      <td>6</td>
+      <td>2010</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>172000</td>
+    </tr>
+  </tbody>
+</table>
+<p>3 rows × 82 columns</p>
+</div></div></div>
 </div>
 </section>
 <section id="histograma-y-boxplot-de-saleprice">
 <h2>3.2 Histograma y boxplot de <code class="docutils literal notranslate"><span class="pre">SalePrice</span></code><a class="headerlink" href="#histograma-y-boxplot-de-saleprice" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>col = &#39;SalePrice&#39;
-series = df[col].dropna()
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">col</span> <span class="o">=</span> <span class="s1">&#39;SalePrice&#39;</span>
+<span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 
-# Histograma (escala lineal)
-plt.figure(figsize=(6,4))
-plt.hist(series, bins=40)
-plt.title(&#39;Histograma de SalePrice&#39;)
-plt.xlabel(&#39;SalePrice&#39;)
-plt.ylabel(&#39;Frecuencia&#39;)
-plt.show()
+<span class="c1"># Histograma (escala lineal)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Histograma de SalePrice&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;SalePrice&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Frecuencia&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-# Histograma (log10) para ver simetría
-plt.figure(figsize=(6,4))
-plt.hist(np.log10(series), bins=40)
-plt.title(&#39;Histograma de log10(SalePrice)&#39;)
-plt.xlabel(&#39;log10(SalePrice)&#39;)
-plt.ylabel(&#39;Frecuencia&#39;)
-plt.show()
+<span class="c1"># Histograma (log10) para ver simetría</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">series</span><span class="p">),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Histograma de log10(SalePrice)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;log10(SalePrice)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Frecuencia&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-# Boxplot simple
-plt.figure(figsize=(4,4))
-plt.boxplot(series.dropna(), vert=True, labels=[&#39;SalePrice&#39;])
-plt.title(&#39;Boxplot de SalePrice&#39;)
-plt.ylabel(&#39;Valor&#39;)
-plt.show()
+<span class="c1"># Boxplot simple</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">vert</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SalePrice&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Boxplot de SalePrice&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Valor&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/dd3b15eaf48a0684289de273782f0e9a7a9348b3404cb29b962e8114c71d5bd4.png" src="_images/dd3b15eaf48a0684289de273782f0e9a7a9348b3404cb29b962e8114c71d5bd4.png" />
+<img alt="_images/27e4987e693095be2d48da1815ee677d218a419a650250d40dde7e741dfea9cf.png" src="_images/27e4987e693095be2d48da1815ee677d218a419a650250d40dde7e741dfea9cf.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\User\AppData\Local\Temp\ipykernel_16044\1973078800.py:22: MatplotlibDeprecationWarning: The &#39;labels&#39; parameter of boxplot() has been renamed &#39;tick_labels&#39; since Matplotlib 3.9; support for the old name will be dropped in 3.11.
+  plt.boxplot(series.dropna(), vert=True, labels=[&#39;SalePrice&#39;])
+</pre></div>
+</div>
+<img alt="_images/10511450e00a43d923cab22389cf061bab19f2e5964e44b959bbfe57aafbc2f9.png" src="_images/10511450e00a43d923cab22389cf061bab19f2e5964e44b959bbfe57aafbc2f9.png" />
 </div>
 </div>
 </section>
@@ -442,27 +573,31 @@ plt.show()
 <h2>3.3 Dispersión: <code class="docutils literal notranslate"><span class="pre">SalePrice</span></code> vs <code class="docutils literal notranslate"><span class="pre">GrLivArea</span></code><a class="headerlink" href="#dispersion-saleprice-vs-grlivarea" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>x, y = df[&#39;GrLivArea&#39;], df[&#39;SalePrice&#39;]
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Gr Liv Area&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;SalePrice&#39;</span><span class="p">]</span>
 
-mask = x.notna() &amp; y.notna()
-x, y = x[mask], y[mask]
+<span class="n">mask</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">y</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
 
-plt.figure(figsize=(6,4))
-plt.scatter(x, y, s=12, alpha=0.6)
-plt.title(&#39;SalePrice vs GrLivArea&#39;)
-plt.xlabel(&#39;GrLivArea&#39;)
-plt.ylabel(&#39;SalePrice&#39;)
-plt.show()
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;SalePrice vs GrLivArea&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;GrLivArea&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;SalePrice&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-# Versión log del precio para linealidad
-plt.figure(figsize=(6,4))
-plt.scatter(x, np.log1p(y), s=12, alpha=0.6)
-plt.title(&#39;log(1+SalePrice) vs GrLivArea&#39;)
-plt.xlabel(&#39;GrLivArea&#39;)
-plt.ylabel(&#39;log(1+SalePrice)&#39;)
-plt.show()
+<span class="c1"># Versión log del precio para linealidad</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;log(1+SalePrice) vs GrLivArea&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;GrLivArea&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;log(1+SalePrice)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/5e6aed347f50429384e355cad80a59f5d12cc83d81eaf16fc45d753d9ad036a6.png" src="_images/5e6aed347f50429384e355cad80a59f5d12cc83d81eaf16fc45d753d9ad036a6.png" />
+<img alt="_images/f6f54f7344cf2f44b2ca39ede9af5e4bb3cc7a679f7195b5901866741b645c0a.png" src="_images/f6f54f7344cf2f44b2ca39ede9af5e4bb3cc7a679f7195b5901866741b645c0a.png" />
 </div>
 </div>
 </section>
@@ -470,30 +605,50 @@ plt.show()
 <h2>3.4 Heatmap de correlaciones principales<a class="headerlink" href="#heatmap-de-correlaciones-principales" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># Seleccionar numéricas
-num_df = df.select_dtypes(include=[np.number])
-num_df = num_df.replace([np.inf, -np.inf], np.nan)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Seleccionar numéricas</span>
+<span class="n">num_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">])</span>
+<span class="n">num_df</span> <span class="o">=</span> <span class="n">num_df</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
 
-# Top por correlación absoluta con SalePrice
-corr_target = num_df.corr(numeric_only=True)[target].dropna().abs().sort_values(ascending=False)
-top_feats = corr_target.index[1:13]  # excluir SalePrice mismo (posición 0), tomar 12 siguientes
-print(&#39;Top correlaciones con SalePrice:\n&#39;, corr_target.head(13))
+<span class="c1"># Top por correlación absoluta con SalePrice</span>
+<span class="n">corr_target</span> <span class="o">=</span> <span class="n">num_df</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">numeric_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">top_feats</span> <span class="o">=</span> <span class="n">corr_target</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">13</span><span class="p">]</span>  <span class="c1"># excluir SalePrice mismo (posición 0), tomar 12 siguientes</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Top correlaciones con SalePrice:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">corr_target</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">13</span><span class="p">))</span>
 
-corr_mat = num_df[[target, *top_feats]].corr()
+<span class="n">corr_mat</span> <span class="o">=</span> <span class="n">num_df</span><span class="p">[[</span><span class="n">target</span><span class="p">,</span> <span class="o">*</span><span class="n">top_feats</span><span class="p">]]</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
 
-# Heatmap manual con matplotlib
-fig, ax = plt.subplots(figsize=(7,6))
-im = ax.imshow(corr_mat, vmin=-1, vmax=1)
-ax.set_xticks(range(len(corr_mat.columns)))
-ax.set_yticks(range(len(corr_mat.index)))
-ax.set_xticklabels(corr_mat.columns, rotation=45, ha=&#39;right&#39;)
-ax.set_yticklabels(corr_mat.index)
-plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
-plt.title(&#39;Matriz de correlación (top con SalePrice)&#39;)
-plt.tight_layout()
-plt.show()
+<span class="c1"># Heatmap manual con matplotlib</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">corr_mat</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">corr_mat</span><span class="o">.</span><span class="n">columns</span><span class="p">)))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">corr_mat</span><span class="o">.</span><span class="n">index</span><span class="p">)))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">corr_mat</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">corr_mat</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.046</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.04</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Matriz de correlación (top con SalePrice)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Top correlaciones con SalePrice:
+ SalePrice         1.000000
+Overall Qual      0.799262
+Gr Liv Area       0.706780
+Garage Cars       0.647877
+Garage Area       0.640401
+Total Bsmt SF     0.632280
+1st Flr SF        0.621676
+Year Built        0.558426
+Full Bath         0.545604
+Year Remod/Add    0.532974
+Garage Yr Blt     0.526965
+Mas Vnr Area      0.508285
+TotRms AbvGrd     0.495474
+Name: SalePrice, dtype: float64
+</pre></div>
+</div>
+<img alt="_images/2425d21c7b7ade702aa70ae056bbb181d8128deb5bf8609b742754f45c1b0489.png" src="_images/2425d21c7b7ade702aa70ae056bbb181d8128deb5bf8609b742754f45c1b0489.png" />
 </div>
 </div>
 </section>
@@ -503,19 +658,26 @@ plt.show()
 <h3>3.5.1 <code class="docutils literal notranslate"><span class="pre">OverallQual</span></code> (ordinal)<a class="headerlink" href="#overallqual-ordinal" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>col = &#39;OverallQual&#39;
-tmp = df[[col, target]].dropna()
-groups = [g[target].values for _, g in tmp.groupby(col)]
-labels = [str(int(v)) for v in sorted(tmp[col].unique())]
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">col</span> <span class="o">=</span> <span class="s1">&#39;Overall Qual&#39;</span>
+<span class="n">tmp</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="n">col</span><span class="p">,</span> <span class="n">target</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">tmp</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col</span><span class="p">)]</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())]</span>
 
-plt.figure(figsize=(7,4))
-plt.boxplot(groups, labels=labels, showfliers=False)
-plt.title(f&#39;SalePrice por {col}&#39;)
-plt.xlabel(col)
-plt.ylabel(&#39;SalePrice&#39;)
-plt.show()
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">showfliers</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SalePrice por </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;SalePrice&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\User\AppData\Local\Temp\ipykernel_16044\1741650317.py:7: MatplotlibDeprecationWarning: The &#39;labels&#39; parameter of boxplot() has been renamed &#39;tick_labels&#39; since Matplotlib 3.9; support for the old name will be dropped in 3.11.
+  plt.boxplot(groups, labels=labels, showfliers=False)
+</pre></div>
+</div>
+<img alt="_images/5d062d46745fbe32ad9f6650aab4519df2d0f95163b5083505022469c436903f.png" src="_images/5d062d46745fbe32ad9f6650aab4519df2d0f95163b5083505022469c436903f.png" />
 </div>
 </div>
 </section>
@@ -523,22 +685,25 @@ plt.show()
 <h3>3.5.2 <code class="docutils literal notranslate"><span class="pre">Neighborhood</span></code> (muchas categorías)<a class="headerlink" href="#neighborhood-muchas-categorias" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>col = &#39;Neighborhood&#39;
-topN = 10
-freq = df[col].value_counts().head(topN).index
-med = (df[df[col].isin(freq)]
-       .groupby(col)[target].median()
-       .sort_values(ascending=False))
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">col</span> <span class="o">=</span> <span class="s1">&#39;Neighborhood&#39;</span>
+<span class="n">topN</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">freq</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">topN</span><span class="p">)</span><span class="o">.</span><span class="n">index</span>
+<span class="n">med</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">freq</span><span class="p">)]</span>
+       <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col</span><span class="p">)[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
+       <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
 
-plt.figure(figsize=(7,4))
-med.plot(kind=&#39;bar&#39;)
-plt.title(&#39;Mediana de SalePrice por Neighborhood (Top 10)&#39;)
-plt.xlabel(&#39;Neighborhood&#39;)
-plt.ylabel(&#39;Mediana de SalePrice&#39;)
-plt.tight_layout()
-plt.show()
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">med</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Mediana de SalePrice por Neighborhood (Top 10)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Neighborhood&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Mediana de SalePrice&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/af9eb2e5b83270dcd1b38db4839a8ea5eff0b5d05d311d4886d771f6d65be9f6.png" src="_images/af9eb2e5b83270dcd1b38db4839a8ea5eff0b5d05d311d4886d771f6d65be9f6.png" />
 </div>
 </div>
 </section>
@@ -547,34 +712,51 @@ plt.show()
 <h2>3.6 Selección de variables candidatas (8–12)<a class="headerlink" href="#seleccion-de-variables-candidatas-812" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># Criterios usados:
-# 1) Correlación absoluta alta con SalePrice (top k)
-# 2) Evitar multicolinealidad: si dos variables tienen |ρ|&gt;0.85, quedarse con una
-# 3) Preferir variables estructurales
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Criterios usados:</span>
+<span class="c1"># 1) Correlación absoluta alta con SalePrice (top k)</span>
+<span class="c1"># 2) Evitar multicolinealidad: si dos variables tienen |ρ|&gt;0.85, quedarse con una</span>
+<span class="c1"># 3) Preferir variables estructurales</span>
 
-k = 15  # empezamos con un pool un poco mayor
-corr_abs = num_df.corr(numeric_only=True)[target].dropna().abs().sort_values(ascending=False)
-pool = list(corr_abs.index[1:k+1])  # quitar SalePrice
+<span class="n">k</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># empezamos con un pool un poco mayor</span>
+<span class="n">corr_abs</span> <span class="o">=</span> <span class="n">num_df</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">numeric_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">pool</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">corr_abs</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># quitar SalePrice</span>
 
-sel = []
-for v in pool:
-    if not sel:
-        sel.append(v)
-        continue
-    ok = True
-    for u in sel:
-        r = abs(num_df[[v, u]].corr().iloc[0,1])
-        if r &gt; 0.85:
-            ok = False
-            break
-    if ok:
-        sel.append(v)
-    if len(sel) &gt;= 12:
-        break
+<span class="n">sel</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pool</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sel</span><span class="p">:</span>
+        <span class="n">sel</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">continue</span>
+    <span class="n">ok</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">sel</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">num_df</span><span class="p">[[</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]]</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mf">0.85</span><span class="p">:</span>
+            <span class="n">ok</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">break</span>
+    <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+        <span class="n">sel</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">12</span><span class="p">:</span>
+        <span class="k">break</span>
 
-print(&#39;Variables candidatas (&lt;=12, sin alta colinealidad):&#39;)
-for i, v in enumerate(sel, 1):
-    print(f&#39;{i:&gt;2}. {v}  (|ρ|={corr_abs[v]:.3f})&#39;)
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Variables candidatas (&lt;=12, sin alta colinealidad):&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sel</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s1">&gt;2</span><span class="si">}</span><span class="s1">. </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">  (|ρ|=</span><span class="si">{</span><span class="n">corr_abs</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Variables candidatas (&lt;=12, sin alta colinealidad):
+ 1. Overall Qual  (|ρ|=0.799)
+ 2. Gr Liv Area  (|ρ|=0.707)
+ 3. Garage Cars  (|ρ|=0.648)
+ 4. Total Bsmt SF  (|ρ|=0.632)
+ 5. 1st Flr SF  (|ρ|=0.622)
+ 6. Year Built  (|ρ|=0.558)
+ 7. Full Bath  (|ρ|=0.546)
+ 8. Year Remod/Add  (|ρ|=0.533)
+ 9. Garage Yr Blt  (|ρ|=0.527)
+10. Mas Vnr Area  (|ρ|=0.508)
+11. TotRms AbvGrd  (|ρ|=0.495)
+12. Fireplaces  (|ρ|=0.475)
 </pre></div>
 </div>
 </div>

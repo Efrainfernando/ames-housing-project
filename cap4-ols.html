@@ -242,7 +242,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="_sources/cap4-ols.md" target="_blank"
+      <li><a href="_sources/cap4-ols.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -252,7 +252,7 @@ const thebe_selector_output = ".output, .cell_output"
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.md</span>
+<span class="btn__text-container">.ipynb</span>
 </a>
 </li>
       
@@ -363,61 +363,64 @@ document.write(`
 \[ \hat{\beta} = (X^\top X)^{-1}X^\top y \]</div>
 <p>usando <strong>las variables candidatas</strong> seleccionadas en el Capítulo 3 y comparar con <code class="docutils literal notranslate"><span class="pre">statsmodels.OLS</span></code>.</p>
 </div></blockquote>
-<hr class="docutils" />
 <section id="datos-y-construccion-de-x-y-y">
 <h2>4.1 Datos y construcción de (X) y (y)<a class="headerlink" href="#datos-y-construccion-de-x-y-y" title="Permalink to this heading">#</a></h2>
 <p>En este capítulo construiremos (X) (predictores) y (y) (respuesta) a partir del dataset <em>Ames Housing</em>.
 Tomamos como objetivo (y = \texttt{SalePrice}) y elegimos <strong>hasta 12 variables candidatas</strong> con alta correlación y baja colinealidad (según el criterio del Cap. 3).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+import numpy as np
+from pathlib import Path
 
-<span class="c1"># Localiza el CSV (compatible con tu estructura de proyecto)</span>
-<span class="n">CANDIDATE_PATHS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;data/ames_housing.csv&#39;</span><span class="p">),</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;AmesHousing.csv&#39;</span><span class="p">)]</span>
-<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">CANDIDATE_PATHS</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="n">DATA_PATH</span> <span class="o">=</span> <span class="n">p</span>
-        <span class="k">break</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s1">&#39;No se encontró data/ames_housing.csv ni AmesHousing.csv&#39;</span><span class="p">)</span>
+# Localiza el CSV (compatible con tu estructura de proyecto)
+CANDIDATE_PATHS = [Path(&#39;data/ames_housing.csv&#39;), Path(&#39;AmesHousing.csv&#39;)]
+for p in CANDIDATE_PATHS:
+    if p.exists():
+        DATA_PATH = p
+        break
+else:
+    raise FileNotFoundError(&#39;No se encontró data/ames_housing.csv ni AmesHousing.csv&#39;)
 
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">DATA_PATH</span><span class="p">)</span>
+df = pd.read_csv(DATA_PATH)
 
-<span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;SalePrice&#39;</span>
+target = &#39;SalePrice&#39;
 
-<span class="c1"># Asegurar numérico y eliminar infinitos</span>
-<span class="n">num_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+# Asegurar numérico y eliminar infinitos
+num_df = df.select_dtypes(include=[np.number]).replace([np.inf, -np.inf], np.nan)
 
-<span class="c1"># Pool por correlación absoluta con el target</span>
-<span class="n">corr_abs</span> <span class="o">=</span> <span class="n">num_df</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">numeric_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+# Pool por correlación absoluta con el target
+corr_abs = num_df.corr(numeric_only=True)[target].dropna().abs().sort_values(ascending=False)
 
-<span class="c1"># Empezamos con top 15 (excluyendo el propio SalePrice) y filtramos por colinealidad &gt; 0.85</span>
-<span class="n">pool</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">corr_abs</span><span class="o">.</span><span class="n">index</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="n">target</span><span class="p">][:</span><span class="mi">15</span><span class="p">]</span>
+# Empezamos con top 15 (excluyendo el propio SalePrice) y filtramos por colinealidad &gt; 0.85
+pool = [c for c in corr_abs.index if c != target][:15]
 
-<span class="n">sel</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pool</span><span class="p">:</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">sel</span><span class="p">:</span>
-        <span class="n">sel</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-        <span class="k">continue</span>
-    <span class="n">ok</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">sel</span><span class="p">:</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">num_df</span><span class="p">[[</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-        <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mf">0.85</span><span class="p">:</span>
-            <span class="n">ok</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">break</span>
-    <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
-        <span class="n">sel</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">12</span><span class="p">:</span>
-        <span class="k">break</span>
+sel = []
+for v in pool:
+    if not sel:
+        sel.append(v)
+        continue
+    ok = True
+    for u in sel:
+        r = abs(num_df[[v, u]].dropna().corr().iloc[0,1])
+        if r &gt; 0.85:
+            ok = False
+            break
+    if ok:
+        sel.append(v)
+    if len(sel) &gt;= 12:
+        break
 
-<span class="c1"># Construcción de matrices con intercepto</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">num_df</span><span class="p">[[</span><span class="n">target</span><span class="p">]</span> <span class="o">+</span> <span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">X</span><span class="p">]</span>  <span class="c1"># intercepto</span>
+# Construcción de matrices con intercepto
+data = num_df[[target] + sel].dropna()
+y = data[target].values.reshape(-1, 1)
+X = data[sel].values
+X = np.c_[np.ones((X.shape[0], 1)), X]  # intercepto
 
-<span class="n">sel</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span>
+sel, X.shape, y.shape
 </pre></div>
+</div>
+</div>
 </div>
 <p>El vector de variables elegidas <code class="docutils literal notranslate"><span class="pre">sel</span></code> es el conjunto de <strong>candidatas</strong> para este capítulo.</p>
 </section>
@@ -441,55 +444,71 @@ Con intercepto, ( p = ) número de predictores + 1.</p>
 <hr class="docutils" />
 <section id="calculo-numerico-manual">
 <h2>4.3 Cálculo numérico manual<a class="headerlink" href="#calculo-numerico-manual" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Cálculo manual de beta_hat</span>
-<span class="n">XtX</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">X</span>
-<span class="n">Xty</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">y</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># Cálculo manual de beta_hat
+XtX = X.T @ X
+Xty = X.T @ y
 
-<span class="c1"># Comprobaciones de rango y número de condición</span>
-<span class="n">rank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_rank</span><span class="p">(</span><span class="n">XtX</span><span class="p">)</span>
-<span class="n">cond</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">XtX</span><span class="p">)</span>
+# Comprobaciones de rango y número de condición
+rank = np.linalg.matrix_rank(XtX)
+cond = np.linalg.cond(XtX)
 
-<span class="n">beta_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">XtX</span><span class="p">)</span> <span class="o">@</span> <span class="n">Xty</span>
+beta_hat = np.linalg.inv(XtX) @ Xty
 
-<span class="n">rank</span><span class="p">,</span> <span class="n">cond</span><span class="p">,</span> <span class="n">beta_hat</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>  <span class="c1"># mostramos primeras 5 betas</span>
+rank, cond, beta_hat[:5].ravel()  # mostramos primeras 5 betas
 </pre></div>
+</div>
+</div>
 </div>
 <section id="predicciones-residuos-y-suma-de-cuadrados">
 <h3>Predicciones, residuos y suma de cuadrados<a class="headerlink" href="#predicciones-residuos-y-suma-de-cuadrados" title="Permalink to this heading">#</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">yhat</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">beta_hat</span>
-<span class="n">res</span>  <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">yhat</span>
-<span class="n">SSR</span>  <span class="o">=</span> <span class="nb">float</span><span class="p">((</span><span class="n">res</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">res</span><span class="p">))</span>  <span class="c1"># residual sum of squares</span>
-<span class="n">n</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
-<span class="n">sigma2_hat</span> <span class="o">=</span> <span class="n">SSR</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>yhat = X @ beta_hat
+res  = y - yhat
+SSR  = float((res.T @ res))  # residual sum of squares
+n, p = X.shape
+sigma2_hat = SSR / (n - p)
 
-<span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">SSR</span><span class="p">,</span> <span class="n">sigma2_hat</span>
+n, p, SSR, sigma2_hat
 </pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="varianzas-de-hat-beta-y-errores-estandar">
 <h3>Varianzas de (\hat{\beta}) y errores estándar<a class="headerlink" href="#varianzas-de-hat-beta-y-errores-estandar" title="Permalink to this heading">#</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Var(beta_hat) = sigma^2 * (X&#39;X)^{-1}</span>
-<span class="n">var_beta</span> <span class="o">=</span> <span class="n">sigma2_hat</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">XtX</span><span class="p">)</span>
-<span class="n">se_beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">var_beta</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># Var(beta_hat) = sigma^2 * (X&#39;X)^{-1}
+var_beta = sigma2_hat * np.linalg.inv(XtX)
+se_beta = np.sqrt(np.diag(var_beta)).reshape(-1,1)
 
-<span class="n">se_beta</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+se_beta[:5].ravel()
 </pre></div>
+</div>
+</div>
 </div>
 </section>
 </section>
 <hr class="docutils" />
 <section id="comparacion-con-statsmodels-ols">
 <h2>4.4 Comparación con <code class="docutils literal notranslate"><span class="pre">statsmodels.OLS</span></code><a class="headerlink" href="#comparacion-con-statsmodels-ols" title="Permalink to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>import statsmodels.api as sm
 
-<span class="c1"># Con statsmodels (agrega intercepto)</span>
-<span class="n">y_sm</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-<span class="n">X_sm</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">has_constant</span><span class="o">=</span><span class="s1">&#39;add&#39;</span><span class="p">)</span>
+# Con statsmodels (agrega intercepto)
+y_sm = data[target].values
+X_sm = sm.add_constant(data[sel].values, has_constant=&#39;add&#39;)
 
-<span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y_sm</span><span class="p">,</span> <span class="n">X_sm</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+ols = sm.OLS(y_sm, X_sm).fit()
 
-<span class="nb">print</span><span class="p">(</span><span class="n">ols</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+print(ols.summary())
 </pre></div>
+</div>
+</div>
 </div>
 <blockquote>
 <div><p><strong>Coincidencia:</strong> Los coeficientes, errores estándar y métricas (R², SSR) deben coincidir con los obtenidos manualmente (salvo diferencias de redondeo).<br />
